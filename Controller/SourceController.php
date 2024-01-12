@@ -590,7 +590,7 @@ EOT;
     /**
      * Generate ZIP-File for download
      */
-    protected function generateZip($imagickProcessor, $uid, $files)
+    protected function generateZip(Request $request, $imagickProcessor, $uid, $files)
     {
         $dstPath = $this->buildViewerPath($uid);
         if (false === $dstPath) {
@@ -603,10 +603,8 @@ EOT;
         $fullnameZip = $filePath . '/' . $fnameZip;
 
         // build absolute url
-        $requestContext = $this->get('router')->getContext();
-
-        $scheme = $requestContext->getScheme();
-        $port = $requestContext->isSecure() ? $requestContext->getHttpsPort() : $requestContext->getHttpPort();
+        $scheme = $request->getScheme();
+        $port = $request->getPort();
 
         $portAppend = '';
         if ('' !== $port) {
@@ -619,8 +617,8 @@ EOT;
             }
         }
 
-        $urlZip = $scheme . '://' . $requestContext->getHost() . $portAppend
-                . $requestContext->getBaseUrl()
+        $urlZip = $scheme . '://' . $request->getHost() . $portAppend
+                . $request->getBaseUrl()
                 . $relPath . '/' . $fnameZip
                 ;
 
@@ -732,7 +730,7 @@ EOT;
             $files = array_merge($files, $readme);
         }
 
-        $urlZip = $this->generateZip($imagickProcessor, $uid, $files);
+        $urlZip = $this->generateZip($request, $imagickProcessor, $uid, $files);
         if (false === $files) {
             // something went wrong
             return new \Symfony\Component\HttpFoundation\RedirectResponse($this->generateUrl('source', [ 'uid' => $uid ]));
@@ -817,8 +815,8 @@ EOT;
         $defaultZoom = 3;
 
         $directoryUrlAbs = $request->getSchemeAndHttpHost()
-            . $this->get('router')->getContext()->getBaseUrl()
-            . '/' . $relPath;
+            . $request->getBaseUrl()
+            . $relPath;
 
         $xpath = new \DOMXPath($resource);
         foreach ($xpath->query("//mets:fileSec/mets:fileGrp[@USE='MASTER']") as $fileSec) {
