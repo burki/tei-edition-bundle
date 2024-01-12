@@ -590,18 +590,19 @@ EOT;
     /**
      * Generate ZIP-File for download
      */
-    protected function generateZip($imagickProcessor, $uid, $files)
+    protected function generateZip(Request $request, $imagickProcessor, $uid, $files)
     {
         $dstPath = $this->buildViewerPath($uid);
         if (false === $dstPath) {
             return false;
         }
+
         list($relPath, $filePath) = $dstPath;
 
         $fnameZip = $this->buildFolderName($uid) . '.zip';
         $fullnameZip = $filePath . '/' . $fnameZip;
-        $urlZip = $this->get('router')->getContext()->getBaseUrl()
-                . '/' . $relPath . '/' . $fnameZip;
+        $urlZip = $request->getBaseUrl()
+                . $relPath . '/' . $fnameZip;
 
         $flags = \ZipArchive::CREATE;
         if (file_exists($fullnameZip)) {
@@ -709,7 +710,7 @@ EOT;
             $files = array_merge($files, $readme);
         }
 
-        $urlZip = $this->generateZip($imagickProcessor, $uid, $files);
+        $urlZip = $this->generateZip($request, $imagickProcessor, $uid, $files);
         if (false === $files) {
             // something went wrong
             return new \Symfony\Component\HttpFoundation\RedirectResponse($this->generateUrl('source', [ 'uid' => $uid ]));
@@ -794,8 +795,8 @@ EOT;
         $defaultZoom = 3;
 
         $directoryUrlAbs = $request->getSchemeAndHttpHost()
-            . $this->get('router')->getContext()->getBaseUrl()
-            . '/' . $relPath;
+            . $request->getBaseUrl()
+            . $relPath;
 
         $xpath = new \DOMXPath($resource);
         foreach ($xpath->query("//mets:fileSec/mets:fileGrp[@USE='MASTER']") as $fileSec) {
