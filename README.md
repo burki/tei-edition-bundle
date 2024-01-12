@@ -1,14 +1,18 @@
 TeiEditionBundle
 ================
 
-This is the initial code for factoring out the generic parts of
-the Key Documents of German-Jewish History into a Symfony bundle.
+This bundle provides the generic parts of a TEI-based source edition as
+a Symfony bundle.
+
+It is currently used by
+    * Key Documents of German-Jewish History, https://keydocuments.net/
+    * Digitale Bibliothek verbrannter Bücher, https://www.verbrannte-buecher.de
 
 See https://github.com/igdj/demo-edition for step-by-step instructions
 on how to make use of this bundle in your project.
 
 If you have any questions or find this code helpful, please contact us at
-    http://jewish-history-online.net/contact
+    https://keydocuments.net/contact
 
 
 License
@@ -16,7 +20,7 @@ License
     Bundle Code for the presentation of the Digital Source Edition
         Key Documents of German-Jewish History
 
-    (C) 2017-2021 Institut für die Geschichte der deutschen Juden,
+    (C) 2017-2024 Institut für die Geschichte der deutschen Juden,
         Daniel Burckhardt
 
 
