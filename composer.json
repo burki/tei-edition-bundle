@@ -32,11 +32,14 @@
 
         "symfony/serializer": "^6.4",
 
-        "twig/twig": "^3.6",
-        "twig/string-extra": "^3.6",
+        "twig/twig": "^3.9",
+        "twig/extra-bundle": "^3.9",
+        "twig/intl-extra": "^3.9",
+        "twig/string-extra": "^3.9",
         "liip/url-auto-converter-bundle": "dev-master",
         "symfony/asset": "^6.4",
 
+        "doctrine/annotations": "^1.4|^2.0",
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/orm": "^2.15",
         "stof/doctrine-extensions-bundle": "^1.7",
@@ -82,10 +85,12 @@
 
         "sylius/theme-bundle": "^2.1",
 
+        "eko/feedbundle": "^2.2",
+
         "square-bit/oai-pmh": "^0.2",
         "symfony/psr-http-message-bridge": "^2.0",
         "laminas/laminas-diactoros": "^2.14",
 
-        "guzzlehttp/guzzle": "^6.5 | ^7.5"
+        "guzzlehttp/guzzle": "^6.5|^7.5"
     }
 }
