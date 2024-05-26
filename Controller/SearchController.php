@@ -47,7 +47,13 @@ extends BaseController
         }
         else {
             $q = trim($request->query->get('q'));
-            $filter = $request->query->get('filter');
+
+            $queryAll = $request->query->all();
+
+            $filter = array_key_exists('filter', $queryAll)
+                ? $queryAll['filter']
+                : [];
+
             if (!empty($filter)) {
                 // filter down to allowed facetNames as keys
                 $filter = array_intersect_key($filter, array_flip($facetNames));
