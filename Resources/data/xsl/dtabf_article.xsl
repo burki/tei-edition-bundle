@@ -11,15 +11,19 @@
 
   <xsl:template match="tei:TEI">
     <ul id="authors">
-        <xsl:for-each select="./tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author/tei:persName">
-          <li>
-            <xsl:if test="@corresp">
-              <xsl:attribute name="data-author-slug"><xsl:value-of select="@corresp" /></xsl:attribute>
-            </xsl:if>
-            <xsl:value-of select="text()" />
-          </li>
-        </xsl:for-each>
+      <xsl:for-each select="./tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:author/tei:persName">
+        <li>
+          <xsl:if test="@corresp">
+            <xsl:attribute name="data-author-slug"><xsl:value-of select="@corresp" /></xsl:attribute>
+          </xsl:if>
+          <xsl:if test="@ref">
+            <xsl:attribute name="data-author-ref"><xsl:value-of select="@ref" /></xsl:attribute>
+          </xsl:if>
+          <xsl:value-of select="text()" />
+        </li>
+      </xsl:for-each>
     </ul>
+
     <div class="article">
       <xsl:apply-templates/>
 
