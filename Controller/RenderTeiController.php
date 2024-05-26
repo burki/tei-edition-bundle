@@ -560,6 +560,25 @@ extends BaseController
     }
 
     /**
+     * TODO: share with src/Command/BaseCommand.php
+     */
+    private function buildGndConditionbyUri($uri, $hyphenAllowed = true)
+    {
+        $condition = null;
+
+        $regExp = '/^https?'
+            . preg_quote('://d-nb.info/gnd/', '/')
+            . ($hyphenAllowed ? '(\d+\-?[\dxX]?)' : '(\d+[xX]?)')
+            . '$/';
+
+        if (preg_match($regExp, $uri, $matches)) {
+            $condition = [ 'gnd' => $matches[1] ];
+        }
+
+        return $condition;
+    }
+
+    /**
      * Use DomCrawler to extract specific parts from the HTML-representation
      */
     protected function extractPartsFromHtml(string $html,
@@ -581,6 +600,14 @@ extends BaseController
             $slug = $node->attr('data-author-slug');
             if (!empty($slug)) {
                 $author['slug'] = $slug;
+            }
+
+            $ref = $node->attr('data-author-ref');
+            if (!empty($ref)) {
+                $gndCondition = $this->buildGndConditionbyUri($ref);
+                if (!empty($gndCondition)) {
+                    $author += $gndCondition;
+                }
             }
 
             return $author;
@@ -653,37 +680,48 @@ extends BaseController
             }
         }));
 
+        $authorsByIdentifier = [];
+
         // try to get bios in the current locale
         $locale = $translator->getLocale();
-        $authorSlugs = [];
-        $authorsBySlug = [];
+        $authorIdentifiers = [
+            'slug' => [],
+            'gnd' => [],
+        ];
+
         foreach ($authors as $author) {
-            if (array_key_exists('slug', $author)) {
-                $authorSlugs[] = $author['slug'];
-                $authorsBySlug[$author['slug']] = $author;
+            foreach (array_keys($authorIdentifiers) as $key) {
+                if (array_key_exists($key, $author)) {
+                    $authorIdentifiers[$key][] = $author[$key];
+                    $authorsByIdentifier[$author[$key]] = $author;
+                    continue 2;
+                }
             }
-            else {
-                $authorsBySlug[] = $author;
-            }
+
+            $authorsByIdentifier[] = $author;
         }
 
-        if (!empty($authorSlugs)) {
-            $query = $entityManager
-                ->createQuery('SELECT p.slug, p.description, p.gender'
-                              . ' FROM \TeiEditionBundle\Entity\Person p'
-                              . ' WHERE p.slug IN (:slugs)')
-                ->setParameter('slugs', $authorSlugs);
+        foreach ($authorIdentifiers as $key => $identifiers) {
+            if (!empty($identifiers)) {
+                $query = $entityManager
+                    ->createQuery(sprintf('SELECT p.%s, p.description, p.gender'
+                                          . ' FROM \TeiEditionBundle\Entity\Person p'
+                                          . ' WHERE p.%s IN (:identifiers)',
+                                          $key, $key))
+                    ->setParameter('identifiers', $identifiers)
+                    ;
 
-            foreach ($query->getResult() as $person) {
-                $authorsBySlug[$person['slug']]['gender'] = $person['gender'];
-                if (!is_null($person['description']) && array_key_exists($locale, $person['description'])) {
-                    $authorsBySlug[$person['slug']]['description'] = $person['description'][$locale];
+                foreach ($query->getResult() as $person) {
+                    $authorsByIdentifier[$person[$key]]['gender'] = $person['gender'];
+                    if (!is_null($person['description']) && array_key_exists($locale, $person['description'])) {
+                        $authorsByIdentifier[$person[$key]]['description'] = $person['description'][$locale];
+                    }
                 }
             }
         }
 
         return [
-            $authorsBySlug,
+            $authorsByIdentifier,
             $sectionHeaders,
             $license,
             $entities,
