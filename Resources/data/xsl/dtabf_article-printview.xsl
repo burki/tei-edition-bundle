@@ -20,6 +20,9 @@
           <xsl:if test="@corresp">
             <xsl:attribute name="data-author-slug"><xsl:value-of select="@corresp" /></xsl:attribute>
           </xsl:if>
+          <xsl:if test="@ref">
+            <xsl:attribute name="data-author-ref"><xsl:value-of select="@ref" /></xsl:attribute>
+          </xsl:if>
           <xsl:value-of select="text()" />
         </li>
       </xsl:for-each>
