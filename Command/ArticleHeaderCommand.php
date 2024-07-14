@@ -210,10 +210,12 @@ extends BaseCommand
                                 if (!empty($gnd)) {
                                     // lookup by gnd instead
                                     $key = 'gnd';
+
                                     return $gnd;
                                 }
                             }
-                            return $related->getSlug();
+
+                            return $slug;
                         }, $related);
                     $creator = [];
                     break;
@@ -222,6 +224,15 @@ extends BaseCommand
                     $repoClass = 'Person';
                     $key = 'slug';
                     $value = $related->getSlug();
+                    if (empty($value)) {
+                        $gnd = $related->getGnd();
+                        if (!empty($gnd)) {
+                            // lookup by gnd instead
+                            $key = 'gnd';
+
+                            $value = $gnd;
+                        }
+                    }
                     break;
 
                 case 'provider':
