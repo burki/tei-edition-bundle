@@ -110,8 +110,7 @@ extends Command
             . ($hyphenAllowed ? '(\d+\-?[\dxX]?)' : '(\d+[xX]?)')
             . '$/';
 
-        if (preg_match($regExp, $uri, $matches))
-        {
+        if (preg_match($regExp, $uri, $matches)) {
             $condition = [ 'gnd' => $matches[1] ];
         }
 
