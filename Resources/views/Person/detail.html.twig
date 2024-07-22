@@ -9,7 +9,7 @@
     <script>
         var service = new SeeAlsoCollection();
         service.services = {
-            'pndaks' : new SeeAlsoService('https://beacon.findbuch.de/seealso/pnd-aks/-lemo@ap/-jgo-hsd-personen')
+            'gnd-entityfacts' : new SeeAlsoService('https://juedische-geschichte-online.net/lod-resolver/seealso/entityfacts/gnd')
         };
         service.views = {
             'seealso-ul' : new SeeAlsoUL({
@@ -167,7 +167,7 @@
                     {% endif %}
                     {% if person.gnd is not empty %}
                     <div class="col-sm-12">
-                        <div title="{{ person.gnd }}" class="pndaks seealso-ul"></div>
+                        <div title="{{ person.gnd }}" class="gnd-entityfacts seealso-ul"></div>
                     </div>
                     {% endif %}
                 </div>
