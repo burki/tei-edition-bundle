@@ -47,6 +47,7 @@
                     </div>
                 </div>
 
+                {% if event.additional.beacon is defined and event.additional.beacon is not empty %}
                 <div class="row box-color-content-inverse">
                     {% if event.additional.beacon is defined and event.additional.beacon is not empty %}
                     <div class="col-sm-12 beacon-ul">
@@ -61,6 +62,7 @@
                         <div title="{{ event.gnd }}" class="gkdaks seealso-ul"></div>
                     </div>
                 </div>
+                {% endif %}
             </div>
             {% endif %}
         </div>
