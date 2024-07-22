@@ -3,6 +3,7 @@
 {% import '@TeiEdition/Shared/helper.html.twig' as helper %}
 
 {% block head %}
+    {#
     <script src="{{ app.request.basepath }}/js/seealso.js"></script>
     <script>
         var service = new SeeAlsoCollection();
@@ -17,6 +18,7 @@
         };
         service.replaceTagsOnLoad();
     </script>
+    #}
 {% endblock %}
 
 {% block body %}
@@ -43,6 +45,7 @@
                     </div>
                 </div>
 
+                {% if event.additional.beacon is defined and event.additional.beacon is not empty %}
                 <div class="row box-color-content-inverse">
                     {% if event.additional.beacon is defined and event.additional.beacon is not empty %}
                     <div class="col-sm-12 beacon-ul">
@@ -57,6 +60,7 @@
                         <div title="{{ event.gnd }}" class="gkdaks seealso-ul"></div>
                     </div>
                 </div>
+                {% endif %}
             </div>
             {% endif %}
         </div>
