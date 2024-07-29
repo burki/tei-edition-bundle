@@ -57,8 +57,6 @@
         "servo/fluidxml": "^1.21",
         "fluentdom/fluentdom": "^8.0",
 
-        "wikimedia/utfnormal": "^3.0",
-
         "html2text/html2text": "^4.3",
 
         "igdj/lod-service": "@dev",
