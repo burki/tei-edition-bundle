@@ -47,6 +47,7 @@ extends BaseCommand
     protected $baseUrl;
     protected $user;
     protected $password;
+    protected $fundingReference;
 
     public function __construct(EntityManagerInterface $em,
                                 KernelInterface $kernel,
@@ -72,6 +73,7 @@ extends BaseCommand
         $this->baseUrl = $params->get('app.datacite.url');
         $this->user = $params->get('app.datacite.user');
         $this->password = $params->get('app.datacite.password');
+        $this->fundingReference = $params->get('app.datacite.funding');
     }
 
     protected function configure()
@@ -490,17 +492,9 @@ extends BaseCommand
         }
 
         // funding
-        $root->add(<<<XML
-    <fundingReferences>
-        <fundingReference>
-            <funderName>Deutsche Forschungsgemeinschaft</funderName>
-            <funderIdentifier funderIdentifierType="Crossref Funder ID">http://dx.doi.org/10.13039/501100001659</funderIdentifier>
-            <awardNumber awardURI="http://gepris.dfg.de/gepris/projekt/268470421">268470421</awardNumber>
-            <awardTitle>Schlüsseldokumente zur deutsch-jüdischen Geschichte von der frühen Neuzeit bis in die Gegenwart. Erstellung eines nutzerfreundlichen Online-Quellenportals für das Fach Jüdische Geschichte</awardTitle>
-        </fundingReference>
-    </fundingReferences>
-XML
-        );
+        if (!empty($this->fundingReference)) {
+            $root->add($this->fundingReference);
+        }
 
         return [ $url, (string)$resource ];
     }
