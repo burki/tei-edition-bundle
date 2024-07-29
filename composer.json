@@ -45,7 +45,7 @@
         "stof/doctrine-extensions-bundle": "^1.12",
         "beberlei/doctrineextensions": "^1.5",
         "oro/doctrine-extensions": "^2.0",
-        "scienta/doctrine-json-functions": "^5.3",
+        "scienta/doctrine-json-functions": "^6.1",
 
         "gjuric/i18n-routing-bundle": "3.2.2",
         "symfony/security-core": "^6.4",
