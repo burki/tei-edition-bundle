@@ -56,7 +56,6 @@
         "sabre/xml": "^4.0",
         "servo/fluidxml": "^1.21",
         "fluentdom/fluentdom": "^8.0",
-        "brunty/relax-ng-domdocument": "~0.2",
 
         "wikimedia/utfnormal": "^3.0",
 
