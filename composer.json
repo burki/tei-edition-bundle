@@ -79,7 +79,7 @@
         "mpdf/mpdf": "^8.2",
 
         "boppy/solr-bundle": "dev-solarium-6",
-        "knplabs/knp-paginator-bundle": "^5.9",
+        "knplabs/knp-paginator-bundle": "^6.4",
 
         "knplabs/knp-menu-bundle": "^3.4",
 
