@@ -1055,7 +1055,7 @@ class TeiHelper
     {
         switch ($schemaType) {
             case 'relaxng':
-                $document = new \Brunty\DOMDocument;
+                $document = new \TeiEditionBundle\Utils\DOMDocument;
                 if (is_resource($fname)) {
                     $document->loadXML(stream_get_contents($fname));
                 }
