@@ -54,7 +54,7 @@
         "cocur/slugify": "^4.5",
 
         "sabre/xml": "^4.0",
-        "servo/fluidxml": "^1.21",
+        "servo/fluidxml": "^2.0",
         "fluentdom/fluentdom": "^8.0",
 
         "html2text/html2text": "^4.3",
