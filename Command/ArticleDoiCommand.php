@@ -103,7 +103,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
 
@@ -139,7 +139,6 @@ extends BaseCommand
 
             return 1;
         }
-
 
         list($url, $metadata) = $this->buildDataCite($entity, $this->prefix);
 
@@ -190,7 +189,7 @@ extends BaseCommand
         return 0;
     }
 
-    function registerDoi($doi, $url, $metadata, $isActive = true)
+    protected function registerDoi($doi, $url, $metadata, $isActive = true)
     {
         // first step is to post metadata
         $response = \Httpful\Request::post($this->baseUrl . 'metadata')
@@ -420,7 +419,7 @@ extends BaseCommand
         if (!empty($keywords)) {
             $subjects = $root->addChild('subjects', true);
             foreach ($keywords as $keyword) {
-                $subjects->addChild('subject', $this->translator->trans($keyword, [], 'additional'), [
+                $subjects->addChild('subject', $this->xmlspecialchars($this->translator->trans($keyword, [], 'additional')), [
                     'xml:lang' => $locale,
                 ]);
             }
@@ -430,9 +429,11 @@ extends BaseCommand
         $relatedIdentifiers = $root->addChild('relatedIdentifiers', true);
 
         $relatedIdentifiers->addChild('relatedIdentifier',
-            $this->adjustUrlProduction($this->router->generate('home',
-                                                               [ '_locale' => $locale, ],
-                                                               UrlGeneratorInterface::ABSOLUTE_URL)),
+            $this->adjustUrlProduction($this->router->generate('home', [
+                    '_locale' => $locale,
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL)
+            ),
             [
                 'relatedIdentifierType' => 'URL',
                 'relationType' => 'IsPartOf',
@@ -476,6 +477,7 @@ extends BaseCommand
                 ->findBy([ 'isPartOf' => $entity ],
                          [ 'dateCreated' => 'ASC', 'name' => 'ASC'])
                 ;
+
             foreach ($related as $source) {
                 $relatedIdentifiers->addChild('relatedIdentifier', $source->buildDoi($prefix), [
                     'relatedIdentifierType' => 'DOI',
@@ -489,7 +491,7 @@ extends BaseCommand
         if (!empty($description)) {
             // htmlspecialchars added due to https://github.com/servo-php/fluidxml/issues/14
             $root->addChild('descriptions', true)
-                ->addChild('description', htmlspecialchars($description, ENT_XML1, 'UTF-8'), [
+                ->addChild('description', $this->xmlspecialchars($description), [
                     'descriptionType' => 'Abstract',
                     'xml:lang' => $locale,
                 ]);
