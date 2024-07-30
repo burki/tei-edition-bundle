@@ -47,6 +47,7 @@ extends BaseCommand
     protected $baseUrl;
     protected $user;
     protected $password;
+    protected $publisher;
     protected $fundingReference;
 
     public function __construct(EntityManagerInterface $em,
@@ -73,6 +74,7 @@ extends BaseCommand
         $this->baseUrl = $params->get('app.datacite.url');
         $this->user = $params->get('app.datacite.user');
         $this->password = $params->get('app.datacite.password');
+        $this->publisher = $params->get('app.site.publisher');
         $this->fundingReference = $params->get('app.datacite.funding');
     }
 
@@ -308,7 +310,7 @@ extends BaseCommand
 
         $root
             // set the publisher - maybe get from xml instead
-            ->addChild('publisher', $this->translator->trans('Institute for the History of the German Jews'));
+            ->addChild('publisher', $this->xmlspecialchars($this->translator->trans($this->publisher)));
 
         $publishedDate = $entity->getDatePublished();
         if (!is_null($publishedDate)) {
@@ -418,7 +420,9 @@ extends BaseCommand
         if (!empty($keywords)) {
             $subjects = $root->addChild('subjects', true);
             foreach ($keywords as $keyword) {
-                $subjects->addChild('subject', $keyword, [ 'xml:lang' => $locale ]);
+                $subjects->addChild('subject', $this->translator->trans($keyword, [], 'additional'), [
+                    'xml:lang' => $locale,
+                ]);
             }
         }
 
