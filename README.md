@@ -5,8 +5,9 @@ This bundle provides the generic parts of a TEI-based source edition as
 a Symfony bundle.
 
 It is currently used by
-    * Key Documents of German-Jewish History, https://keydocuments.net/
+    * Key Documents of German-Jewish History, https://keydocuments.net
     * Digitale Bibliothek verbrannter Bücher, https://www.verbrannte-buecher.de
+    * Jüdische Geschichte[n] in der DDR, https://ddr.juedische-geschichte-online.net
 
 See https://github.com/igdj/demo-edition for step-by-step instructions
 on how to make use of this bundle in your project.
