@@ -49,6 +49,7 @@ extends BaseCommand
     protected $password;
     protected $publisher;
     protected $fundingReference;
+    protected $adjustUrlProduction = null;
 
     public function __construct(EntityManagerInterface $em,
                                 KernelInterface $kernel,
@@ -76,6 +77,11 @@ extends BaseCommand
         $this->password = $params->get('app.datacite.password');
         $this->publisher = $params->get('app.site.publisher');
         $this->fundingReference = $params->get('app.datacite.funding');
+
+        $adjustUrlProduction = $params->get('app.datacite.url_production_adjust');
+        if (is_array($adjustUrlProduction) && 2 == count($adjustUrlProduction)) {
+            $this->adjustUrlProduction = $adjustUrlProduction;
+        }
     }
 
     protected function configure()
@@ -231,9 +237,13 @@ extends BaseCommand
 
     private function adjustUrlProduction($url)
     {
-        /* dirty hack to generate production urls on local setup */
-        return str_replace([ '//localhost/', '//127.0.0.1/', ],
-                           [ '//juedische-geschichte-online.net/', '//jewish-history-online.net/' ],
+        if (is_null($this->adjustUrlProduction)) {
+            return $url;
+        }
+
+        /* generate production urls on local setup according to DATACITE_URL_PRODUCTION_ADJUST */
+        return str_replace($this->adjustUrlProduction[0],
+                           $this->adjustUrlProduction[1],
                            $url);
     }
 
