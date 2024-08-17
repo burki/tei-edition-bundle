@@ -22,7 +22,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 class ArticleHeaderCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('article:header')
@@ -53,7 +53,7 @@ extends BaseCommand
             ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
 

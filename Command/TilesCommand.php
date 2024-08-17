@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class TilesCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('source:tiles')
@@ -34,7 +34,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
 

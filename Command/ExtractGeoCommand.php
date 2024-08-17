@@ -15,7 +15,7 @@ extends BaseCommand
 {
     use \TeiEditionBundle\Utils\RenderTeiTrait;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('extract:geo')
@@ -34,7 +34,7 @@ extends BaseCommand
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $language = 'deu';
         $locale = \TeiEditionBundle\Utils\Iso639::code3to1($language);

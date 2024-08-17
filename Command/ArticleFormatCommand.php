@@ -29,7 +29,7 @@ extends Command
         $this->formatter = $formatter;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('article:format')
@@ -42,7 +42,7 @@ extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
         $options = [];

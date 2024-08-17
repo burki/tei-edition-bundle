@@ -23,7 +23,7 @@ extends BaseCommand
 {
     use \TeiEditionBundle\Utils\RenderTeiTrait; // use shared method renderTei()
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('article:content')
@@ -52,7 +52,7 @@ extends BaseCommand
         return $html2text->getText();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
 
