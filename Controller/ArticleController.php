@@ -189,11 +189,9 @@ extends RenderTeiController
         ]);
     }
 
-    /**
-     * @Route("/article/date", name="article-index-date")
-     * @Route("/article.rss", name="article-index-rss")
-     * @Route("/article", name="article-index")
-     */
+    #[Route(path: '/article/date', name: 'article-index-date')]
+    #[Route(path: '/article.rss', name: 'article-index-rss')]
+    #[Route(path: '/article', name: 'article-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator,
@@ -250,11 +248,9 @@ extends RenderTeiController
         ]);
     }
 
-    /**
-     * @Route("/article/{slug}.jsonld", name="article-jsonld")
-     * @Route("/article/{slug}.pdf", name="article-pdf")
-     * @Route("/article/{slug}", name="article")
-     */
+    #[Route(path: '/article/{slug}.jsonld', name: 'article-jsonld')]
+    #[Route(path: '/article/{slug}.pdf', name: 'article-pdf')]
+    #[Route(path: '/article/{slug}', name: 'article')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  TranslatorInterface $translator,
