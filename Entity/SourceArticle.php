@@ -6,10 +6,7 @@ namespace TeiEditionBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use TeiEditionBundle\Utils\JsonLd;
 
-/**
- *
- * @ORM\Entity
- */
+#[ORM\Entity]
 class SourceArticle
 extends Article
 {

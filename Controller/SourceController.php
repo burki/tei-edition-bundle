@@ -433,11 +433,9 @@ EOT;
         ]);
     }
 
-    /**
-     * @Route("/source/{uid}.jsonld", name="source-jsonld")
-     * @Route("/source/{uid}.pdf", name="source-pdf")
-     * @Route("/source/{uid}", name="source", requirements={"uid"=".*source\-\d+"})
-     */
+    #[Route(path: '/source/{uid}.jsonld', name: 'source-jsonld')]
+    #[Route(path: '/source/{uid}.pdf', name: 'source-pdf')]
+    #[Route(path: '/source/{uid}', name: 'source', requirements: ['uid' => '.*source\-\d+'])]
     public function sourceViewerAction(Request $request,
                                        EntityManagerInterface $entityManager,
                                        TranslatorInterface $translator,
@@ -700,10 +698,9 @@ EOT;
     }
 
     /**
-     * @Route("/source/{uid}.zip", name="source-download")
-     *
      * For downloadable sources, build the ZIP-archive and redirect to it
      */
+    #[Route(path: '/source/{uid}.zip', name: 'source-download')]
     public function downloadAction(Request $request,
                                    EntityManagerInterface $entityManager,
                                    TranslatorInterface $translator,
@@ -717,6 +714,7 @@ EOT;
         }
 
         $files = false;
+
         // check if we are allowed to download
         if ($article->licenseAllowsDownload()) {
             $files = $this->buildDownloadFiles($uid, $article);
@@ -743,12 +741,9 @@ EOT;
     }
 
     /**
-     *
-     * @Route("/source/{uid}.tei.xml", name="source-tei")
-     *
      * For downloadable sources, send TEI
-     *
      */
+    #[Route(path: '/source/{uid}.tei.xml', name: 'source-tei')]
     public function teiAction(Request $request,
                               EntityManagerInterface $entityManager,
                               $uid)
@@ -774,13 +769,10 @@ EOT;
     }
 
     /**
-     *
-     * @Route("/source/{uid}.mets.xml", name="source-mets")
-     *
      * For downloadable sources, adjust the METS-container so it works well
      * in the DFG-Viewer
-     *
      */
+    #[Route(path: '/source/{uid}.mets.xml', name: 'source-mets')]
     public function metsAction(Request $request,
                                EntityManagerInterface $entityManager,
                                \Twig\Environment $twig,
@@ -872,13 +864,11 @@ EOT;
     }
 
     /**
-     *
-     * @Route("/source/tei2html/{path}", requirements={"path" = ".*"}, name="tei2html")
-     *
      * This action is called by
      *   iview-client-mets.js
      * to render a specific page of the transcription or translation
      */
+    #[Route(path: '/source/tei2html/{path}', requirements: ['path' => '.*'], name: 'tei2html')]
     public function tei2htmlAction($path)
     {
         $parts = explode('/', $path, 2);
@@ -954,14 +944,12 @@ EOT;
     }
 
     /**
-     *
-     * @Route("/source/imginfo/{path}", requirements={"path" = ".*"}, name="imginfo")
-     *
      * This action is called by
      *   iview-client-mets.js
      * to determine the width and height of the page facsimile
      * to determine the maximum zoom level for the tiles
      */
+    #[Route(path: '/source/imginfo/{path}', requirements: ['path' => '.*'], name: 'imginfo')]
     public function imgInfoAction($path)
     {
         $parts = explode('/', $path);

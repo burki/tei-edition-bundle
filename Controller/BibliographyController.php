@@ -47,9 +47,7 @@ extends BaseController
         return new \Seboettg\CiteProc\CiteProc(file_get_contents($path), $locale, $additionalMarkup);
     }
 
-    /**
-     * @Route("/bibliography", name="bibliography-index")
-     */
+    #[Route(path: '/bibliography', name: 'bibliography-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
@@ -72,9 +70,7 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/bibliography/isbn/beacon", name="bibliography-isbn-beacon")
-     */
+    #[Route(path: '/bibliography/isbn/beacon', name: 'bibliography-isbn-beacon')]
     public function isbnBeaconAction(EntityManagerInterface $entityManager,
                                      TranslatorInterface $translator)
     {
@@ -142,13 +138,11 @@ extends BaseController
         return $response;
     }
 
-    /**
-     * @Route("/bibliography/{slug}.ris", name="bibliography-ris")
-     * @Route("/bibliography/{slug}.jsonld", name="bibliography-jsonld")
-     * @Route("/bibliography/{id}", requirements={"id" = "\d+"})
-     * @Route("/bibliography/{slug}", name="bibliography")
-     * @Route("/bibliography/isbn/{isbn}", name="bibliography-by-isbn")
-     */
+    #[Route(path: '/bibliography/{slug}.ris', name: 'bibliography-ris')]
+    #[Route(path: '/bibliography/{slug}.jsonld', name: 'bibliography-jsonld')]
+    #[Route(path: '/bibliography/{id}', requirements: ['id' => '\d+'])]
+    #[Route(path: '/bibliography/{slug}', name: 'bibliography')]
+    #[Route(path: '/bibliography/isbn/{isbn}', name: 'bibliography-by-isbn')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  TranslatorInterface $translator,
@@ -220,9 +214,7 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/bibliography/unapi", name="bibliography-unapi")
-     */
+    #[Route(path: '/bibliography/unapi', name: 'bibliography-unapi')]
     public function unapiAction(Request $request,
                                 EntityManagerInterface $entityManager)
     {
