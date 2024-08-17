@@ -20,12 +20,10 @@ extends BaseController
 
     /**
      * Display map of sources and mentioned places
-     *
-     * @Route("/map", name="place-map")
-     * @Route("/map/place", name="place-map-mentioned")
-     * @Route("/map/landmark", name="place-map-landmark")
-     *
      */
+    #[Route(path: '/map', name: 'place-map')]
+    #[Route(path: '/map/place', name: 'place-map-mentioned')]
+    #[Route(path: '/map/landmark', name: 'place-map-landmark')]
     public function mapAction(Request $request,
                               EntityManagerInterface $entityManager,
                               TranslatorInterface $translator)
@@ -41,9 +39,7 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/map/popup-content/{ids}", name="place-map-popup-content")
-     */
+    #[Route(path: '/map/popup-content/{ids}', name: 'place-map-popup-content')]
     public function mapPopupContentAction(Request $request,
                                           EntityManagerInterface $entityManager,
                                           $ids)
@@ -116,9 +112,7 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/place", name="place-index")
-     */
+    #[Route(path: '/place', name: 'place-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
@@ -145,12 +139,10 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/place/{id}.jsonld", name="place-jsonld")
-     * @Route("/place/{id}", name="place")
-     * @Route("/place/tgn/{tgn}.jsonld", name="place-by-tgn-jsonld")
-     * @Route("/place/tgn/{tgn}", name="place-by-tgn")
-     */
+    #[Route(path: '/place/{id}.jsonld', name: 'place-jsonld')]
+    #[Route(path: '/place/{id}', name: 'place')]
+    #[Route(path: '/place/tgn/{tgn}.jsonld', name: 'place-by-tgn-jsonld')]
+    #[Route(path: '/place/tgn/{tgn}', name: 'place-by-tgn')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  $id = null, $tgn = null)
@@ -208,10 +200,8 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/landmark/{id}.jsonld", name="landmark-jsonld")
-     * @Route("/landmark/{id}", name="landmark")
-     */
+    #[Route(path: '/landmark/{id}.jsonld', name: 'landmark-jsonld')]
+    #[Route(path: '/landmark/{id}', name: 'landmark')]
     public function landmarkDetailAction(Request $request,
                                          EntityManagerInterface $entityManager,
                                          $id = null)
