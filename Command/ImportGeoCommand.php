@@ -58,7 +58,7 @@ extends BaseCommand
     }
 
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('import:geo')
@@ -163,7 +163,7 @@ extends BaseCommand
         $this->em->clear();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dir = $this->locateData($fname = 'geo/');
 
