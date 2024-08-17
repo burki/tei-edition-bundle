@@ -23,7 +23,7 @@ extends BaseCommand
     static $widthScaled = 293;
     static $quality = 85;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('source:thumbnail')
@@ -41,7 +41,7 @@ extends BaseCommand
         $xml->registerXPathNamespace('tei', 'http://www.tei-c.org/ns/1.0');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
 
