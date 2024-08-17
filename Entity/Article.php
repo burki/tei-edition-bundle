@@ -17,13 +17,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="article")
- * @ORM\InheritanceType("SINGLE_TABLE")
- * @ORM\DiscriminatorColumn(name="genre", type="string")
- * @ORM\DiscriminatorMap({"interpretation" = "Article", "source" = "SourceArticle", "exhibition" = "ExhibitionArticle"})
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'article')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'genre', type: 'string')]
+#[ORM\DiscriminatorMap(['interpretation' => 'Article', 'source' => 'SourceArticle', 'exhibition' => 'ExhibitionArticle'])]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Article
 implements \JsonSerializable, JsonLdSerializable, OgSerializable,
 \Eko\FeedBundle\Item\Writer\RoutedItemInterface
@@ -62,26 +63,26 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string
      *
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $articleSection;
 
     /**
@@ -91,262 +92,214 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
      * a special mechanism for indicating authorship via the rel tag.
      * That is equivalent to this and may be used interchangeably.
      *
-     * @ORM\ManyToMany(targetEntity="TeiEditionBundle\Entity\Person", inversedBy="articles")
      * @Solr\Field(type="strings", getter="getFullname")
      */
+    #[ORM\ManyToMany(targetEntity: \TeiEditionBundle\Entity\Person::class, inversedBy: 'articles')]
+    #[Solr\Field(type: 'strings', getter: 'getFullname')]
     protected $author;
 
     /**
      * @var Person Organization or person who adapts a creative work to different languages, regional differences and technical requirements of a target market, or that translates during some event..
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Person")
      */
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Person::class)]
     protected $translator;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $translatedFrom;
 
     /**
      * @var Place The location depicted or described in the content.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place", inversedBy="articles")
      */
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class, inversedBy: 'articles')]
     protected $contentLocation;
 
     /**
      * @var string The geo coordinates of the place.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
-     * @Solr\Field()
+     * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $geo;
 
-    /**
-     * @ORM\OneToMany(
-     *   targetEntity="ArticlePerson",
-     *   mappedBy="article",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticlePerson::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $personReferences;
 
-    /**
-     * @ORM\OneToMany(
-     *   targetEntity="ArticleOrganization",
-     *   mappedBy="article",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleOrganization::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $organizationReferences;
 
-    /**
-     * @ORM\OneToMany(
-     *   targetEntity="ArticlePlace",
-     *   mappedBy="article",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticlePlace::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $placeReferences;
 
-    /**
-     * @ORM\OneToMany(
-     *   targetEntity="ArticleLandmark",
-     *   mappedBy="article",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleLandmark::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $landmarkReferences;
 
-    /**
-     * @ORM\OneToMany(
-     *   targetEntity="ArticleEvent",
-     *   mappedBy="article",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleEvent::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $eventReferences;
 
-    /**
-     * @ORM\OneToMany(
-     *   targetEntity="ArticleBibitem",
-     *   mappedBy="article",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleBibitem::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $bibitemReferences;
 
     /**
      * @var string The creator/author of this CreativeWork.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $creator;
 
     /**
      * @var string The date on which the CreativeWork was created.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $dateCreated;
 
     /**
      * @var string Override of the date on which the CreativeWork was created.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $dateCreatedDisplay;
 
     /**
      * @var \DateTime Date of first broadcast/publication.
-     *
-     * @Assert\Date
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[Assert\Date]
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $datePublished;
 
     /**
      * @var \DateTime The date on which the CreativeWork was most recently modified or when the item's entry was modified .
-     *
-     * @Assert\Date
-     * @ORM\Column(type="date", nullable=true)
      */
+    #[Assert\Date]
+    #[ORM\Column(type: 'date', nullable: true)]
     protected $dateModified;
 
     /**
      * @var string A short description of the item.
      *
-     * @ORM\Column(type="text", length=65535, nullable=true)
      * @Solr\Field(type="string")
      */
+    #[ORM\Column(type: 'text', length: 65535, nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $description;
 
     /**
      * @var Article Indicates a CreativeWork that this CreativeWork is (in some sense) part of.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Article")
-     * @ORM\JoinColumn(name="isPartOf_id", referencedColumnName="id", nullable=true)
      */
+    #[ORM\JoinColumn(name: 'isPartOf_id', referencedColumnName: 'id', nullable: true)]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Article::class)]
     protected $isPartOf;
 
     /**
      * @var Organization Holding institution.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Organization", inversedBy="providerOf")
      */
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, inversedBy: 'providerOf')]
     protected $provider;
 
     /**
      * @var string Holding institution's identification number.
      *
-     * @ORM\Column(type="string", nullable=true)
      *
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $providerIdno;
 
     /**
      * @var string Keywords or tags used to describe this content. Multiple entries in a keywords list are typically delimited by commas.
-     *
-     * @ORM\Column(type="simple_array", nullable=true)
      */
+    #[ORM\Column(type: 'simple_array', nullable: true)]
     protected $keywords;
 
     /**
      * @var string A license document that applies to this content, typically indicated by URL.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $license;
 
     /**
      * @var string A license document that applies to this content, typically indicated by URL.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true, length=2048)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true, length: 2048)]
     protected $rights;
 
     /**
      * @var string The name of the item.
      *
-     * @Assert\Type(type="string")
-     * @Assert\NotNull
-     * @ORM\Column(length=512)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[Assert\NotNull]
+    #[ORM\Column(length: 512)]
+    #[Solr\Field(type: 'string')]
     protected $name;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @Assert\NotNull
-     * @ORM\Column
      */
+    #[Assert\Type(type: 'string')]
+    #[Assert\NotNull]
+    #[ORM\Column]
     protected $language;
 
     /**
      * @var string
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column]
+    #[Solr\Field(type: 'string')]
     protected $sourceType;
 
     /**
      * @var string The textual content of this CreativeWork.
      *
-     * @ORM\Column(type="text", length=16777215, nullable=true)
      * @Solr\Field(type="text")
      */
+    #[ORM\Column(type: 'text', length: 16777215, nullable: true)]
+    #[Solr\Field(type: 'text')]
     protected $text;
 
     /**
      * @var string
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $uid;
 
     /**
      * @var string
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $doi;
 
     /**
      * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
      * @var string
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $slug;
 
     /**

@@ -16,9 +16,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @see http://schema.org/Place Documentation on Schema.org
  *
  * Provides common information for Place and LandmarksOrHistoricalBuildings
- *
- * @ORM\MappedSuperclass
  */
+#[ORM\MappedSuperclass]
 class PlaceBase
 implements \JsonSerializable, JsonLdSerializable
 {
@@ -28,115 +27,107 @@ implements \JsonSerializable, JsonLdSerializable
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $type = 'inhabited place';
 
     /**
      * @var string The geo coordinates of the place.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
-     * @Solr\Field()
+     * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $geo;
 
     /**
      * @var string The name of the item.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=false)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: false)]
+    #[Solr\Field(type: 'string')]
     protected $name;
 
     /**
      * @var string A short description of the item.
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $description;
 
     /**
-     * @ORM\Column(name="country_code", type="string", nullable=true)
      * @Solr\Field(type="string")
      */
+    #[ORM\Column(name: 'country_code', type: 'string', nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $countryCode;
 
     /**
      * @var array Additional info for the item.
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
     /**
      * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $tgn;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $gnd;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $geonames;
 
     /**
      * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $wikidata;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     /**

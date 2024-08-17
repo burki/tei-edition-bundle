@@ -17,10 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="event")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'event')]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Event
 implements \JsonSerializable, JsonLdSerializable
 {
@@ -45,96 +46,85 @@ implements \JsonSerializable, JsonLdSerializable
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string A short description of the item.
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $description;
 
     /**
      * @var string The end date (and time) of the item.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $endDate;
 
     /**
      * @var string The start date (and time) of the item.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $startDate;
 
     /**
      * @var Place The location of for example where the event is happening, an organization is located, or where an action takes place..
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place")
-     * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
      */
+    #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $location;
 
     /**
      * @var string The name of the item.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $name;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=32, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $gnd;
 
-    /**
-    * @ORM\Column(type="json", nullable=true)
-    */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticleEvent", mappedBy="event", cascade={"persist", "remove"}, orphanRemoval=TRUE)
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleEvent::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $slug;
 
     /**

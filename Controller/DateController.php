@@ -16,10 +16,8 @@ use Doctrine\ORM\EntityManagerInterface;
 class DateController
 extends BaseController
 {
-    /**
-     * @Route("/chronology/partial", name="date-chronology-partial")
-     * @Route("/chronology", name="date-chronology")
-     */
+    #[Route(path: '/chronology/partial', name: 'date-chronology-partial')]
+    #[Route(path: '/chronology', name: 'date-chronology')]
     public function chronologyAction(Request $request,
                                      EntityManagerInterface $entityManager,
                                      TranslatorInterface $translator)
@@ -55,9 +53,7 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/event", name="event-index")
-     */
+    #[Route(path: '/event', name: 'event-index')]
     public function indexAction(EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
     {
@@ -79,12 +75,10 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/event/{id}.jsonld", name="event-jsonld")
-     * @Route("/event/{id}", name="event")
-     * @Route("/event/gnd/{gnd}.jsonld", name="event-by-gnd-jsonld")
-     * @Route("/event/gnd/{gnd}", name="event-by-gnd")
-     */
+    #[Route(path: '/event/{id}.jsonld', name: 'event-jsonld')]
+    #[Route(path: '/event/{id}', name: 'event')]
+    #[Route(path: '/event/gnd/{gnd}.jsonld', name: 'event-by-gnd-jsonld')]
+    #[Route(path: '/event/gnd/{gnd}', name: 'event-by-gnd')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  $id = null, $gnd = null)

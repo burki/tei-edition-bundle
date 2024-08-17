@@ -17,10 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="person")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'person')]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Person
 implements \JsonSerializable, JsonLdSerializable, OgSerializable
 {
@@ -42,211 +43,190 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string An additional name for a Person, can be used for a middle name.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $additionalName;
 
     /**
      * @var string An award won by or for this item.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $award;
 
     /**
      * @var string Date of birth.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $birthDate;
 
     /**
      * @var string Date of death.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $deathDate;
 
     /**
      * @var array|null A short description of the item.
      *
-     * @ORM\Column(type="json", nullable=true)
      *
      * @Solr\Field(type="strings", getter="getDescriptionValues")
      */
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Solr\Field(type: 'strings', getter: 'getDescriptionValues')]
     protected $description;
 
     /**
      * @var string Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $familyName;
 
     /**
      * @var string Gender of the person.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $gender;
 
     /**
      * @var string Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $givenName;
 
     /**
      * @var string The job title of the person (for example, Financial Manager).
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $jobTitle;
 
     /**
      * @var string Nationality of the person.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $nationality;
 
     /**
      * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
      * @var Place The place where the person was born.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place")
-     * @ORM\JoinColumn(name="birthPlace_id", referencedColumnName="id")
      */
+    #[ORM\JoinColumn(name: 'birthPlace_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $birthPlace;
 
     /**
      * @var Place The place where the person died.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place")
-     * @ORM\JoinColumn(name="deathPlace_id", referencedColumnName="id")
      */
+    #[ORM\JoinColumn(name: 'deathPlace_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $deathPlace;
 
     /**
      * TODO: rename to honorificPrefix
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $honoricPrefix;
 
     /**
      * TODO: rename to honorificSuffice
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $honoricSuffix;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $gnd;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $stolpersteine;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $djh;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $viaf;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $entityfacts;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Article", mappedBy="author")
-     */
+    #[ORM\ManyToMany(targetEntity: \Article::class, mappedBy: 'author')]
     protected $articles;
 
     use ArticleReferencesTrait;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticlePerson", mappedBy="person", cascade={"persist", "remove"}, orphanRemoval=TRUE)
-     */
+    #[ORM\OneToMany(targetEntity: \ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $slug;
 
     /**

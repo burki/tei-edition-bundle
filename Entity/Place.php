@@ -21,10 +21,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="place")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'place')]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Place
 extends PlaceBase
 {
@@ -158,32 +159,20 @@ extends PlaceBase
         return ucfirst($label);
     }
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Place", inversedBy="children")
-     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\JoinColumn(referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: \Place::class, inversedBy: 'children')]
     protected $parent;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Place", mappedBy="parent")
-     * @ORM\OrderBy({"type" = "ASC", "name" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: \Place::class, mappedBy: 'parent')]
+    #[ORM\OrderBy(['type' => 'ASC', 'name' => 'ASC'])]
     private $children;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="contentLocation")
-     */
+    #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'contentLocation')]
     protected $articles;
 
     use ArticleReferencesTrait;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticlePlace",
-     *   mappedBy="place",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     public function showCenterMarker()

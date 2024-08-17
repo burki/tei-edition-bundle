@@ -16,9 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class OrganizationController
 extends BaseController
 {
-    /**
-     * @Route("/organization", name="organization-index")
-     */
+    #[Route(path: '/organization', name: 'organization-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
@@ -53,11 +51,10 @@ extends BaseController
     }
 
     /**
-     * @Route("/organization/gnd/beacon", name="organization-gnd-beacon")
-     *
      * Provide a BEACON file as described in
      *  https://de.wikipedia.org/wiki/Wikipedia:BEACON
      */
+    #[Route(path: '/organization/gnd/beacon', name: 'organization-gnd-beacon')]
     public function gndBeaconAction(EntityManagerInterface $entityManager,
                                     TranslatorInterface $translator)
     {
@@ -94,12 +91,10 @@ extends BaseController
                                                               [ 'Content-Type' => 'text/plain; charset=UTF-8' ]);
     }
 
-    /**
-     * @Route("/organization/{id}.jsonld", name="organization-jsonld")
-     * @Route("/organization/{id}", name="organization")
-     * @Route("/organization/gnd/{gnd}.jsonld", name="organization-by-gnd-jsonld")
-     * @Route("/organization/gnd/{gnd}", name="organization-by-gnd")
-     */
+    #[Route(path: '/organization/{id}.jsonld', name: 'organization-jsonld')]
+    #[Route(path: '/organization/{id}', name: 'organization')]
+    #[Route(path: '/organization/gnd/{gnd}.jsonld', name: 'organization-by-gnd-jsonld')]
+    #[Route(path: '/organization/gnd/{gnd}', name: 'organization-by-gnd')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  $id = null, $gnd = null)
