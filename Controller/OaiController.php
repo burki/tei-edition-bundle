@@ -21,9 +21,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class OaiController
 extends AbstractController
 {
-    /**
-     * @Route("/oai", name="oai")
-     */
+    #[Route(path: '/oai', name: 'oai')]
     public function dispatchAction(Request $request,
                                    EntityManagerInterface $entityManager,
                                    TranslatorInterface $translator,

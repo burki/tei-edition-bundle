@@ -21,11 +21,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
  *
- * @ORM\Entity
- * @ORM\Table(name="bibitem")
- * @ORM\HasLifecycleCallbacks()
  *
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'bibitem')]
+#[ORM\HasLifecycleCallbacks]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Bibitem
 implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSerializable
 {
@@ -115,232 +117,207 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string The type of the Bibliographic Item (as in Zotero)
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $itemType;
 
     /**
      * @var array The author/contributor/editor of this CreativeWork.
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $creators;
 
     /**
      * @var string The series of books the book was published in
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $series;
 
     /**
      * @var string The number within the series of books the book was published in
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $seriesNumber;
 
     /**
      * @var string The volume of a journal or multi-volume book
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $volume;
 
     /**
      * @var string The number of volumes of a multi-volume book
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $numberOfVolumes;
 
     /**
      * @var string The issue of a journal, magazine, or tech-report, if applicable
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $issue;
 
     /**
      * @var string The edition of a book
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $bookEdition;
 
     /**
      * @var string The place(s) of publication
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $publicationLocation; /* map to contentLocation in Schema.org */
 
     /**
      * @var string The publisher's name
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $publisher;
 
     /**
      * @var string Date of first broadcast/publication.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $datePublished;
 
     /**
      * @var string The Page numbers, separated either by commas or as range by hyphen
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $pagination;
 
     /**
      * @var string The number of pages of the book
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $numberOfPages;
 
     /**
      * @var string The doi of the article
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $doi;
 
     /**
      * @var string The isbn of the book
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $isbn;
 
     /**
      * @var string The issn of of the Journal
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $issn;
 
     /**
      * @var array
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
     /**
      * @var Bibitem Indicates a Bibitem that this Bibitem is (in some sense) part of.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Bibitem")
      */
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Bibitem::class)]
     protected $isPartOf;
 
     /**
      * @var string The name (title) of the item.
      *
-     * @Assert\Type(type="string")
-     * @Assert\NotNull
-     * @ORM\Column(length=512)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[Assert\NotNull]
+    #[ORM\Column(length: 512)]
+    #[Solr\Field(type: 'string')]
     protected $name;
 
     /**
      * @var string The title of the book or journal for bookSection / journalArticle.
-     *
-     * @ORM\Column(length=512,nullable=true)
      */
+    #[ORM\Column(length: 512, nullable: true)]
     protected $containerName;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @Assert\NotNull
-     * @ORM\Column
      */
+    #[Assert\Type(type: 'string')]
+    #[Assert\NotNull]
+    #[ORM\Column]
     protected $language;
 
     /**
      * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
      * @var string
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $slug;
 
     /**
      * @var string
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $uid;
 
     /**
      * @var array A short description of the item. Generated for solr
      *
-     * @ORM\Column(type="json", nullable=true)
      *
      * @Solr\Field(type="strings", getter="getDescriptionStrings")
      *
      */
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Solr\Field(type: 'strings', getter: 'getDescriptionStrings')]
     protected $description;
 
     use ArticleReferencesTrait;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticleBibitem",
-     *   mappedBy="bibitem",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleBibitem::class, mappedBy: 'bibitem', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     public static function slugifyCorresp($slugify, $corresp)
@@ -764,13 +741,13 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
      *
      * Populate description for other properties.
      *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
      *
      * @param string $description
      *
      * @return $this
      */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
     public function populateDescription()
     {
         $raw = $this->jsonSerialize();
