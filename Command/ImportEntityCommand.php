@@ -14,7 +14,7 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 class ImportEntityCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('import:entity')
@@ -22,7 +22,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $this->locateData('gnd2tgn.xlsx');
 
