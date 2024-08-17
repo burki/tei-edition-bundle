@@ -10,103 +10,91 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A glossary entry.
- *
- * @ORM\Entity
- * @ORM\Table(name="term")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'term')]
 class GlossaryTerm
 {
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected $id;
 
     /**
      * @var integer
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @Assert\NotNull
-     * @ORM\Column
      */
+    #[Assert\Type(type: 'string')]
+    #[Assert\NotNull]
+    #[ORM\Column]
     protected $language;
 
     /**
      * @var string Term.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=false)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: false)]
     protected $term;
 
     /**
      * @var string Name.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $name;
 
     /**
      * @var string Headline of the item.
-     *
-     * @ORM\Column(type="string", length=1023, nullable=true)
      */
+    #[ORM\Column(type: 'string', length: 1023, nullable: true)]
     protected $headline;
 
     /**
      * @var string A short description of the item.
-     *
-     * @ORM\Column(type="text", length=65535, nullable=true)
      */
+    #[ORM\Column(type: 'text', length: 65535, nullable: true)]
     protected $description;
 
     /**
      * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $gnd;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $slug;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     /**

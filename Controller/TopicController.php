@@ -95,9 +95,7 @@ extends RenderTeiController
         return $topicsDescription;
     }
 
-    /**
-     * @Route("/topic", name="topic-index")
-     */
+    #[Route(path: '/topic', name: 'topic-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
@@ -108,11 +106,9 @@ extends RenderTeiController
         ]);
     }
 
-    /**
-     * @Route("/topic/{slug}.jsonld", name="topic-background-jsonld")
-     * @Route("/topic/{slug}.pdf", name="topic-background-pdf")
-     * @Route("/topic/{slug}", name="topic-background")
-     */
+    #[Route(path: '/topic/{slug}.jsonld', name: 'topic-background-jsonld')]
+    #[Route(path: '/topic/{slug}.pdf', name: 'topic-background-pdf')]
+    #[Route(path: '/topic/{slug}', name: 'topic-background')]
     public function backgroundAction(Request $request,
                                      EntityManagerInterface $entityManager,
                                      TranslatorInterface $translator,
