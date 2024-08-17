@@ -21,7 +21,7 @@ use Cocur\Slugify\SlugifyInterface;
 class ImportGlossaryCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('import:glossary')
@@ -29,7 +29,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = 'glossary.xlsx';
 
