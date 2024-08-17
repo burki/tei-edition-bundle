@@ -16,9 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 class GlossaryController
 extends BaseController
 {
-    /**
-     * @Route("/glossary", name="glossary-index")
-     */
+    #[Route(path: '/glossary', name: 'glossary-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
