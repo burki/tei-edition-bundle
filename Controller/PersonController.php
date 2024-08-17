@@ -18,10 +18,8 @@ extends BaseController
 {
     use SharingBuilderTrait;
 
-    /**
-     * @Route("/person", name="person-index")
-     * @Route("/about/authors", name="about-authors")
-     */
+    #[Route(path: '/person', name: 'person-index')]
+    #[Route(path: '/about/authors', name: 'about-authors')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
@@ -59,11 +57,10 @@ extends BaseController
     }
 
     /**
-     * @Route("/person/gnd/beacon", name="person-gnd-beacon")
-     *
      * Provide a BEACON file as described in
      *  https://de.wikipedia.org/wiki/Wikipedia:BEACON
      */
+    #[Route(path: '/person/gnd/beacon', name: 'person-gnd-beacon')]
     public function gndBeaconAction(EntityManagerInterface $entityManager,
                                     TranslatorInterface $translator,
                                     \Twig\Environment $twig)
@@ -101,12 +98,10 @@ extends BaseController
                                                               [ 'Content-Type' => 'text/plain; charset=UTF-8' ]);
     }
 
-    /**
-     * @Route("/person/{id}.jsonld", name="person-jsonld")
-     * @Route("/person/{id}", name="person")
-     * @Route("/person/gnd/{gnd}.jsonld", name="person-by-gnd-jsonld")
-     * @Route("/person/gnd/{gnd}", name="person-by-gnd")
-     */
+    #[Route(path: '/person/{id}.jsonld', name: 'person-jsonld')]
+    #[Route(path: '/person/{id}', name: 'person')]
+    #[Route(path: '/person/gnd/{gnd}.jsonld', name: 'person-by-gnd-jsonld')]
+    #[Route(path: '/person/gnd/{gnd}', name: 'person-by-gnd')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  TranslatorInterface $translator,
