@@ -18,7 +18,7 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 class MetsCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('source:mets')
@@ -36,7 +36,7 @@ extends BaseCommand
         $xml->registerXPathNamespace('tei', 'http://www.tei-c.org/ns/1.0');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = $input->getArgument('file');
 

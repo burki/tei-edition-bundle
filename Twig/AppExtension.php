@@ -43,14 +43,14 @@ extends AbstractExtension
         }
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('file_exists', 'file_exists'),
         ];
     }
 
-    public function getFilters()
+    public function getFilters(): array
     {
         return [
             // general

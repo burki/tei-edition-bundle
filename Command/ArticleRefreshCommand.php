@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 class ArticleRefreshCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('article:refresh')
@@ -39,7 +39,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fnameInput = $input->getArgument('file');
         $quiet = $input->getOption('quiet');
