@@ -84,7 +84,7 @@ extends BaseCommand
         }
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('article:doi')
