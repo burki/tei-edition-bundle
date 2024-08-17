@@ -32,10 +32,10 @@
 
         "symfony/serializer": "^6.4",
 
-        "twig/twig": "^3.10",
-        "twig/extra-bundle": "^3.10",
-        "twig/intl-extra": "^3.10",
-        "twig/string-extra": "^3.10",
+        "twig/twig": "^3.11",
+        "twig/extra-bundle": "^3.11",
+        "twig/intl-extra": "^3.11",
+        "twig/string-extra": "^3.11",
         "liip/url-auto-converter-bundle": "dev-master",
         "symfony/asset": "^6.4",
 
@@ -84,8 +84,8 @@
 
         "eko/feedbundle": "^2.2",
 
-        "square-bit/oai-pmh": "^0.2",
-        "symfony/psr-http-message-bridge": "^2.0",
+        "square-bit/oai-pmh": "^0.3",
+        "symfony/psr-http-message-bridge": "^6.4",
         "laminas/laminas-diactoros": "^2.26",
 
         "guzzlehttp/guzzle": "^6.5|^7.5"
