@@ -11,33 +11,33 @@
         "php": "^8.1",
         "ext-curl": "*",
 
-        "symfony/yaml": "^6.4",
-        "symfony/config": "^6.4",
-        "symfony/expression-language": "^6.4",
-        "symfony/console": "^6.4",
-        "symfony/framework-bundle": "^6.4",
+        "symfony/yaml": "^6.4|^7.1",
+        "symfony/config": "^6.4|^7.1",
+        "symfony/expression-language": "^6.4|^7.1",
+        "symfony/console": "^6.4|^7.1",
+        "symfony/framework-bundle": "^6.4|^7.1",
 
-        "symfony/translation": "^6.4",
-        "symfony/twig-bridge": "^6.4",
-        "symfony/twig-bundle": "^6.4",
-        "symfony/intl": "^6.4",
+        "symfony/translation": "^6.4|^7.1",
+        "symfony/twig-bridge": "^6.4|^7.1",
+        "symfony/twig-bundle": "^6.4|^7.1",
+        "symfony/intl": "^6.4|^7.1",
 
-        "symfony/var-dumper": "^6.4",
-        "symfony/var-exporter": "^6.4",
-        "symfony/http-foundation": "^6.4",
-        "symfony/routing": "^6.4",
-        "symfony/mime": "^6.4",
-        "symfony/dom-crawler": "^6.4",
-        "symfony/css-selector": "^6.4",
+        "symfony/var-dumper": "^6.4|^7.1",
+        "symfony/var-exporter": "^6.4|^7.1",
+        "symfony/http-foundation": "^6.4|^7.1",
+        "symfony/routing": "^6.4|^7.1",
+        "symfony/mime": "^6.4|^7.1",
+        "symfony/dom-crawler": "^6.4|^7.1",
+        "symfony/css-selector": "^6.4|^7.1",
 
-        "symfony/serializer": "^6.4",
+        "symfony/serializer": "^6.4|^7.1",
 
         "twig/twig": "^3.11",
         "twig/extra-bundle": "^3.11",
         "twig/intl-extra": "^3.11",
         "twig/string-extra": "^3.11",
         "liip/url-auto-converter-bundle": "dev-master",
-        "symfony/asset": "^6.4",
+        "symfony/asset": "^6.4|^7.1",
 
         "doctrine/annotations": "^1.4|^2.0",
         "doctrine/doctrine-bundle": "^2.12",
@@ -47,8 +47,8 @@
         "oro/doctrine-extensions": "^2.0",
         "scienta/doctrine-json-functions": "^6.1",
 
-        "gjuric/i18n-routing-bundle": "3.2.2",
-        "symfony/security-core": "^6.4",
+        "gjuric/i18n-routing-bundle": "^3.2",
+        "symfony/security-core": "^6.4|^7.1",
         "jms/translation-bundle": "^2.3",
 
         "cocur/slugify": "^4.5",
@@ -84,7 +84,7 @@
         "eko/feedbundle": "^2.2",
 
         "square-bit/oai-pmh": "^0.3",
-        "symfony/psr-http-message-bridge": "^6.4",
+        "symfony/psr-http-message-bridge": "^6.4|^7.1",
         "laminas/laminas-diactoros": "^2.26",
 
         "guzzlehttp/guzzle": "^6.5|^7.5"
