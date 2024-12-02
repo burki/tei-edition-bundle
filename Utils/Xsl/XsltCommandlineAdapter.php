@@ -11,7 +11,7 @@ implements XsltAdapterInterface
     protected $config = [];
     protected $errors = [];
 
-    public function __construct($cmdTemplate, $config = null)
+    public function __construct(string $cmdTemplate, $config = null)
     {
         $this->cmdTemplate = $cmdTemplate;
         if (isset($config) && is_array($config)) {
@@ -24,7 +24,7 @@ implements XsltAdapterInterface
         return $this->errors;
     }
 
-    protected function escapeFilename($fname, $check_exists = true)
+    protected function escapeFilename(string $fname, $check_exists = true)
     {
         if ($check_exists) {
             $fname = realpath($fname);
