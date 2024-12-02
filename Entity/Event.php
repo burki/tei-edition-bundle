@@ -305,11 +305,10 @@ implements \JsonSerializable, JsonLdSerializable
         return self::stripAt($name);
     }
 
-
     /**
-     * Sets socation.
+     * Sets location.
      *
-     * @param Place|null $socation
+     * @param Place|null $location
      *
      * @return $this
      */
@@ -323,7 +322,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets location.
      *
-     * @return Place
+     * @return Place|null
      */
     public function getLocation()
     {
