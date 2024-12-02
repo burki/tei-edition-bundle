@@ -328,7 +328,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets birthDate.
      *
-     * @param string $birthDate
+     * @param string|null $birthDate
      *
      * @return $this
      */
