@@ -303,7 +303,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     protected $slug;
 
     /**
-     * @var string
+     * @var string|null
      *
      * Currently only used for news articles
      */
@@ -369,7 +369,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets articleSection.
      *
-     * @param string $articleSection
+     * @param string|null $articleSection
      *
      * @return $this
      */
@@ -563,7 +563,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets creator.
      *
-     * @param string $creator
+     * @param string|null $creator
      *
      * @return $this
      */
@@ -587,7 +587,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets dateCreated.
      *
-     * @param string $dateCreated
+     * @param string|null $dateCreated
      *
      * @return $this
      */
@@ -611,7 +611,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets dateCreatedDisplay.
      *
-     * @param string $dateCreatedDisplay
+     * @param string|null $dateCreatedDisplay
      *
      * @return $this
      */
@@ -683,7 +683,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets description.
      *
-     * @param string $description
+     * @param string|null $description
      *
      * @return $this
      */
@@ -697,7 +697,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Gets description.
      *
-     * @return string
+     * @return string|null
      */
     public function getDescription()
     {
@@ -731,7 +731,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Gets isPartOf.
      *
-     * @return Article
+     * @return Article|null
      */
     public function getIsPartOf()
     {
@@ -861,7 +861,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets text.
      *
-     * @param string $text
+     * @param string|null $text
      *
      * @return $this
      */
@@ -875,7 +875,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Gets text.
      *
-     * @return string
+     * @return string|null
      */
     public function getText()
     {
