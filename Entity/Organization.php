@@ -271,7 +271,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets foundingDate.
      *
-     * @param string $foundingDate
+     * @param string|null $foundingDate
      *
      * @return $this
      */
@@ -285,7 +285,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets foundingDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getFoundingDate()
     {
@@ -446,11 +446,11 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets gnd.
      *
-     * @param string $gnd
+     * @param string|null $gnd
      *
      * @return $this
      */
-    public function setGnd($gnd)
+    public function setGnd(?string $gnd)
     {
         $this->gnd = $gnd;
 
