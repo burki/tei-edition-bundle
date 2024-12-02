@@ -528,7 +528,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
     /**
      * Gets issue.
      *
-     * @return string
+     * @return string|null
      */
     public function getIssue()
     {

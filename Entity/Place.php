@@ -177,7 +177,6 @@ extends PlaceBase
 
     public function showCenterMarker()
     {
-        $hasPlaceParent = false;
         $ancestorOrSelf = $this;
         while (!is_null($ancestorOrSelf)) {
             if (in_array($ancestorOrSelf->type, [ 'neighborhood', 'inhabited place' ])) {
