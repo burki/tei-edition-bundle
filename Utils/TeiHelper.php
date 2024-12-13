@@ -82,11 +82,22 @@ class TeiHelper
      */
     public function loadXml(string $fname)
     {
-        try {
-            $dom = \FluentDOM::load($fname, 'xml', [
+        if (class_exists('\FluentDOM\Loader\LoaderOptions')) {
+            $loaderOptions = [
+                \FluentDOM\Loader\LoaderOptions::ALLOW_FILE => true,
+                \FluentDOM\Loader\LoaderOptions::PRESERVE_WHITESPACE => true,
+            ];
+        }
+        else {
+            // 8.x
+            $loaderOptions = [
                 \FluentDOM\Loader\Options::ALLOW_FILE => true,
                 \FluentDOM\Loader\Options::PRESERVE_WHITESPACE => true,
-            ]);
+            ];
+        }
+
+        try {
+            $dom = \FluentDOM::load($fname, 'xml', $loaderOptions);
         }
         catch (FileNotLoaded $e) {
             return false;
@@ -463,7 +474,7 @@ class TeiHelper
         return $article;
     }
 
-    private function createElement($doc, $name, $content = null, array $attributes = null)
+    private function createElement($doc, $name, $content = null, ?array $attributes = null)
     {
         list($prefix, $localName) = \FluentDOM\Utility\QualifiedName::split($name);
 

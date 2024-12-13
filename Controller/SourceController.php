@@ -207,7 +207,10 @@ extends ArticleController
          */
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
 
-        $firstFacs = $teiHelper->getFirstPbFacs($this->locateTeiResource($fname));
+        $fnameFull = $this->locateTeiResource($fname);
+        $firstFacs = false !== $fnameFull
+            ? $teiHelper->getFirstPbFacs($fnameFull)
+            : null;
 
         $sourceType = $sourceArticle->getSourceType();
         if ($generatePrintView) {
@@ -740,9 +743,11 @@ EOT;
             $fname = $this->buildArticleFname($article);
             $fnameFull = $this->locateTeiResource($fname);
 
-            return new Response(file_get_contents($fnameFull) , 200, [
-                'Content-Type' => 'text/xml;charset=UTF-8'
-            ]);
+            if (false !== $fnameFull) {
+                return new Response(file_get_contents($fnameFull) , 200, [
+                    'Content-Type' => 'text/xml;charset=UTF-8'
+                ]);
+            }
         }
 
         return new \Symfony\Component\HttpFoundation\RedirectResponse($this->generateUrl('source', [ 'uid' => $uid ]));

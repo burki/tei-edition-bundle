@@ -493,12 +493,8 @@ implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * TODO: Switch to
-     *  public function jsonSerialize(): mixed
-     * from PHP 7.4 on
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'id' => $this->id,

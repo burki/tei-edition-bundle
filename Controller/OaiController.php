@@ -95,7 +95,7 @@ extends \Picturae\OaiPmh\Provider
      * @param \Psr\Http\Message\ServerRequestInterface|null $request
      */
     public function __construct(\Picturae\OaiPmh\Interfaces\Repository $repository,
-                                \Psr\Http\Message\ServerRequestInterface $request = null)
+                                ?\Psr\Http\Message\ServerRequestInterface $request = null)
     {
         parent::__construct($repository, $request);
 
@@ -266,12 +266,12 @@ implements InterfaceRepository
     /**
      * @param string $metadataFormat metadata format of the records to be fetch or null if only headers are fetched
      * (listIdentifiers)
-     * @param DateTime $from
-     * @param DateTime $until
-     * @param string $set name of the set containing this record
+     * @param DateTime|null $from
+     * @param DateTime|null $until
+     * @param string|null $set name of the set containing this record
      * @return RecordList
      */
-    public function listRecords($metadataFormat = null, DateTime $from = null, DateTime $until = null, $set = null)
+    public function listRecords($metadataFormat = null, ?DateTime $from = null, ?DateTime $until = null, $set = null)
     {
         $params = [
             'offset' => 0,
@@ -371,16 +371,16 @@ implements InterfaceRepository
      * Get resumption token
      *
      * @param int $offset
-     * @param DateTime $from
-     * @param DateTime $util
-     * @param string $metadataPrefix
-     * @param string $set
+     * @param DateTime|null $from
+     * @param DateTime|null $util
+     * @param string|null $metadataPrefix
+     * @param string|null $set
      * @return string
      */
     private function encodeResumptionToken(
         $offset = 0,
-        DateTime $from = null,
-        DateTime $until = null,
+        ?DateTime $from = null,
+        ?DateTime $until = null,
         $metadataPrefix = null,
         $set = null
     ) {
