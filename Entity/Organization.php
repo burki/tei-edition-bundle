@@ -376,11 +376,11 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets foundingLocation.
      *
-     * @param Place $foundingLocation
+     * @param Place|null $foundingLocation
      *
      * @return $this
      */
-    public function setFoundingLocation(Place $foundingLocation = null)
+    public function setFoundingLocation(?Place $foundingLocation = null)
     {
         $this->foundingLocation = $foundingLocation;
 
@@ -390,7 +390,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets foundingLocation.
      *
-     * @return Place
+     * @return Place|null
      */
     public function getFoundingLocation()
     {
@@ -400,11 +400,11 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets precedingOrganization.
      *
-     * @param Organization $precedingOrganization
+     * @param Organization|null $precedingOrganization
      *
      * @return $this
      */
-    public function setPrecedingOrganization(Organization $precedingOrganization = null)
+    public function setPrecedingOrganization(?Organization $precedingOrganization = null)
     {
         $this->precedingOrganization = $precedingOrganization;
 
@@ -414,7 +414,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets precedingOrganization.
      *
-     * @return Organization
+     * @return Organization|null
      */
     public function getPrecedingOrganization()
     {
@@ -424,7 +424,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets succeedingOrganization.
      *
-     * @return Organization
+     * @return Organization|null
      */
     public function getSucceedingOrganization()
     {
@@ -553,12 +553,8 @@ implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * TODO: Switch to
-     *  public function jsonSerialize(): mixed
-     * from PHP 7.4 on
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'id' => $this->id,

@@ -205,7 +205,7 @@ extends PlaceBase
         return 8;
     }
 
-    public function setParent(Place $parent = null)
+    public function setParent(?Place $parent = null)
     {
         $this->parent = $parent;
     }
