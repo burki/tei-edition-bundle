@@ -13,7 +13,7 @@ implements XsltAdapterInterface
     protected $errors = [];
     protected $config = [];
 
-    public function __construct(XsltAdapterInterface $xsltAdapter, CacheInterface $cache = null, $config = null)
+    public function __construct(XsltAdapterInterface $xsltAdapter, ?CacheInterface $cache = null, $config = null)
     {
         $this->xsltAdapter = $xsltAdapter;
         $this->cache = $cache;
