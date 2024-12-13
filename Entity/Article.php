@@ -518,7 +518,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
      *
      * @return $this
      */
-    public function setTranslator(Person $translator = null)
+    public function setTranslator(?Person $translator = null)
     {
         $this->translator = $translator;
 
@@ -566,7 +566,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
      *
      * @return $this
      */
-    public function setContentLocation(Place $contentLocation = null)
+    public function setContentLocation(?Place $contentLocation = null)
     {
         $this->contentLocation = $contentLocation;
 
@@ -682,11 +682,11 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets datePublished.
      *
-     * @param \DateTime $datePublished
+     * @param \DateTime|null $datePublished
      *
      * @return $this
      */
-    public function setDatePublished(\DateTime $datePublished = null)
+    public function setDatePublished(?\DateTime $datePublished = null)
     {
         $this->datePublished = $datePublished;
 
@@ -696,7 +696,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Gets datePublished.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDatePublished()
     {
@@ -706,11 +706,11 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets dateModified.
      *
-     * @param \DateTime $dateModified
+     * @param \DateTime|null $dateModified
      *
      * @return $this
      */
-    public function setDateModified(\DateTime $dateModified = null)
+    public function setDateModified(?\DateTime $dateModified = null)
     {
         $this->dateModified = $dateModified;
 
@@ -720,7 +720,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Gets dateModified.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
     public function getDateModified()
     {
@@ -764,11 +764,11 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets isPartOf.
      *
-     * @param Article $isPartOf
+     * @param Article|null $isPartOf
      *
      * @return $this
      */
-    public function setIsPartOf(Article $isPartOf = null)
+    public function setIsPartOf(?Article $isPartOf = null)
     {
         $this->isPartOf = $isPartOf;
 
@@ -788,11 +788,11 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     /**
      * Sets provider.
      *
-     * @param Organization $provider
+     * @param Organization|null $provider
      *
      * @return $this
      */
-    public function setProvider(Organization $provider = null)
+    public function setProvider(?Organization $provider = null)
     {
         $this->provider = $provider;
 
@@ -1250,11 +1250,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
     }
 
     /**
-     * TODO: Switch to public function jsonSerialize(): mixed
-     * from PHP 7.4 on
      */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'id' => $this->id,
