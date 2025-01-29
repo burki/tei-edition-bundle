@@ -7,10 +7,10 @@ Template for mods for dfg-viewer
     <mets:mdWrap MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="DVRIGHTS">
       <mets:xmlData>
         <dv:rights xmlns:dv="http://dfg-viewer.de/">
-          <dv:owner>Institut für die Geschichte der deutschen Juden</dv:owner>
-          <dv:ownerLogo>http://juedische-geschichte-online.net/img/dfgviewer_logo_igdj.gif</dv:ownerLogo>
-          <dv:ownerSiteURL>http://igdj-hh.de/</dv:ownerSiteURL>
-          <dv:ownerContact>mailto:info@juedische-geschichte-online.net</dv:ownerContact>
+          <dv:owner>{% if sitePublisher is defined %}{{ sitePublisher|trans({}, 'additional') }}{% else %}Institut für die Geschichte der deutschen Juden{% endif %}</dv:owner>
+          <dv:ownerLogo>{% if sitePublisherLogo is defined %}{{ sitePublisherLogo|trans({}, 'additional') }}{% else %}http://juedische-geschichte-online.net/img/dfgviewer_logo_igdj.gif{% endif %}</dv:ownerLogo>
+          <dv:ownerSiteURL>{% if sitePublisherUrl is defined %}{{ sitePublisherUrl|trans({}, 'additional') }}{% else %}https://igdj-hh.de/{% endif %}</dv:ownerSiteURL>
+          <dv:ownerContact>mailto:{% if siteEmail is defined %}{{ siteEmail }}{% else %}info@juedische-geschichte-online.net{% endif %}</dv:ownerContact>
         </dv:rights>
       </mets:xmlData>
     </mets:mdWrap>
