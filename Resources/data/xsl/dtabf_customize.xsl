@@ -379,4 +379,27 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- start supporting @xml:id on item -->
+  <xsl:template match="tei:item">
+    <xsl:choose>
+      <xsl:when test="ancestor::tei:p">
+        <span class="dta-list-item">
+          <xsl:apply-templates/>
+        </span>
+      </xsl:when>
+      <xsl:when test="descendant::tei:pb">
+        <div class="dta-list-item-noindent">
+          <xsl:apply-templates/>
+        </div>
+      </xsl:when>
+      <xsl:otherwise>
+        <div class="dta-list-item">
+          <xsl:if test="@xml:id">
+            <xsl:attribute name="id"><xsl:value-of select="@xml:id"/></xsl:attribute>
+          </xsl:if>
+          <xsl:apply-templates/>
+        </div>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
 </xsl:stylesheet>
