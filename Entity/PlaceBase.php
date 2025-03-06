@@ -41,13 +41,13 @@ implements \JsonSerializable, JsonLdSerializable
     protected $status = 0;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $type = 'inhabited place';
 
     /**
-     * @var string The geo coordinates of the place.
+     * @var string|null The geo coordinates of the place.
      *
      * @Solr\Field(type="string")
      */
@@ -67,7 +67,7 @@ implements \JsonSerializable, JsonLdSerializable
     protected $name;
 
     /**
-     * @var string A short description of the item.
+     * @var array|null A short description of the item.
      */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $description;
@@ -80,40 +80,40 @@ implements \JsonSerializable, JsonLdSerializable
     protected $countryCode;
 
     /**
-     * @var array Additional info for the item.
+     * @var array|null Additional info for the item.
      */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
     /**
-     * @var string URL of the item.
+     * @var string|null URL of the item.
      */
     #[Assert\Url]
     #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $tgn;
 
     /**
-     * @var string
+     * @var string|null
      */
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $gnd;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $geonames;
 
     /**
-     * @var string
+     * @var string|null
      */
-    #[ORM\Column(type: 'string', nullable: true)]
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $wikidata;
 
     /**
@@ -181,7 +181,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets type.
      *
-     * @param string $type
+     * @param string|null $type
      *
      * @return $this
      */
@@ -195,7 +195,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets type.
      *
-     * @return string
+     * @return string|null
      */
     public function getType()
     {
@@ -205,7 +205,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets geo.
      *
-     * @param string $geo
+     * @param string|null $geo
      *
      * @return $this
      */
@@ -219,7 +219,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets geo.
      *
-     * @return string
+     * @return string|null
      */
     public function getGeo()
     {
@@ -229,7 +229,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets countryCode.
      *
-     * @param string $countryCode
+     * @param string|null $countryCode
      *
      * @return $this
      */
@@ -243,7 +243,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets countryCode.
      *
-     * @return string
+     * @return string|null
      */
     public function getCountryCode()
     {
@@ -277,7 +277,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets description.
      *
-     * @param string $description
+     * @param array|null $description
      *
      * @return $this
      */
@@ -291,7 +291,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets description.
      *
-     * @return string
+     * @return array|null
      */
     public function getDescription()
     {
@@ -301,7 +301,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets description in a specific locale.
      *
-     * @return string
+     * @return string|null
      */
     public function getDescriptionLocalized($locale)
     {
@@ -322,7 +322,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets additional.
      *
-     * @param array $additional
+     * @param array|null $additional
      *
      * @return $this
      */
@@ -336,7 +336,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets additional.
      *
-     * @return array
+     * @return array|null
      */
     public function getAdditional()
     {
@@ -346,7 +346,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets url.
      *
-     * @param string $url
+     * @param string|null $url
      *
      * @return $this
      */
@@ -360,7 +360,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets url.
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -370,7 +370,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets Getty Thesaurus of Geographic Names Identifier.
      *
-     * @param string $tgn
+     * @param string|null $tgn
      *
      * @return $this
      */
@@ -384,7 +384,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets Getty Thesaurus of Geographic Names.
      *
-     * @return string
+     * @return string|null
      */
     public function getTgn()
     {
@@ -394,7 +394,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets gnd.
      *
-     * @param string $gnd
+     * @param string|null $gnd
      *
      * @return $this
      */
@@ -408,7 +408,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets gnd.
      *
-     * @return string
+     * @return string|null
      */
     public function getGnd()
     {
@@ -418,7 +418,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets geonames.
      *
-     * @param string $geonames
+     * @param string|null $geonames
      *
      * @return $this
      */
@@ -432,7 +432,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets geonames.
      *
-     * @return string
+     * @return string|null
      */
     public function getGeonames()
     {
@@ -440,9 +440,9 @@ implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Sets wikidata.
+     * Sets Wikidata QID.
      *
-     * @param string $wikidata
+     * @param string|null $wikidata
      *
      * @return $this
      */
@@ -454,9 +454,9 @@ implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Gets wikidata.
+     * Gets Wikidata QID.
      *
-     * @return string
+     * @return string|null
      */
     public function getWikidata()
     {
@@ -466,7 +466,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets localized name.
      *
-     * @return string
+     * @return string|null
      */
     public function getNameLocalized($locale = 'en', $fallback = true)
     {
