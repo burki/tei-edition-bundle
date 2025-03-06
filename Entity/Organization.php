@@ -66,7 +66,7 @@ implements \JsonSerializable, JsonLdSerializable
     protected $description;
 
     /**
-     * @var string The date that this organization was dissolved.
+     * @var string|null The date that this organization was dissolved.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $dissolutionDate;
@@ -78,7 +78,7 @@ implements \JsonSerializable, JsonLdSerializable
     protected $foundingDate;
 
     /**
-     * @var string The name of the item.
+     * @var string|null The name of the item.
      *
      * @Solr\Field(type="string")
      */
@@ -88,24 +88,30 @@ implements \JsonSerializable, JsonLdSerializable
     protected $name;
 
     /**
-     * @var string URL of the item.
+     * @var string|null URL of the item.
      */
     #[Assert\Url]
     #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
-     * @var Place The place where the Organization was founded.
+     * @var Place|null The place where the Organization was founded.
      */
     #[ORM\JoinColumn(name: 'foundingLocation_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $foundingLocation;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $gnd;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
+    protected $wikidata;
 
     #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'provider')]
     #[ORM\OrderBy(['dateCreated' => 'ASC', 'name' => 'ASC'])]
@@ -115,14 +121,14 @@ implements \JsonSerializable, JsonLdSerializable
     protected $additional;
 
     /**
-     * @var Organization The organization that preceded this on.
+     * @var Organization|null The organization that preceded this on.
      */
     #[ORM\JoinColumn(name: 'precedingId', referencedColumnName: 'id')]
     #[ORM\OneToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, inversedBy: 'succeedingOrganization')]
     protected $precedingOrganization;
 
     /**
-     * @var Organization The organization that suceeded this on.
+     * @var Organization|null The organization that suceeded this on.
      */
     #[ORM\OneToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, mappedBy: 'precedingOrganization')]
     protected $succeedingOrganization;
@@ -145,7 +151,7 @@ implements \JsonSerializable, JsonLdSerializable
     protected $changedAt;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -202,7 +208,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets description.
      *
-     * @param string $description
+     * @param array|null $description
      *
      * @return $this
      */
@@ -216,7 +222,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets description.
      *
-     * @return string
+     * @return array|null
      */
     public function getDescription()
     {
@@ -261,7 +267,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets dissolutionDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getDissolutionDate()
     {
@@ -295,7 +301,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return $this
      */
@@ -309,7 +315,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -337,7 +343,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets url.
      *
-     * @param string $url
+     * @param string|null $url
      *
      * @return $this
      */
@@ -351,7 +357,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets url.
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -460,12 +466,37 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets gnd.
      *
-     * @return string
+     * @return string|null
      */
     public function getGnd()
     {
         return $this->gnd;
     }
+
+    /**
+     * Sets Wikidata QID.
+     *
+     * @param string|null $wikidata
+     *
+     * @return $this
+     */
+    public function setWikidata($wikidata)
+    {
+        $this->wikidata = $wikidata;
+
+        return $this;
+    }
+
+    /**
+     * Gets Wikidata QID.
+     *
+     * @return string|null
+     */
+    public function getWikidata()
+    {
+        return $this->wikidata;
+    }
+
 
     /**
      * Gets providerOf.
@@ -506,7 +537,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets additional.
      *
-     * @return array
+     * @return array|null
      */
     public function getAdditional()
     {
@@ -516,7 +547,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets slug.
      *
-     * @param string $slug
+     * @param string|null $slug
      *
      * @return $this
      */
@@ -530,7 +561,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets slug.
      *
-     * @return string
+     * @return string|null
      */
     public function getSlug()
     {
