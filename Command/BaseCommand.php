@@ -319,6 +319,12 @@ extends Command
         {
             $condition = [ 'tgn' => $matches[1] ];
         }
+        else if (preg_match('/^'
+                       . preg_quote('http://www.wikidata.org/entity/', '/')
+                       . '(Q\d+)$/', $uri, $matches))
+        {
+            $condition = [ 'wikidata' => $matches[1] ];
+        }
 
         return $condition;
     }
