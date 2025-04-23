@@ -29,11 +29,16 @@ extends \Mpdf\Mpdf
             : $fontDir;
 
         $defaultFontConfig = (new \Mpdf\Config\FontVariables())->getDefaults();
-        $fontdata = $defaultFontConfig['fontdata'];
 
+        $fontdata = $defaultFontConfig['fontdata'];
         $options['fontdata'] = array_key_exists('fontdata', $options)
             ? $fontdata + $options['fontdata']
             : $fontdata;
+
+        $fonttrans = $defaultFontConfig['fonttrans'];
+        $options['fonttrans'] = array_key_exists('fonttrans', $options)
+            ? $fonttrans + $options['fonttrans']
+            : $fonttrans;
 
         parent::__construct($options);
 
