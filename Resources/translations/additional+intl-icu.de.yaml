@@ -1,5 +1,6 @@
-author.oneormany:                   "{count, plural, one {Zum Autor} other {Zu den Autoren}}"
+author.oneormany:                   "{count, plural, one {Zur Autor:in} other {Zu den Autor:innen}}"
 author.oneormany-female:            "{count, plural, one {Zur Autorin} other {Zu den Autorinnen}}"
+author.oneormany-male:              "{count, plural, one {Zum Autor} other {Zu den Autoren}}"
 interpretation.oneormany:           "{count, plural, one {Interpretation} other {Interpretationen}}"
 additionalsource.oneormany:         "{count, plural, one {Weitere Quelle} other {Weitere Quellen}}"
 source.oneormany:                   "{count, plural, one {Quelle} other {Quellen}}"
