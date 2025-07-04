@@ -517,12 +517,17 @@ extends BaseController
         $crawler = new \Symfony\Component\DomCrawler\Crawler();
         $crawler->addHtmlContent('<body>' . $html . '</body>');
 
+        $siteKey = $this->getSiteKey();
+        $siteLinkPrefix = !empty($siteKey)
+            ? $siteKey . ':'
+            : '';
+
         $crawler->filterXPath("//a[@class='external']")
-            ->each(function ($crawler) use ($refLookup) {
+            ->each(function ($crawler) use ($refLookup, $siteLinkPrefix) {
                 foreach ($crawler as $node) {
                     $href = $node->getAttribute('href');
 
-                    if (preg_match('/^(jgo:(article|source)\-(\d+))(\#.+)?$/', $href, $matches)) {
+                    if (preg_match('/^(' . $siteLinkPrefix . '(article|source)\-(\d+))(\#.+)?$/', $href, $matches)) {
                         $hrefBase = $matches[1]; // $href without anchor
                         $anchor = count($matches) > 4 ? $matches[4] : '';
                         if (array_key_exists($hrefBase, $refLookup)) {
@@ -673,12 +678,17 @@ extends BaseController
         }));
 
         // refs to other articles in the format jgo:article-123 or jgo:source-123#anchor
-        $refs = array_unique($crawler->filterXPath("//a[@class='external']")->each(function ($node, $i) {
+        $siteKey = $this->getSiteKey();
+        $siteLinkPrefix = !empty($siteKey)
+            ? $siteKey . ':'
+            : '';
+
+        $refs = array_filter(array_unique($crawler->filterXPath("//a[@class='external']")->each(function ($node, $i) use ($siteLinkPrefix) {
             $href = $node->attr('href');
-            if (preg_match('/^jgo:(article|source)\-(\d+)(\#.+)?$/', $node->attr('href'))) {
+            if (preg_match('/^' . $siteLinkPrefix . '(article|source)\-(\d+)(\#.+)?$/', $node->attr('href'))) {
                 return $node->attr('href');
             }
-        }));
+        })));
 
         $authorsByIdentifier = [];
 

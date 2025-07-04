@@ -46,6 +46,18 @@ extends AbstractController
         return $this->slugify;
     }
 
+    protected function getSiteKey(): ?string
+    {
+        try {
+            // Try to get the site key from the parameters
+            return $this->getParameter('app.site.key');
+        }
+        catch (\Exception $e) {
+        }
+
+        return null;
+    }
+
     /**
      * Get a global twig variable by $key
      */
