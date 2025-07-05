@@ -66,4 +66,19 @@ trait RenderTeiTrait
 
         return $crawler->html();
     }
+
+    /**
+     * Custom method since $node->text() returns node-content as well
+     */
+    protected function extractTextFromNode($node)
+    {
+        $html = $node->html();
+        if (!preg_match('/</', $html)) {
+            return $node->text();
+        }
+
+        return $this->removeByCssSelector('<body>' . $html . '</body>',
+                                          [ 'span.editorial', 'a.editorial-marker' ],
+                                          true);
+    }
 }
