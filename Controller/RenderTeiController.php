@@ -550,21 +550,6 @@ extends BaseController
     }
 
     /**
-     * Custom method since $node->text() returns node-content as well
-     */
-    private function extractText($node)
-    {
-        $html = $node->html();
-        if (!preg_match('/</', $html)) {
-            return $node->text();
-        }
-
-        return $this->removeByCssSelector('<body>' . $html . '</body>',
-                                          [ 'span.editorial', 'a.editorial-marker' ],
-                                          true);
-    }
-
-    /**
      * TODO: share with src/Command/BaseCommand.php
      */
     private function buildGndConditionbyUri($uri, $hyphenAllowed = true)
@@ -595,7 +580,7 @@ extends BaseController
 
         // headers for TOC
         $sectionHeaders = $crawler->filterXPath('//h2')->each(function ($node, $i) {
-            return [ 'id' => $node->attr('id'), 'text' => $this->extractText($node) ];
+            return [ 'id' => $node->attr('id'), 'text' => $this->extractTextFromNode($node) ];
         });
 
         // authors
