@@ -62,7 +62,7 @@ extends BaseCommand
         $output->writeln(sprintf('<error>invalid type: %s</error>',
                                  $input->getArgument('type')));
 
-        return 1;
+        return Command::FAILURE;
     }
 
     protected function normalizeUnicode($value)
@@ -132,7 +132,11 @@ extends BaseCommand
         foreach ($files as $key => $fname) {
             $info = [];
 
-            $fnameFull = $this->locateData($fname);
+            try {
+                $fnameFull = $this->locateData($fname);
+            } catch (\Exception $e) {
+                return $gndBeacon; // no file found
+            }
 
             $lines = file($fnameFull);
             foreach ($lines as $line) {
@@ -377,12 +381,12 @@ extends BaseCommand
 
             foreach ($places as $place) {
                 $geo = $place->getGeo();
-                if (empty($geo) || false === strpos($geo, ':')) {
+                if (empty($geo) || false === strpos($geo, ',')) {
                     continue;
                 }
 
                 $persist = false;
-                list($lat, $long) = explode(':', $geo, 2);
+                list($lat, $long) = explode(',', $geo, 2);
                 $url = sprintf('http://api.geonames.org/extendedFindNearby?lat=%s&lng=%s&username=burckhardtd',
                                $lat, $long);
 
@@ -611,9 +615,9 @@ extends BaseCommand
     protected function enhanceBibitem()
     {
         // currently only googleapis.com/books
-        $googleapisKey = $this->getParameter('googleapis.key');
+        $googleapisKey = $this->getParameter('app.googleapis.key');
         if (empty($googleapisKey)) {
-            return;
+            return Command::FAILURE;
         }
 
         $bibitemRepository = $this->em->getRepository('\TeiEditionBundle\Entity\Bibitem');
@@ -667,6 +671,6 @@ extends BaseCommand
             }
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
