@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ImportGlossaryCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -10,16 +11,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
-use Doctrine\ORM\EntityManagerInterface;
-
-use Cocur\Slugify\SlugifyInterface;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 /**
  * Import Glossary from data/glossary.xlsx (one line per item and language).
  */
-class ImportGlossaryCommand
-extends BaseCommand
+class ImportGlossaryCommand extends BaseCommand
 {
     protected function configure()
     {
@@ -29,17 +26,16 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = 'glossary.xlsx';
 
         try {
             $fname = $this->locateData($fname);
-        }
-        catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $fs = new Filesystem();
@@ -47,26 +43,22 @@ extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
-
-        $file = new \SplFileObject($fname);
-        $reader = new \Ddeboer\DataImport\Reader\ExcelReader($file);
-
-        $reader->setHeaderRowNumber(0);
-        $count = 0;
 
         $termRepository = $this->em->getRepository('\TeiEditionBundle\Entity\GlossaryTerm');
 
-        foreach ($reader as $row) {
+        $count = 0;
+        SimpleExcelReader::create($fname)->getRows()
+        ->each(function (array $row) use ($output, $termRepository, &$count) {
             $unique_values = array_unique(array_values($row));
             if (1 == count($unique_values) && null === $unique_values[0]) {
                 // all values null
-                continue;
+                return;
             }
 
             if (empty($row['term']) || empty($row['language']) || !in_array($row['language'], [ 'deu', 'eng' ])) {
-                continue;
+                return;
             }
 
             $output->writeln('Insert/Update: ' . $row['term']);
@@ -97,11 +89,15 @@ extends BaseCommand
                         // $output->writeln('Skip : ' . $key);
                 }
             }
+
             $this->em->persist($term);
+            ++$count;
+        });
+
+        if ($count > 0) {
+            $this->flushEm($this->em);
         }
 
-        $this->flushEm($this->em);
-
-        return 0;
+        return Command::SUCCESS;
     }
 }
