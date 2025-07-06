@@ -3,10 +3,12 @@
 
 namespace TeiEditionBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 /**
  * Import Entities from data/gnd2tgn.xlsx (currently only places).
@@ -24,35 +26,44 @@ extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output) : int
     {
-        $fname = $this->locateData('gnd2tgn.xlsx');
+        $fname = 'gnd2tgn.xlsx';
+
+        try {
+            $fname = $this->locateData($fname);
+        } catch (\InvalidArgumentException $e) {
+            $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
+
+            return Command::FAILURE;
+        }
 
         $fs = new Filesystem();
 
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
-        $file = new \SplFileObject($fname);
-        $reader = new \Ddeboer\DataImport\Reader\ExcelReader($file);
-
-        $reader->setHeaderRowNumber(0);
 
         $entities = [ 'place' => [] ];
-        foreach ($reader as $row) {
+        SimpleExcelReader::create($fname)->getRows()
+        ->each(function (array $row) use (&$entities) {
             $unique_values = array_unique(array_values($row));
             if (1 == count($unique_values) && null === $unique_values[0]) {
                 // all values null
-                continue;
+                return;
             }
 
             if (empty($row['tgn'])) {
-                continue;
+                return;
+            }
+
+            if (array_key_exists('', $row)) {
+                unset($row['']);
             }
 
             $entities['place'][$row['tgn']] = $row;
-        }
+        });
 
         foreach ([ 'person', 'place', 'organization' ] as $type) {
             // currently only place
@@ -77,6 +88,6 @@ extends BaseCommand
             }
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -68,8 +68,7 @@
 
         "nategood/httpful": "^1.0",
 
-        "ddeboer/data-import": "0.20.*",
-        "phpoffice/phpexcel": "1.8.*",
+        "spatie/simple-excel": "^3.7",
 
         "gmo/iso-639": "^1.0",
 
