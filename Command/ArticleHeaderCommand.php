@@ -202,17 +202,20 @@ extends BaseCommand
             switch ($attribute) {
                 case 'author':
                     $repoClass = 'Person';
-                    $key = 'slug';
+                    $key = [];
                     $value = array_map(function ($related) use (&$key) {
                             $slug = $related->getSlug();
                             if (empty($slug)) {
                                 $gnd = $related->getGnd();
                                 if (!empty($gnd)) {
                                     // lookup by gnd instead
-                                    $key = 'gnd';
+                                    $key[] = 'gnd';
 
                                     return $gnd;
                                 }
+                            }
+                            else {
+                                $key[] = 'slug';
                             }
 
                             return $slug;
@@ -256,41 +259,41 @@ extends BaseCommand
                     break;
             }
 
-            if (is_null($criteria) && isset($key) && !empty($value)) {
-                $criteria = [ $key => $value ];
-            }
+            if (is_array($value)) {
+                $methodGet = 'get' . ucfirst($attribute);
+                $currentValues = $entity->$methodGet();
+                foreach ($value as $idx => $singleValue) {
+                    $criteria = [ $key[$idx] => $singleValue ];
+                    $relatedEntity = $this->em->getRepository('\TeiEditionBundle\Entity\\' . $repoClass)
+                        ->findOneBy($criteria);
 
-            if (!empty($criteria)) {
-                if (is_array($value)) {
-                    $methodGet = 'get' . ucfirst($attribute);
-                    $currentValues = $entity->$methodGet();
-                    foreach ($value as $singleValue) {
-                        $criteria = [ $key => $singleValue ];
-                        $relatedEntity = $this->em->getRepository('\TeiEditionBundle\Entity\\' . $repoClass)
-                            ->findOneBy($criteria);
-
-                        if (!is_null($relatedEntity)) {
-                            if ('author' == $attribute) {
-                                // collect author into creator for quick sorting
-                                $creator[] = $relatedEntity->getFullname();
-                            }
-
-                            if (!$currentValues->contains($relatedEntity)) {
-                                $method = 'add' . ucfirst($attribute);
-                                $entity->$method($relatedEntity);
-                            }
+                    if (!is_null($relatedEntity)) {
+                        if ('author' == $attribute) {
+                            // collect author into creator for quick sorting
+                            $creator[] = $relatedEntity->getFullname();
                         }
-                        else {
-                            die('TeiEditionBundle:' . $repoClass . '->findOneBy' . json_encode($criteria) . ' failed');
+
+                        if (!$currentValues->contains($relatedEntity)) {
+                            $method = 'add' . ucfirst($attribute);
+                            $entity->$method($relatedEntity);
                         }
                     }
-
-                    $currentValues = $entity->$methodGet();
-                    if ('author' == $attribute) {
-                        $entity->setCreator(join('; ', $creator));
+                    else {
+                        die('TeiEditionBundle:' . $repoClass . '->findOneBy' . json_encode($criteria) . ' failed');
                     }
                 }
-                else {
+
+                $currentValues = $entity->$methodGet();
+                if ('author' == $attribute) {
+                    $entity->setCreator(join('; ', $creator));
+                }
+            }
+            else {
+                if (is_null($criteria) && isset($key) && !empty($value)) {
+                    $criteria = [ $key => $value ];
+                }
+
+                if (!empty($criteria)) {
                     $relatedEntity = $this->em->getRepository('\TeiEditionBundle\Entity\\' . $repoClass)
                         ->findOneBy($criteria);
 
