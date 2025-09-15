@@ -113,7 +113,7 @@ extends ArticleController
     /**
      * Render the Source Viewer which depends on the format (JsonLD or HTML),
      * the mode (PDF or Browser-view)
-     * as well as the sourceType (text / Transcript / Audio / Video / Object)
+     * as well as the sourceType (Text / Transcript / Audio / Video / Object)
      */
     protected function renderSourceViewer(Request $request,
                                           EntityManagerInterface $entityManager,
@@ -188,6 +188,17 @@ extends ArticleController
 
         $entityLookup = $this->buildEntityLookup($entityManager, $entities);
         $glossaryLookup = $this->buildGlossaryLookup($entityManager, $glossaryTerms, $request->getLocale());
+
+        $localeSwitch = [];
+        $translations = $entityManager
+            ->getRepository('\TeiEditionBundle\Entity\Article')
+            ->findBy([ 'uid' => $sourceArticle->getUid() ]);
+        foreach ($translations as $translation) {
+            if ($sourceArticle->getLanguage() != $translation->getLanguage()) {
+                $localeSwitch[\TeiEditionBundle\Utils\Iso639::code3to1($translation->getLanguage())]
+                    = [ 'uid' => $translation->getUid() ];
+            }
+        }
 
         $fnameMets = $this->buildArticleFname($sourceArticle, '.mets.xml');
         $parts = explode('.', $fnameMets);
@@ -363,6 +374,7 @@ extends ArticleController
                         'og' => $this->buildOg($sourceArticle, $request, $entityManager, $translator, 'source', [ 'uid' => $sourceArticle->getUid() ]),
                         'twitter' => $this->buildTwitter($sourceArticle, $request, 'source', [ 'uid' => $sourceArticle->getUid() ]),
                     ],
+                    'route_params_locale_switch' => $localeSwitch,
                 ]);
             }
 
@@ -407,6 +419,7 @@ EOT;
                     'og' => $this->buildOg($sourceArticle, $request, $entityManager, $translator, 'source', [ 'uid' => $sourceArticle->getUid() ]),
                     'twitter' => $this->buildTwitter($sourceArticle, $request, 'source', [ 'uid' => $sourceArticle->getUid() ]),
                 ],
+                'route_params_locale_switch' => $localeSwitch,
             ]);
         }
 
@@ -430,6 +443,7 @@ EOT;
                 'og' => $this->buildOg($sourceArticle, $request, $entityManager, $translator, 'source', [ 'uid' => $sourceArticle->getUid() ]),
                 'twitter' => $this->buildTwitter($sourceArticle, $request, 'source', [ 'uid' => $sourceArticle->getUid() ]),
             ],
+            'route_params_locale_switch' => $localeSwitch,
         ]);
     }
 
