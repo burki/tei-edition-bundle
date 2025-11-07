@@ -35,7 +35,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         switch ($input->getArgument('type')) {
             case 'person':
@@ -392,63 +392,74 @@ extends BaseCommand
 
                 $xml = simplexml_load_file($url);
                 foreach ($xml->geoname as $geoname) {
+                    $placeName = $place->getName();
+                    if (in_array($geoname->fcode, [
+                            'PCLI',
+                            'ADM1', 'ADM2', 'ADM4',
+                            'PPLA3', 'PPLX',
+                        ]))
+                    {
+                        $geonameId =  (string)($geoname->geonameId);
+                        $geonameName =  (string)($geoname->name);
+                    }
+
                     switch ($type) {
                         case 'nation':
                             if ('PCLI' == $geoname->fcode) {
-                                $geonames = (string)($geoname->geonameId);
-                                var_dump($place->getName() . ': '
-                                 . (string)($geoname->name) . ' - ' . $geonames );
-                                $place->setGeonames($geonames);
+                                if ($placeName != $geonameName) {
+                                    var_dump($placeName . ': ' . $geonameName . ' - ' . $geonameId);
+                                }
+                                $place->setGeonames($geonameId);
                                 $persist = true;
                             }
                             break;
 
                         case 'country':
                             if ('ADM1' == $geoname->fcode) {
-                                $geonames = (string)($geoname->geonameId);
-                                var_dump($place->getName() . ': '
-                                 . (string)($geoname->name) . ' - ' . $geonames );
-                                $place->setGeonames($geonames);
+                                if ($placeName != $geonameName) {
+                                    var_dump($placeName . ': ' . $geonameName . ' - ' . $geonameId);
+                                }
+                                $place->setGeonames($geonameId);
                                 $persist = true;
                             }
                             break;
 
                         case 'state':
                             if ('ADM1' == $geoname->fcode) {
-                                $geonames = (string)($geoname->geonameId);
-                                var_dump($place->getName() . ': '
-                                 . (string)($geoname->name) . ' - ' . $geonames );
-                                $place->setGeonames($geonames);
+                                if ($placeName != $geonameName) {
+                                    var_dump($placeName . ': ' . $geonameName . ' - ' . $geonameId);
+                                }
+                                $place->setGeonames($geonameId);
                                 $persist = true;
                             }
                             break;
 
                         case 'metropolitan area':
                             if ('ADM2' == $geoname->fcode) {
-                                $geonames = (string)($geoname->geonameId);
-                                var_dump($place->getName() . ': '
-                                 . (string)($geoname->name) . ' - ' . $geonames );
-                                $place->setGeonames($geonames);
+                                if ($placeName != $geonameName) {
+                                    var_dump($placeName . ': ' . $geonameName . ' - ' . $geonameId);
+                                }
+                                $place->setGeonames($geonameId);
                                 $persist = true;
                             }
                             break;
 
                         case 'inhabited place':
                             if ('PPLA3' == $geoname->fcode || 'ADM4' == $geoname->fcode) {
-                                $geonames = (string)($geoname->geonameId);
-                                var_dump($place->getName() . ': '
-                                 . (string)($geoname->name) . ' - ' . $geonames );
-                                $place->setGeonames($geonames);
+                                if ($placeName != $geonameName) {
+                                    var_dump($placeName . ': ' . $geonameName . ' - ' . $geonameId);
+                                }
+                                $place->setGeonames($geonameId);
                                 $persist = true;
                             }
                             break;
 
                         case 'neighborhood':
                             if ('PPLX' == $geoname->fcode) {
-                                $geonames = (string)($geoname->geonameId);
-                                var_dump($place->getName() . ': '
-                                 . (string)($geoname->name) . ' - ' . $geonames );
-                                $place->setGeonames($geonames);
+                                if ($placeName != $geonameName) {
+                                    var_dump($placeName . ': ' . $geonameName . ' - ' . $geonameId);
+                                }
+                                $place->setGeonames($geonameId);
                                 $persist = true;
                             }
                             break;
