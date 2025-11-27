@@ -120,12 +120,12 @@ extends ArticleController
                                           TranslatorInterface $translator,
                                           $uid, SourceArticle $sourceArticle)
     {
-        if (in_array($request->get('_route'), [ 'source-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'source-jsonld' ])) {
             // return jsonld-rendition
             return $this->buildJsonLdResponse($request, $entityManager, $translator, $sourceArticle);
         }
 
-        $generatePrintView = 'source-pdf' == $request->get('_route');
+        $generatePrintView = 'source-pdf' == $request->attributes->get('_route');
 
         $fname = $this->buildArticleFname($sourceArticle);
 
