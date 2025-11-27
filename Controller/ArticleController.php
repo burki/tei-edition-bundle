@@ -82,7 +82,7 @@ extends RenderTeiController
                                      TranslatorInterface $translator,
                                      $article)
     {
-        $generatePrintView = 'article-pdf' == $request->get('_route');
+        $generatePrintView = 'article-pdf' == $request->attributes->get('_route');
 
         $fname = $this->buildArticleFname($article);
 
@@ -162,7 +162,7 @@ extends RenderTeiController
             }
         }
 
-        if (in_array($request->get('_route'), [ 'article-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'article-jsonld' ])) {
             return new JsonLdResponse($article->jsonLdSerialize($request->getLocale(), false, true));
         }
 
@@ -203,7 +203,7 @@ extends RenderTeiController
             $language = \TeiEditionBundle\Utils\Iso639::code1to3($locale);
         }
 
-        $sort = in_array($request->get('_route'), [
+        $sort = in_array($request->attributes->get('_route'), [
                     'article-index-date', 'article-index-rss'
                 ])
             ? '-A.datePublished' : 'A.creator';
@@ -226,13 +226,13 @@ extends RenderTeiController
             $query->setParameter('language', $language);
         }
 
-        if ('article-index-rss' == $request->get('_route')) {
+        if ('article-index-rss' == $request->attributes->get('_route')) {
             $query->setMaxResults(10);
         }
 
         $articles = $query->getResult();
 
-        if ('article-index-rss' == $request->get('_route')) {
+        if ('article-index-rss' == $request->attributes->get('_route')) {
             $feed = $feedManager->get('article');
             $feed->addFromArray($articles);
 

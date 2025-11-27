@@ -170,7 +170,7 @@
         {% block head %}{% endblock %}
     </head>
 
-    <body role="document" class="route-{{ app.request.get('_route') | replace({'_' : '-'}) }}">
+    <body role="document" class="route-{{ app.request.attributes.get('_route') | replace({'_' : '-'}) }}">
         {% block body %}{% endblock %}
     </body>
 </html>

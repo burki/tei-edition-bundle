@@ -126,7 +126,7 @@ extends RenderTeiController
             return $this->redirectToRoute('topic-index');
         }
 
-        $generatePrintView = 'topic-background-pdf' == $request->get('_route');
+        $generatePrintView = 'topic-background-pdf' == $request->attributes->get('_route');
         $fname = $slug . $fnameAppend . '.xml';
         $path = '';
 
@@ -264,7 +264,7 @@ extends RenderTeiController
             $sourcesPrimary = & $sources;
         }
 
-        if (in_array($request->get('_route'), [ 'topic-background-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'topic-background-jsonld' ])) {
             if (!is_null($article) && $article instanceof \TeiEditionBundle\Entity\Article) {
                 return new JsonLdResponse($article->jsonLdSerialize($request->getLocale(), false, true));
             }

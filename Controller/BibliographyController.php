@@ -194,10 +194,10 @@ extends BaseController
             $routeParams = [ 'slug' => $slug ];
         }
 
-        if (in_array($request->get('_route'), [ 'bibliography-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'bibliography-jsonld' ])) {
             return new JsonLdResponse($bibitem->jsonLdSerialize($request->getLocale(), false, true));
         }
-        else if (in_array($request->get('_route'), [ 'bibliography-ris' ])) {
+        else if (in_array($request->attributes->get('_route'), [ 'bibliography-ris' ])) {
             return $this->buildRisResponse($bibitem);
         }
 

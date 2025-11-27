@@ -113,7 +113,7 @@ extends BaseController
             return $this->redirectToRoute('organization-index');
         }
 
-        if (in_array($request->get('_route'), [ 'organization-jsonld', 'organization-by-gnd-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'organization-jsonld', 'organization-by-gnd-jsonld' ])) {
             return new JsonLdResponse($organization->jsonLdSerialize($request->getLocale(), false, true));
         }
 
