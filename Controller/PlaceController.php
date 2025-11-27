@@ -30,7 +30,7 @@ extends BaseController
     {
         list($markers, $bounds) = $this->buildMap($entityManager,
                                                   $request->getLocale(),
-                                                  str_replace('place-map-', '', $request->get('_route')));
+                                                  str_replace('place-map-', '', $request->attributes->get('_route')));
 
         return $this->render('@TeiEdition/Place/map.html.twig', [
             'pageTitle' => $translator->trans('Map'),
@@ -166,7 +166,7 @@ extends BaseController
             return $this->redirectToRoute('place-index');
         }
 
-        if (in_array($request->get('_route'), [ 'place-jsonld', 'place-by-tgn-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'place-jsonld', 'place-by-tgn-jsonld' ])) {
             return new JsonLdResponse($place->jsonLdSerialize($request->getLocale(), false, true));
         }
 
@@ -217,7 +217,7 @@ extends BaseController
             return $this->redirectToRoute('place-map-landmark');
         }
 
-        if (in_array($request->get('_route'), [ 'landmark-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'landmark-jsonld' ])) {
             return new JsonLdResponse($landmark->jsonLdSerialize($request->getLocale(), false, true));
         }
 

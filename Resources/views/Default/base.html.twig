@@ -30,7 +30,7 @@
         {% embed '@TeiEdition/Default/head_script.html.twig' %}{% endembed %}
     </head>
 
-    <body role="document" class="route-{{ app.request.get('_route') | replace({'_' : '-'}) }}">
+    <body role="document" class="route-{{ app.request.attributes.get('_route') | replace({'_' : '-'}) }}">
         <div id="displaybox" style="display: none;">
             <a href="#" style="display: block; position: absolute; top: 8px; right: 8px;" onclick="$('#displaybox').toggle(); return false;"><svg fill="currentColor" preserveAspectRatio="xMidYMid meet" height="2em" width="2em" viewBox="0 0 40 40" style="vertical-align: middle;"><g><path d="m31.6 10.7l-9.3 9.3 9.3 9.3-2.3 2.3-9.3-9.3-9.3 9.3-2.3-2.3 9.3-9.3-9.3-9.3 2.3-2.3 9.3 9.3 9.3-9.3z"></path></g></svg></a>
             <div id="displayBoxContent" style="background-color: white; margin-top: 2em; margin-left: auto; margin-right: auto; width: 90%; height: 90%; overflow: auto;"></div>

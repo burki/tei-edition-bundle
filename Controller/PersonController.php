@@ -24,7 +24,7 @@ extends BaseController
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator)
     {
-        $route = $request->get('_route');
+        $route = $request->attributes->get('_route');
         $authorsOnly = 'about-authors' == $route;
 
         $qb = $entityManager
@@ -130,7 +130,7 @@ extends BaseController
             $routeParams = [ 'gnd' => $gnd ];
         }
 
-        if (in_array($request->get('_route'), [ 'person-jsonld', 'person-by-gnd-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'person-jsonld', 'person-by-gnd-jsonld' ])) {
             return new JsonLdResponse($person->jsonLdSerialize($request->getLocale(), false, true));
         }
 

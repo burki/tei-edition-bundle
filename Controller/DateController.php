@@ -106,7 +106,7 @@ extends BaseController
             $routeParams = [ 'gnd' => $gnd ];
         }
 
-        if (in_array($request->get('_route'), [ 'event-jsonld', 'event-by-gnd-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'event-jsonld', 'event-by-gnd-jsonld' ])) {
             return new JsonLdResponse($event->jsonLdSerialize($request->getLocale(), false, true));
         }
 
