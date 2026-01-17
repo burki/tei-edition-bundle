@@ -9,7 +9,7 @@
 
 <xsl:output method="html" />
 
-<xsl:template match="tei:body">
+<xsl:template match="tei:text">
     <xsl:if test="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:notesStmt/tei:note">
         <div class="source-description">
             <xsl:apply-templates select="/tei:TEI/tei:teiHeader/tei:fileDesc/tei:notesStmt/tei:note/node()"/>
