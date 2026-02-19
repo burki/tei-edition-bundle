@@ -90,9 +90,16 @@ extends BaseCommand
                 return 2;
             }
 
-            $output->writeln('<info> [OK]</info>');
-
             $outputText = $bufferedOutput->fetch();
+            if ('' === trim($outputText)) {
+                $output->writeln('<info> [FAIL]</info>');
+                $output->writeln(sprintf('<error>article:adjust on %s did not produce any output</error>',
+                                         $fnameInput));
+
+                return 2;
+            }
+
+            $output->writeln('<info> [OK]</info>');
             file_put_contents($fnameOutput, $outputText);
 
             // use .xml for all of the following
