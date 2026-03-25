@@ -1,12 +1,14 @@
 {
     "name": "igdj/tei-edition-bundle",
     "type": "symfony-bundle",
-    "autoload": {
-        "psr-4": {
-            "TeiEditionBundle\\": ""
-        },
-        "exclude-from-classmap": [ "/Tests/" ]
-    },
+    "description": "Symfony bundle to provide TEI edition functionality.",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Daniel Burckhardt",
+            "role": "Developer"
+        }
+    ],
     "require": {
         "php": "^8.2",
         "ext-curl": "*",
@@ -88,5 +90,10 @@
         "laminas/laminas-diactoros": "^3.7",
 
         "guzzlehttp/guzzle": "^7.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "TeiEditionBundle\\": "src/"
+        }
     }
 }
