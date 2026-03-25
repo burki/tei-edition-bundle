@@ -1,4 +1,5 @@
 <?php
+
 // src/Twig/AppExtension.php
 
 /**
@@ -19,22 +20,20 @@
 namespace TeiEditionBundle\Twig;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
-
 use Cocur\Slugify\SlugifyInterface;
 
-class AppExtension
-extends AbstractExtension
+class AppExtension extends AbstractExtension
 {
     private $translator;
     private $slugifyer;
 
-    public function __construct(TranslatorInterface $translator,
-                                SlugifyInterface $slugifyer)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        SlugifyInterface $slugifyer
+    ) {
         $this->translator = $translator;
         $this->slugifyer = $slugifyer;
         if (!is_null($slugifyer)) {
@@ -61,10 +60,16 @@ extends AbstractExtension
             // appbundle-specific
             new TwigFilter('placeTypeLabel', [ $this, 'placeTypeLabelFilter' ]),
             new TwigFilter('lookupLocalizedTopic', [ $this, 'lookupLocalizedTopicFilter' ]),
-            new TwigFilter('glossaryAddRefLink', [ $this, 'glossaryAddRefLinkFilter' ],
-                                   [ 'is_safe' => [ 'html' ] ]),
-            new TwigFilter('renderCitation', [ $this, 'renderCitation' ],
-                                   [ 'is_safe' => [ 'html' ] ]),
+            new TwigFilter(
+                'glossaryAddRefLink',
+                [ $this, 'glossaryAddRefLinkFilter' ],
+                [ 'is_safe' => [ 'html' ] ]
+            ),
+            new TwigFilter(
+                'renderCitation',
+                [ $this, 'renderCitation' ],
+                [ 'is_safe' => [ 'html' ] ]
+            ),
         ];
     }
 
@@ -100,7 +105,7 @@ extends AbstractExtension
             'century' => is_numeric($epoch)
                 ? abs(intval($epoch / 100)) + 1
                 : '',
-            'decade' => is_numeric($epoch) ?  $epoch % 100 : '',
+            'decade' => is_numeric($epoch) ? $epoch % 100 : '',
         ], 'additional');
     }
 
@@ -116,7 +121,7 @@ extends AbstractExtension
             . (!empty($parsed['path']) && '/' !== $parsed['path'] ? $parsed['path'] : '')
             . (!empty($parsed['query']) ? '?' . $parsed['query'] : '')
             . (!empty($parsed['fragment']) ? '#' . $parsed['fragment'] : '')
-            ;
+        ;
     }
 
     public function lookupLocalizedTopicFilter($topic, $locale = null)
@@ -131,17 +136,19 @@ extends AbstractExtension
     {
         $slugifyer = $this->slugifyer;
 
-        return preg_replace_callback('/\[\[(.*?)\]\]/',
-                    function ($matches) use ($slugifyer) {
-                       $slug = $label = $matches[1];
-                       if (!is_null($slugifyer)) {
-                           $slug = $slugifyer->slugify($slug);
-                       }
-                       return '→ <a href="#' . rawurlencode($slug) . '">'
-                         . $label
-                         . '</a>';
-                    },
-                    $description);
+        return preg_replace_callback(
+            '/\[\[(.*?)\]\]/',
+            function ($matches) use ($slugifyer) {
+                $slug = $label = $matches[1];
+                if (!is_null($slugifyer)) {
+                    $slug = $slugifyer->slugify($slug);
+                }
+                return '→ <a href="#' . rawurlencode($slug) . '">'
+                  . $label
+                  . '</a>';
+            },
+            $description
+        );
     }
 
     public function renderCitation($encoded)

@@ -1,13 +1,12 @@
 <?php
+
 // src/Entity/Person.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -22,12 +21,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'person')]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
-class Person
-implements \JsonSerializable, JsonLdSerializable, OgSerializable
+class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
 {
-    static $ENTITYFACTS_LOCALES = [ 'de', 'en' ];
+    use ArticleReferencesTrait;
+    public static $ENTITYFACTS_LOCALES = [ 'de', 'en' ];
 
-    static function formatDateIncomplete($dateStr)
+    public static function formatDateIncomplete($dateStr)
     {
         if (preg_match('/^\d{4}$/', $dateStr)) {
             $dateStr .= '-00-00';
@@ -208,8 +207,6 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
 
     #[ORM\ManyToMany(targetEntity: \Article::class, mappedBy: 'author')]
     protected $articles;
-
-    use ArticleReferencesTrait;
 
     #[ORM\OneToMany(targetEntity: \ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
@@ -630,8 +627,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
             $uri = $place['@id'];
             if (preg_match('/^https?'
                            . preg_quote('://d-nb.info/gnd/', '/')
-                           . '(\d+\-?[\dxX]?)$/', $uri, $matches))
-            {
+                           . '(\d+\-?[\dxX]?)$/', $uri, $matches)) {
                 $placeInfo['gnd'] = $matches[1];
             }
         }
@@ -701,8 +697,10 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
         }
 
         if (!is_null($this->additional) && array_key_exists('wikidata', $this->additional)) {
-            return self::buildPlaceInfoFromWikidata($this->additional['wikidata']['de'],
-                                                    'placeOfDeath');
+            return self::buildPlaceInfoFromWikidata(
+                $this->additional['wikidata']['de'],
+                'placeOfDeath'
+            );
         }
     }
 
@@ -1004,9 +1002,9 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
             : \TeiEditionBundle\Utils\Iso639::code1to3($lang);
 
         return $this->articles->filter(
-            function($entity) use ($langCode3) {
-               return 1 == $entity->getStatus()
-                && (is_null($langCode3) || $entity->getLanguage() == $langCode3);
+            function ($entity) use ($langCode3) {
+                return 1 == $entity->getStatus()
+                 && (is_null($langCode3) || $entity->getLanguage() == $langCode3);
             }
         );
     }

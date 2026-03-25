@@ -10,7 +10,7 @@ class SimplifyGeojsonProcessor
 {
     protected $path = '';
 
-    var $config = [];
+    public $config = [];
 
     public function __construct($config = null)
     {
@@ -28,7 +28,7 @@ class SimplifyGeojsonProcessor
         $cmd = $this->path
              . 'simplify-geojson '
              . join(' ', $arguments)
-             ;
+        ;
 
         $ret = exec($cmd, $lines, $retval);
 

@@ -5,8 +5,7 @@ namespace TeiEditionBundle\Utils\Xsl;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
-class XsltCacheAdapter
-implements XsltAdapterInterface
+class XsltCacheAdapter implements XsltAdapterInterface
 {
     protected $xsltAdapter;
     protected $cache;
@@ -51,7 +50,7 @@ implements XsltAdapterInterface
         return join('-', [
             md5($fnameXml), $modifiedXml,
             md5($fnameXsl), $modifiedXsl,
-            md5(json_encode($options))
+            md5(json_encode($options)),
         ]);
     }
 

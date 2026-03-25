@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleEntityCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -13,8 +14,7 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 /**
  * Extract entities from TEI and add missing or update relations.
  */
-class ArticleEntityCommand
-extends BaseCommand
+class ArticleEntityCommand extends BaseCommand
 {
     protected function configure(): void
     {
@@ -107,7 +107,8 @@ extends BaseCommand
                 return 1;
             }
 
-            $uid = $article->uid; $language = $article->language;
+            $uid = $article->uid;
+            $language = $article->language;
             $article = $this->em->getRepository('TeiEditionBundle\Entity\Article')
                 ->findOneBy([
                     'uid' => $uid,
@@ -115,8 +116,11 @@ extends BaseCommand
                 ]);
 
             if (is_null($article)) {
-                $output->writeln(sprintf('<error>no article found for uid %s and language %s</error>',
-                                         $uid, $language));
+                $output->writeln(sprintf(
+                    '<error>no article found for uid %s and language %s</error>',
+                    $uid,
+                    $language
+                ));
 
                 return 1;
             }

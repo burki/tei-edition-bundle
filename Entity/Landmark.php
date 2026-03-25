@@ -1,11 +1,11 @@
 <?php
+
 // src/Entity/Landmark.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,8 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ORM\Table(name: 'landmark')]
 #[ORM\Entity]
-class Landmark
-extends PlaceBase
+class Landmark extends PlaceBase
 {
     use ArticleReferencesTrait;
 

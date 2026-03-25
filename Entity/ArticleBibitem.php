@@ -1,4 +1,5 @@
 <?php
+
 // src/Entity/ArticleBibitem.php
 
 namespace TeiEditionBundle\Entity;
@@ -6,8 +7,7 @@ namespace TeiEditionBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class ArticleBibitem
-extends ArticleEntity
+class ArticleBibitem extends ArticleEntity
 {
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id', nullable: false)]
     #[ORM\ManyToOne(targetEntity: \Bibitem::class, inversedBy: 'articleReferences')]

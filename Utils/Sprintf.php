@@ -7,7 +7,6 @@ namespace TeiEditionBundle\Utils;
  */
 class Sprintf
 {
-
     private static $string;
 
     /** No instances */
@@ -35,13 +34,13 @@ class Sprintf
         foreach ($args as $key => $val) {
 
             // Forced formatting for boolean values
-            if (preg_match('%(?P<key>'.$key.'(?:\:bool\:(?P<format>int|str)))%', self::$string, $matches)) {
+            if (preg_match('%(?P<key>' . $key . '(?:\:bool\:(?P<format>int|str)))%', self::$string, $matches)) {
                 self::$string = self::replace($matches['key'], $val, 'bool', $matches['format']);
                 continue;
             }
 
             // Forced formatting for any value
-            if (preg_match('%(?P<key>'.$key.'(?:\:(?P<format>\w+)))%', self::$string, $matches)) {
+            if (preg_match('%(?P<key>' . $key . '(?:\:(?P<format>\w+)))%', self::$string, $matches)) {
                 self::$string = self::replace($matches['key'], $val, $matches['format']);
                 continue;
             }
@@ -67,20 +66,20 @@ class Sprintf
         switch ($format) {
 
             case 'int':
-                $string = preg_replace('/%'.$key.'%/', intval($val), self::$string);
+                $string = preg_replace('/%' . $key . '%/', intval($val), self::$string);
                 break;
 
             case 'float':
-                $string = preg_replace('/%'.$key.'%/', floatval($val), self::$string);
+                $string = preg_replace('/%' . $key . '%/', floatval($val), self::$string);
                 break;
 
             case 'bool':
-                $string = $output === 'str' ? preg_replace('/%'.$key.'%/', (bool) $val ? 'true' : 'false', self::$string)
-                                            : preg_replace('/%'.$key.'%/', (bool) $val, self::$string);
+                $string = $output === 'str' ? preg_replace('/%' . $key . '%/', (bool) $val ? 'true' : 'false', self::$string)
+                                            : preg_replace('/%' . $key . '%/', (bool) $val, self::$string);
                 break;
 
             default:
-                $string = preg_replace('/%'.$key.'%/', strval($val), self::$string);
+                $string = preg_replace('/%' . $key . '%/', strval($val), self::$string);
                 break;
         }
 

@@ -2,8 +2,7 @@
 
 namespace TeiEditionBundle\Utils\Xsl;
 
-class XsltSaxonProcessorAdapter
-implements XsltAdapterInterface
+class XsltSaxonProcessorAdapter implements XsltAdapterInterface
 {
     protected $config = [];
     protected $errors = [];

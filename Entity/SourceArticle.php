@@ -1,4 +1,5 @@
 <?php
+
 // src/Entity/SourceArticle.php
 
 namespace TeiEditionBundle\Entity;
@@ -7,8 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use TeiEditionBundle\Utils\JsonLd;
 
 #[ORM\Entity]
-class SourceArticle
-extends Article
+class SourceArticle extends Article
 {
     /**
      * Gets genre.
@@ -82,8 +82,7 @@ extends Article
                 'http://creativecommons.org/licenses/by-nc-nd/4.0/',
                 'http://creativecommons.org/licenses/by/3.0/de/',
                 'http://rightsstatements.org/vocab/NoC-NC/1.0/',
-            ]))
-        {
+            ])) {
             return true;
         }
 

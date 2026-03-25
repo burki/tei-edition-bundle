@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ExtractGeoCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -10,8 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
-class ExtractGeoCommand
-extends BaseCommand
+class ExtractGeoCommand extends BaseCommand
 {
     use \TeiEditionBundle\Utils\RenderTeiTrait;
 
@@ -29,8 +29,12 @@ extends BaseCommand
     protected function buildArticleFnameFromUid($uid, $locale)
     {
         if (preg_match('/(article|source)\-(\d+)/', $uid, $matches)) {
-            return sprintf('%s-%05d.%s',
-                           $matches[1], $matches[2], $locale);
+            return sprintf(
+                '%s-%05d.%s',
+                $matches[1],
+                $matches[2],
+                $locale
+            );
         }
     }
 
@@ -42,18 +46,23 @@ extends BaseCommand
         $teiHelper = new MyTeiHelper();
 
         $articles = $this->em->getRepository('TeiEditionBundle\Entity\Article')
-            ->findBy([
-                // 'uid' => 'jgo:source-193',
-                'language' => $language,
-            ],
-            [ 'uid' => 'ASC' ])
-            ;
+            ->findBy(
+                [
+                    // 'uid' => 'jgo:source-193',
+                    'language' => $language,
+                ],
+                [ 'uid' => 'ASC' ]
+            )
+        ;
 
         $entitiesByUid = [];
         foreach ($articles as $article) {
             if ('background' == $article->getArticleSection()) {
-                $fname = sprintf('%s.%s',
-                                 $article->getSlug(), $locale);
+                $fname = sprintf(
+                    '%s.%s',
+                    $article->getSlug(),
+                    $locale
+                );
             }
             else {
                 $fname = $this->buildArticleFnameFromUid($article->getUid(), $locale);
@@ -105,7 +114,7 @@ extends BaseCommand
                 $geo,
                 implode('; ', $info['text']),
                 implode(', ', $info['uid']),
-                $status
+                $status,
             ]) . "\n";
         }
 
@@ -113,8 +122,7 @@ extends BaseCommand
     }
 }
 
-class MyTeiHelper
-extends \TeiEditionBundle\Utils\TeiHelper
+class MyTeiHelper extends \TeiEditionBundle\Utils\TeiHelper
 {
     protected function normalizeWhitespace($txt)
     {
@@ -138,7 +146,7 @@ extends \TeiEditionBundle\Utils\TeiHelper
                 $attribute = '{http://www.tei-c.org/ns/1.0}date' == $entity['name']
                     ? 'corresp' : 'ref';
                 if (empty($entity['attributes'][$attribute])) {
-                  continue;
+                    continue;
                 }
 
                 $uri = trim($entity['attributes'][$attribute]);

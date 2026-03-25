@@ -1,13 +1,12 @@
 <?php
+
 // src/Entity/Place.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-
 use Symfony\Component\String\Inflector\EnglishInflector;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -26,17 +25,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'place')]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
-class Place
-extends PlaceBase
+class Place extends PlaceBase
 {
-    static $zoomLevelByType = [
+    use ArticleReferencesTrait;
+    public static $zoomLevelByType = [
         'neighborhood' => 12,
         'city district' => 11,
         'district' => 11,
         'inhabited place' => 10,
     ];
 
-    static $aatToType = [
+    public static $aatToType = [
         'facets (controlled vocabulary)' => 'root', // http://vocab.getty.edu/aat/300386699
         'continents' => 'continent',                // http://vocab.getty.edu/aat/300128176
         'subcontinents' => 'subcontinent',          // http://vocab.getty.edu/aat/300182723
@@ -171,8 +170,6 @@ extends PlaceBase
     #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'contentLocation')]
     protected $articles;
 
-    use ArticleReferencesTrait;
-
     #[ORM\OneToMany(targetEntity: \ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
@@ -242,7 +239,7 @@ extends PlaceBase
             'archipelago' => 20,
         ];
 
-        uksort($ret, function($typeA, $typeB) use ($typeWeights) {
+        uksort($ret, function ($typeA, $typeB) use ($typeWeights) {
             if ($typeA == $typeB) {
                 return 0;
             }

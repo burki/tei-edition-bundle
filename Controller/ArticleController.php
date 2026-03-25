@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/ArticleController.php
 
 namespace TeiEditionBundle\Controller;
@@ -6,18 +7,14 @@ namespace TeiEditionBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use Eko\FeedBundle\Feed\FeedManager;
 
 /**
  *
  */
-class ArticleController
-extends RenderTeiController
+class ArticleController extends RenderTeiController
 {
     protected function buildArticleFname($article, $extension = '.xml')
     {
@@ -38,18 +35,23 @@ extends RenderTeiController
     protected function buildArticleFnameFromUid($uid, $locale)
     {
         if (preg_match('/(article|source)\-(\d+)/', $uid, $matches)) {
-            return sprintf('%s-%05d.%s',
-                           $matches[1], $matches[2], $locale);
+            return sprintf(
+                '%s-%05d.%s',
+                $matches[1],
+                $matches[2],
+                $locale
+            );
         }
     }
 
     /**
      * Call dtabf_note.xsl to render Source Description
      */
-    protected function renderSourceDescription($article,
-                                               EntityManagerInterface $entityManager,
-                                               TranslatorInterface $translator)
-    {
+    protected function renderSourceDescription(
+        $article,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         // localize labels in xslt
         $language = null;
         $params = [];
@@ -68,7 +70,7 @@ extends RenderTeiController
             return $html;
         }
 
-        list($authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs) = $this->extractPartsFromHtml($html, $entityManager, $translator);
+        [$authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs] = $this->extractPartsFromHtml($html, $entityManager, $translator);
 
         return $this->adjustRefs($html, $refs, $entityManager, $translator, $language);
     }
@@ -77,11 +79,12 @@ extends RenderTeiController
      * Call 'dtabf_article.xsl' or 'dtabf_article-printview.xsl'
      * to render article
      */
-    protected function renderArticle(Request $request,
-                                     EntityManagerInterface $entityManager,
-                                     TranslatorInterface $translator,
-                                     $article)
-    {
+    protected function renderArticle(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $article
+    ) {
         $generatePrintView = 'article-pdf' == $request->attributes->get('_route');
 
         $fname = $this->buildArticleFname($article);
@@ -100,32 +103,40 @@ extends RenderTeiController
         $meta = $teiHelper->analyzeHeader($this->locateTeiResource($fname));
 
         $path = '';
-        list($prefix, $path) = explode(':', $meta->uid, 2);
+        [$prefix, $path] = explode(':', $meta->uid, 2);
         if (preg_match('/\-(\d+)$/', $path, $matches)) {
             $path = preg_replace('/\-(\d+)$/', sprintf('-%05d', $matches[1]), $path);
         }
 
-        $html = $this->renderTei($fname,
-                                 $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl',
-                                 [ 'params' => $params ]);
+        $html = $this->renderTei(
+            $fname,
+            $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl',
+            [ 'params' => $params ]
+        );
 
-        list($authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs) = $this->extractPartsFromHtml($html, $entityManager, $translator);
+        [$authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs] = $this->extractPartsFromHtml($html, $entityManager, $translator);
         $html = $this->adjustRefs($html, $refs, $entityManager, $translator, $language);
 
-        $html = $this->adjustMedia($html,
-                                   $request->getBaseURL()
+        $html = $this->adjustMedia(
+            $html,
+            $request->getBaseURL()
                                    . '/viewer/' . $path,
-                                   $generatePrintView ? '' : 'img-responsive');
+            $generatePrintView ? '' : 'img-responsive'
+        );
 
         $sourceDescription = $this->renderSourceDescription($article, $entityManager, $translator);
         $related = $entityManager
             ->getRepository('\TeiEditionBundle\Entity\Article')
-            ->findBy([ 'isPartOf' => $article ],
-                     [ 'dateCreated' => 'ASC', 'name' => 'ASC']);
+            ->findBy(
+                [ 'isPartOf' => $article ],
+                [ 'dateCreated' => 'ASC', 'name' => 'ASC']
+            );
 
         if ($generatePrintView) {
-            $html = $this->removeByCssSelector('<body>' . $html . '</body>',
-                                               [ 'h2 + br', 'h3 + br' ]);
+            $html = $this->removeByCssSelector(
+                '<body>' . $html . '</body>',
+                [ 'h2 + br', 'h3 + br' ]
+            );
 
             $html = $this->renderView('@TeiEdition/Article/article-printview.html.twig', [
                 'article' => $article,
@@ -144,7 +155,7 @@ extends RenderTeiController
             return;
         }
 
-        list($dummy, $dummy, $dummy, $entitiesSourceDescription, $dummy, $glossaryTermsSourceDescription, $refs) = $this->extractPartsFromHtml($sourceDescription, $entityManager, $translator);
+        [$dummy, $dummy, $dummy, $entitiesSourceDescription, $dummy, $glossaryTermsSourceDescription, $refs] = $this->extractPartsFromHtml($sourceDescription, $entityManager, $translator);
 
         $entities = array_merge($entities, $entitiesSourceDescription);
 
@@ -192,11 +203,12 @@ extends RenderTeiController
     #[Route(path: '/article/date', name: 'article-index-date')]
     #[Route(path: '/article.rss', name: 'article-index-rss')]
     #[Route(path: '/article', name: 'article-index')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator,
-                                FeedManager $feedManager)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        FeedManager $feedManager
+    ) {
         $language = null;
         $locale = $request->getLocale();
         if (!empty($locale)) {
@@ -204,23 +216,23 @@ extends RenderTeiController
         }
 
         $sort = in_array($request->attributes->get('_route'), [
-                    'article-index-date', 'article-index-rss'
-                ])
+            'article-index-date', 'article-index-rss',
+        ])
             ? '-A.datePublished' : 'A.creator';
 
         $qb = $entityManager
                 ->createQueryBuilder();
 
         $qb->select([ 'A',
-                $sort . ' HIDDEN articleSort'
-            ])
+            $sort . ' HIDDEN articleSort',
+        ])
             ->from('\TeiEditionBundle\Entity\Article', 'A')
             ->where('A.status = 1')
             ->andWhere('A.language = :language')
             ->andWhere("A.articleSection IN ('background', 'interpretation')")
             ->andWhere('A.creator IS NOT NULL') // TODO: set for background
             ->orderBy('articleSort, A.creator, A.name')
-            ;
+        ;
         $query = $qb->getQuery();
         if (!empty($language)) {
             $query->setParameter('language', $language);
@@ -236,7 +248,8 @@ extends RenderTeiController
             $feed = $feedManager->get('article');
             $feed->addFromArray($articles);
 
-            return new Response($feed->render('rss'), // // or 'atom'
+            return new Response(
+                $feed->render('rss'), // // or 'atom'
                 Response::HTTP_OK,
                 [ 'content-type' => 'text/xml' ]
             );
@@ -251,11 +264,12 @@ extends RenderTeiController
     #[Route(path: '/article/{slug}.jsonld', name: 'article-jsonld')]
     #[Route(path: '/article/{slug}.pdf', name: 'article-pdf')]
     #[Route(path: '/article/{slug}', name: 'article')]
-    public function detailAction(Request $request,
-                                 EntityManagerInterface $entityManager,
-                                 TranslatorInterface $translator,
-                                 $slug)
-    {
+    public function detailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $slug
+    ) {
         $criteria = [];
         $locale = $request->getLocale();
         if (!empty($locale)) {

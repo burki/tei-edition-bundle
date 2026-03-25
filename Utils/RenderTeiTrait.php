@@ -47,7 +47,7 @@ trait RenderTeiTrait
     /**
      * Remove nodes from HTML by CSS-Selector
      */
-    function removeByCssSelector($html, $selectorsToRemove, $returnPlainText = false)
+    public function removeByCssSelector($html, $selectorsToRemove, $returnPlainText = false)
     {
         $crawler = new \Symfony\Component\DomCrawler\Crawler();
         $crawler->addHtmlContent($html);
@@ -77,8 +77,10 @@ trait RenderTeiTrait
             return $node->text();
         }
 
-        return $this->removeByCssSelector('<body>' . $html . '</body>',
-                                          [ 'span.editorial', 'a.editorial-marker' ],
-                                          true);
+        return $this->removeByCssSelector(
+            '<body>' . $html . '</body>',
+            [ 'span.editorial', 'a.editorial-marker' ],
+            true
+        );
     }
 }

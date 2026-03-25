@@ -1,11 +1,11 @@
 <?php
+
 // src/Entity/ArticleEntity.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]

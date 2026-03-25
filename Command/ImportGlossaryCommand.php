@@ -32,7 +32,8 @@ class ImportGlossaryCommand extends BaseCommand
 
         try {
             $fname = $this->locateData($fname);
-        } catch (\InvalidArgumentException $e) {
+        }
+        catch (\InvalidArgumentException $e) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
             return Command::FAILURE;

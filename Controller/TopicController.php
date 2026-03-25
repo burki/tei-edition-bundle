@@ -1,23 +1,21 @@
 <?php
+
 // src/Controller/TopicController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class TopicController
-extends RenderTeiController
+class TopicController extends RenderTeiController
 {
     /* TODO: inject these topics */
-    static $TOPICS = [
+    public static $TOPICS = [
         'Demographics and Social Structure',
         'Education and Learning',
         'Family and Everyday Life',
@@ -96,10 +94,11 @@ extends RenderTeiController
     }
 
     #[Route(path: '/topic', name: 'topic-index')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         return $this->render('@TeiEdition/Topic/index.html.twig', [
             'pageTitle' => $translator->trans('Topics'),
             'topics' => $this->buildTopicsDescriptions($translator, $request->getLocale()),
@@ -109,11 +108,12 @@ extends RenderTeiController
     #[Route(path: '/topic/{slug}.jsonld', name: 'topic-background-jsonld')]
     #[Route(path: '/topic/{slug}.pdf', name: 'topic-background-pdf')]
     #[Route(path: '/topic/{slug}', name: 'topic-background')]
-    public function backgroundAction(Request $request,
-                                     EntityManagerInterface $entityManager,
-                                     TranslatorInterface $translator,
-                                     $slug)
-    {
+    public function backgroundAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $slug
+    ) {
         $language = null;
         $locale = $request->getLocale();
         if (!empty($locale)) {
@@ -138,10 +138,10 @@ extends RenderTeiController
         $article = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Article')
                 ->findOneBy($criteria)
-                ;
+        ;
         if (isset($article)) {
             $meta = $article;
-            list($prefix, $path) = explode(':', $meta->getUid(), 2);
+            [$prefix, $path] = explode(':', $meta->getUid(), 2);
             if (preg_match('/\-(\d+)$/', $path, $matches)) {
                 $path = preg_replace('/\-(\d+)$/', sprintf('-%05d', $matches[1]), $path);
             }
@@ -165,17 +165,21 @@ extends RenderTeiController
 
         $html = $this->renderTei($fname, $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl', [ 'params' => $params ]);
 
-        list($authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs) = $this->extractPartsFromHtml($html, $entityManager, $translator);
+        [$authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs] = $this->extractPartsFromHtml($html, $entityManager, $translator);
         $html = $this->adjustRefs($html, $refs, $entityManager, $translator, $language);
 
-        $html = $this->adjustMedia($html,
-                                   $request->getBaseURL()
+        $html = $this->adjustMedia(
+            $html,
+            $request->getBaseURL()
                                    . '/viewer/' . $path,
-                                   $generatePrintView ? '' : 'img-responsive');
+            $generatePrintView ? '' : 'img-responsive'
+        );
 
         if ($generatePrintView) {
-            $html = $this->removeByCssSelector('<body>' . $html . '</body>',
-                                               [ 'h2 + br', 'h3 + br' ]);
+            $html = $this->removeByCssSelector(
+                '<body>' . $html . '</body>',
+                [ 'h2 + br', 'h3 + br' ]
+            );
 
             $html = $this->renderView('@TeiEdition/Article/article-printview.html.twig', [
                 'name' => $topics[$slug],
@@ -225,7 +229,7 @@ extends RenderTeiController
                         . (!empty($language) ? ' AND A.language=:language' : ''))
                 ->setParameter('topic', '%' . $topics[$slug] . '%')
                 ->orderBy('S.dateCreated', 'ASC')
-                ;
+        ;
         if (!empty($language)) {
             $queryBuilder->setParameter('language', $language);
         }
@@ -256,7 +260,7 @@ extends RenderTeiController
                     $sourcesPrimary[] = $source;
                 }
                 else {
-                   $sourcesAdditional[] = $source;
+                    $sourcesAdditional[] = $source;
                 }
             }
         }

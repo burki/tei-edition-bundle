@@ -1,33 +1,34 @@
 <?php
+
 // src/Controller/GlossaryController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class GlossaryController
-extends BaseController
+class GlossaryController extends BaseController
 {
     #[Route(path: '/glossary', name: 'glossary-index')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $language = \TeiEditionBundle\Utils\Iso639::code1to3($request->getLocale());
 
         $terms = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\GlossaryTerm')
-                ->findBy([ 'status' => [ 0, 1 ],
-                           'language' => $language ],
-                         [ 'term' => 'ASC' ]);
+                ->findBy(
+                    [ 'status' => [ 0, 1 ],
+                        'language' => $language ],
+                    [ 'term' => 'ASC' ]
+                );
 
         return $this->render('@TeiEdition/Glossary/index.html.twig', [
             'pageTitle' => $translator->trans('Glossary'),

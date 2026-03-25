@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleValidateCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,17 +9,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Validate TEI against data/basisformat.rng.
  */
-class ArticleValidateCommand
-extends BaseCommand
+class ArticleValidateCommand extends BaseCommand
 {
     protected function configure(): void
     {

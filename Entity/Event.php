@@ -1,13 +1,12 @@
 <?php
+
 // src/Entity/Event.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -22,12 +21,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name: 'event')]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
-class Event
-implements \JsonSerializable, JsonLdSerializable
+class Event implements \JsonSerializable, JsonLdSerializable
 {
-    use AlternateNameTrait, ArticleReferencesTrait;
+    use AlternateNameTrait;
+    use ArticleReferencesTrait;
 
-    static function formatDateIncomplete($dateStr)
+    public static function formatDateIncomplete($dateStr)
     {
         if (preg_match('/^\d{4}$/', $dateStr)) {
             $dateStr .= '-00-00';

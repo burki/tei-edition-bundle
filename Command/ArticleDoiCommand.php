@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleDoiCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,40 +9,30 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Cocur\Slugify\SlugifyInterface;
-
 use Sylius\Bundle\ThemeBundle\Context\SettableThemeContext;
 use Sylius\Bundle\ThemeBundle\Repository\ThemeRepositoryInterface;
-
 use TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor;
 use TeiEditionBundle\Utils\Xsl\XsltProcessor;
 use TeiEditionBundle\Utils\XmlFormatter\XmlFormatter;
-
 use FluidXml\FluidXml;
 use FluidXml\FluidNamespace;
 
 /**
  * Assign DOIs through DataCite MDS API.
  */
-class ArticleDoiCommand
-extends BaseCommand
+class ArticleDoiCommand extends BaseCommand
 {
     protected $prefix;
     protected $baseUrl;
@@ -51,25 +42,36 @@ extends BaseCommand
     protected $fundingReference;
     protected $adjustUrlProduction = null;
 
-    public function __construct(EntityManagerInterface $em,
-                                KernelInterface $kernel,
-                                RouterInterface $router,
-                                TranslatorInterface $translator,
-                                SlugifyInterface $slugify,
-                                ParameterBagInterface $params,
-                                ThemeRepositoryInterface $themeRepository,
-                                SettableThemeContext $themeContext,
-                                ?string $siteTheme,
-                                ImageMagickProcessor $imagickProcessor,
-                                XsltProcessor $xsltProcessor,
-                                XmlFormatter $formatter,
-                                ?string $publicDir
-                            )
-    {
-        parent::__construct($em, $kernel, $router, $translator, $slugify, $params,
-                            $themeRepository, $themeContext, $siteTheme,
-                            $imagickProcessor, $xsltProcessor, $formatter,
-                            $publicDir);
+    public function __construct(
+        EntityManagerInterface $em,
+        KernelInterface $kernel,
+        RouterInterface $router,
+        TranslatorInterface $translator,
+        SlugifyInterface $slugify,
+        ParameterBagInterface $params,
+        ThemeRepositoryInterface $themeRepository,
+        SettableThemeContext $themeContext,
+        ?string $siteTheme,
+        ImageMagickProcessor $imagickProcessor,
+        XsltProcessor $xsltProcessor,
+        XmlFormatter $formatter,
+        ?string $publicDir
+    ) {
+        parent::__construct(
+            $em,
+            $kernel,
+            $router,
+            $translator,
+            $slugify,
+            $params,
+            $themeRepository,
+            $themeContext,
+            $siteTheme,
+            $imagickProcessor,
+            $xsltProcessor,
+            $formatter,
+            $publicDir
+        );
 
         $this->prefix = $params->get('app.datacite.prefix');
         $this->baseUrl = $params->get('app.datacite.url');
@@ -146,15 +148,18 @@ extends BaseCommand
             return 1;
         }
 
-        list($url, $metadata) = $this->buildDataCite($entity, $this->prefix);
+        [$url, $metadata] = $this->buildDataCite($entity, $this->prefix);
 
         $persist = false;
 
         if ($input->getOption('insert-missing')) {
             $doi = $entity->getDoi();
             if (!is_null($doi)) {
-                $output->writeln(sprintf('<info>doi for uid %s already exists: %s</info>',
-                                         $entity->getUid(), $entity->getDoi()));
+                $output->writeln(sprintf(
+                    '<info>doi for uid %s already exists: %s</info>',
+                    $entity->getUid(),
+                    $entity->getDoi()
+                ));
 
                 return 0;
             }
@@ -162,8 +167,10 @@ extends BaseCommand
         else if ($input->getOption('update')) {
             $doi = $entity->getDoi();
             if (is_null($doi)) {
-                $output->writeln(sprintf('<info>no doi for uid %s yet</info>',
-                                         $entity->getUid()));
+                $output->writeln(sprintf(
+                    '<info>no doi for uid %s yet</info>',
+                    $entity->getUid()
+                ));
 
                 return 0;
             }
@@ -177,8 +184,11 @@ extends BaseCommand
                 $persist = true;
             }
             else {
-                $output->writeln(sprintf('<info>Error trying to register doi %s for %s</info>',
-                                         $doi, $entity->getUid()));
+                $output->writeln(sprintf(
+                    '<info>Error trying to register doi %s for %s</info>',
+                    $doi,
+                    $entity->getUid()
+                ));
 
                 return 2;
             }
@@ -232,7 +242,7 @@ extends BaseCommand
             return false;
         }
 
-        return (bool)preg_match('/^OK/', $response->body);
+        return (bool) preg_match('/^OK/', $response->body);
     }
 
     private function adjustUrlProduction($url)
@@ -242,9 +252,11 @@ extends BaseCommand
         }
 
         /* generate production urls on local setup according to DATACITE_URL_PRODUCTION_ADJUST */
-        return str_replace($this->adjustUrlProduction[0],
-                           $this->adjustUrlProduction[1],
-                           $url);
+        return str_replace(
+            $this->adjustUrlProduction[0],
+            $this->adjustUrlProduction[1],
+            $url
+        );
     }
 
     private function xmlspecialchars($str)
@@ -263,7 +275,7 @@ extends BaseCommand
 
         $xsiNs = new FluidNamespace('xsi', 'http://www.w3.org/2001/XMLSchema-instance');
         $rootNode = $root[0];
-        $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:{$xsiNs->id()}",  $xsiNs->uri());
+        $rootNode->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:{$xsiNs->id()}", $xsiNs->uri());
 
         $root->attr([ 'xsi:schemaLocation' => 'http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd' ]);
 
@@ -280,7 +292,7 @@ extends BaseCommand
                 $creators = $root->addChild('creators', true)
                     ->addChild('creator', true)
                         ->addChild('creatorName', $this->xmlspecialchars($creator))
-                    ;
+                ;
             }
             else {
                 die('TODO: either creators or contributors is mandatory');
@@ -326,7 +338,7 @@ extends BaseCommand
             $root->addChild('publicationYear', $publishedDate->format('Y'));
             $root->addChild('dates', true)
                 ->addChild('date', $publishedDate->format('Y-m-d'), [ 'dateType' => 'Issued' ])
-                ;
+            ;
         }
         else {
             $now = new \DateTime();
@@ -374,7 +386,7 @@ extends BaseCommand
             }
         }
         else {
-           $root->addChild('resourceType', 'Article', [ 'resourceTypeGeneral' => 'Text' ]);
+            $root->addChild('resourceType', 'Article', [ 'resourceTypeGeneral' => 'Text' ]);
         }
 
         /*
@@ -384,9 +396,9 @@ extends BaseCommand
         */
 
         $url = $this->adjustUrlProduction($this->router->generate($routeName, [
-                $routeKey => $routeValue,
-                '_locale' => $locale,
-            ], UrlGeneratorInterface::ABSOLUTE_URL));
+            $routeKey => $routeValue,
+            '_locale' => $locale,
+        ], UrlGeneratorInterface::ABSOLUTE_URL));
 
         $root->addChild('language', $locale)
             ->addChild('alternateIdentifiers', true)
@@ -438,11 +450,16 @@ extends BaseCommand
         // relatedIdentifiers
         $relatedIdentifiers = $root->addChild('relatedIdentifiers', true);
 
-        $relatedIdentifiers->addChild('relatedIdentifier',
-            $this->adjustUrlProduction($this->router->generate('home', [
-                    '_locale' => $locale,
-                ],
-                UrlGeneratorInterface::ABSOLUTE_URL)
+        $relatedIdentifiers->addChild(
+            'relatedIdentifier',
+            $this->adjustUrlProduction(
+                $this->router->generate(
+                    'home',
+                    [
+                        '_locale' => $locale,
+                    ],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                )
             ),
             [
                 'relatedIdentifierType' => 'URL',
@@ -454,7 +471,7 @@ extends BaseCommand
         $variants = $this->em
             ->getRepository('\TeiEditionBundle\Entity\Article')
             ->findBy([ 'uid' => $entity->getUid() ])
-            ;
+        ;
 
         foreach ($variants as $variant) {
             if ($entity->getLanguage() != $variant->getLanguage()) {
@@ -484,9 +501,11 @@ extends BaseCommand
             // for interpretation: sources
             $related = $this->em
                 ->getRepository('\TeiEditionBundle\Entity\Article')
-                ->findBy([ 'isPartOf' => $entity ],
-                         [ 'dateCreated' => 'ASC', 'name' => 'ASC'])
-                ;
+                ->findBy(
+                    [ 'isPartOf' => $entity ],
+                    [ 'dateCreated' => 'ASC', 'name' => 'ASC']
+                )
+            ;
 
             foreach ($related as $source) {
                 $relatedIdentifiers->addChild('relatedIdentifier', $source->buildDoi($prefix), [
@@ -512,6 +531,6 @@ extends BaseCommand
             $root->add($this->fundingReference);
         }
 
-        return [ $url, (string)$resource ];
+        return [ $url, (string) $resource ];
     }
 }

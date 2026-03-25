@@ -3,7 +3,6 @@
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 
 /**
@@ -28,7 +27,7 @@ trait AlternateNameTrait
         }
 
         // make sure order is as in $language_preferred_ordered
-        uksort($assoc, function($langA, $langB) {
+        uksort($assoc, function ($langA, $langB) {
             if ($langA == $langB) {
                 return 0;
             }

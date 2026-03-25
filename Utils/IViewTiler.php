@@ -4,7 +4,7 @@ namespace TeiEditionBundle\Utils;
 
 class IViewTiler
 {
-    var $tile_size = 256;
+    public $tile_size = 256;
 
     public function determineMaxZoom($width, $height)
     {

@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/BaseController.php
 
 /**
@@ -9,13 +10,10 @@ namespace TeiEditionBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\KernelInterface;
-
 use Cocur\Slugify\SlugifyInterface;
-
 use Sylius\Bundle\ThemeBundle\Context\SettableThemeContext;
 
-abstract class BaseController
-extends AbstractController
+abstract class BaseController extends AbstractController
 {
     use \TeiEditionBundle\Utils\LocateDataTrait;
 
@@ -25,11 +23,12 @@ extends AbstractController
     private $twig;
     private $globals = null;
 
-    public function __construct(KernelInterface $kernel,
-                                SlugifyInterface $slugify,
-                                SettableThemeContext $themeContext,
-                                \Twig\Environment $twig)
-    {
+    public function __construct(
+        KernelInterface $kernel,
+        SlugifyInterface $slugify,
+        SettableThemeContext $themeContext,
+        \Twig\Environment $twig
+    ) {
         $this->kernel = $kernel;
         $this->slugify = $slugify;
         $this->themeContext = $themeContext;

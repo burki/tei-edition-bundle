@@ -6,10 +6,10 @@ use TeiEditionBundle\Utils\Sprintf;
 
 class XmlFormatterCommandlineAdapter
 {
-    var $cmdTemplate;
-    var $config = [];
+    public $cmdTemplate;
+    public $config = [];
 
-    function __construct($cmdTemplate, $config = null)
+    public function __construct($cmdTemplate, $config = null)
     {
         $this->cmdTemplate = $cmdTemplate;
         if (isset($config) && is_array($config)) {
@@ -44,7 +44,7 @@ class XmlFormatterCommandlineAdapter
         return join(' ', $nameValue);
     }
 
-    function formatFile($srcFilename, $options = [])
+    public function formatFile($srcFilename, $options = [])
     {
         $cmd = trim(Sprintf::f($this->cmdTemplate, [
             'source' => $this->escapeFilename($srcFilename),
@@ -59,7 +59,7 @@ class XmlFormatterCommandlineAdapter
         return $res;
     }
 
-    function formatXML($xml, $options = [])
+    public function formatXML($xml, $options = [])
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'TMP_');
         file_put_contents($tempFile, $xml);

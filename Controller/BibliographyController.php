@@ -1,20 +1,18 @@
 <?php
+
 // src/Controller/BibliographyController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class BibliographyController
-extends BaseController
+class BibliographyController extends BaseController
 {
     use SharingBuilderTrait;
 
@@ -23,23 +21,22 @@ extends BaseController
         $path = $this->locateData('csl/jgo-infoclio-de.csl.xml');
 
         $wrapSpan = function ($renderedText, $class) {
-            return '<span class="citeproc-'. $class . '">' . $renderedText . '</span>';
+            return '<span class="citeproc-' . $class . '">' . $renderedText . '</span>';
         };
 
         $additionalMarkup = [];
         foreach ([
-                'creator' => 'creator',
-                'title' => 'title',
-                'in' => 'in',
-                'volumes' => 'volumes',
-                'book-series' => 'book-series',
-                'place' => 'place',
-                'date' => 'data',
-                'URL' => 'URL',
-                'DOI' => 'DOI',
-            ] as $key => $class)
-        {
-            $additionalMarkup[$key] = function($cslItem, $renderedText) use ($wrapSpan, $class) {
+            'creator' => 'creator',
+            'title' => 'title',
+            'in' => 'in',
+            'volumes' => 'volumes',
+            'book-series' => 'book-series',
+            'place' => 'place',
+            'date' => 'data',
+            'URL' => 'URL',
+            'DOI' => 'DOI',
+        ] as $key => $class) {
+            $additionalMarkup[$key] = function ($cslItem, $renderedText) use ($wrapSpan, $class) {
                 return $wrapSpan($renderedText, $class);
             };
         }
@@ -48,10 +45,11 @@ extends BaseController
     }
 
     #[Route(path: '/bibliography', name: 'bibliography-index')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $qb = $entityManager
                 ->createQueryBuilder();
 
@@ -59,7 +57,7 @@ extends BaseController
             ->from('\TeiEditionBundle\Entity\Bibitem', 'B')
             ->where('B.status IN (0,1)')
             ->orderBy('nameSort')
-            ;
+        ;
         $query = $qb->getQuery();
         $items = $query->getResult();
 
@@ -71,9 +69,10 @@ extends BaseController
     }
 
     #[Route(path: '/bibliography/isbn/beacon', name: 'bibliography-isbn-beacon')]
-    public function isbnBeaconAction(EntityManagerInterface $entityManager,
-                                     TranslatorInterface $translator)
-    {
+    public function isbnBeaconAction(
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $bibitemRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Bibitem');
 
@@ -85,15 +84,17 @@ extends BaseController
                 ->groupBy('B.isbn')
                 ->orderBy('B.isbn')
                 ->getQuery()
-                ;
+        ;
 
         $bibitems = $query->execute();
 
         $ret = '#FORMAT: BEACON' . "\n"
              // . "#VERSION: 0.1\n"
-             ;
-        $ret .= sprintf('#TARGET: %s/isbn/{ID}',
-                        $this->generateUrl('bibliography-index', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL))
+        ;
+        $ret .= sprintf(
+            '#TARGET: %s/isbn/{ID}',
+            $this->generateUrl('bibliography-index', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL)
+        )
               . "\n";
 
         $ret .= '#NAME: '
@@ -116,8 +117,11 @@ extends BaseController
             $ret .=  $isbn . ($count > 1 ? '|' . $count : '') . "\n";
         }
 
-        return new \Symfony\Component\HttpFoundation\Response($ret, \Symfony\Component\HttpFoundation\Response::HTTP_OK,
-                                                              [ 'Content-Type' => 'text/plain; charset=UTF-8' ]);
+        return new \Symfony\Component\HttpFoundation\Response(
+            $ret,
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK,
+            [ 'Content-Type' => 'text/plain; charset=UTF-8' ]
+        );
     }
 
     private function buildRisResponse($bibitem)
@@ -129,8 +133,10 @@ extends BaseController
         $csl = json_encode([ $data ]);
 
         $converter = new \Geissler\Converter\Converter();
-        $res = $converter->convert(new \Geissler\Converter\Standard\CSL\CSL($csl),
-                                   new \Geissler\Converter\Standard\RIS\RIS());
+        $res = $converter->convert(
+            new \Geissler\Converter\Standard\CSL\CSL($csl),
+            new \Geissler\Converter\Standard\RIS\RIS()
+        );
 
         $response = new \Symfony\Component\HttpFoundation\Response($res);
         $response->headers->set('Content-Type', 'text/plain; charset=UTF-8');
@@ -143,11 +149,14 @@ extends BaseController
     #[Route(path: '/bibliography/{id}', requirements: ['id' => '\d+'])]
     #[Route(path: '/bibliography/{slug}', name: 'bibliography')]
     #[Route(path: '/bibliography/isbn/{isbn}', name: 'bibliography-by-isbn')]
-    public function detailAction(Request $request,
-                                 EntityManagerInterface $entityManager,
-                                 TranslatorInterface $translator,
-                                 $id = null, $slug = null, $isbn = null)
-    {
+    public function detailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $id = null,
+        $slug = null,
+        $isbn = null
+    ) {
         $bibitemRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Bibitem');
 
@@ -165,8 +174,10 @@ extends BaseController
             if (!empty($variants)) {
                 $orParts = [];
                 foreach ($variants as $variant) {
-                    $orParts[] = sprintf("REPLACE(B.isbn, '-', '') LIKE '%%%s%%'",
-                                         $variant);
+                    $orParts[] = sprintf(
+                        "REPLACE(B.isbn, '-', '') LIKE '%%%s%%'",
+                        $variant
+                    );
                 }
                 $query = $bibitemRepo
                         ->createQueryBuilder('B')
@@ -176,7 +187,7 @@ extends BaseController
                         ->groupBy('B.isbn')
                         ->orderBy('B.isbn')
                         ->getQuery()
-                        ;
+                ;
                 $bibitems = $query->execute();
                 if (count($bibitems) > 0) {
                     return $this->redirectToRoute('bibliography', [ 'slug' => $bibitems[0]->getSlug() ]);
@@ -188,7 +199,8 @@ extends BaseController
             return $this->redirectToRoute('bibliography-index');
         }
 
-        $routeName = 'bibliography'; $routeParams = [ 'slug' => $bibitem->getId() ];
+        $routeName = 'bibliography';
+        $routeParams = [ 'slug' => $bibitem->getId() ];
         if (!empty($slug)) {
             $routeName = 'bibliography';
             $routeParams = [ 'slug' => $slug ];
@@ -208,16 +220,22 @@ extends BaseController
             'pageMeta' => [
                 'jsonLd' => $bibitem->jsonLdSerialize($request->getLocale()),
                 'og' => $this->buildOg($bibitem, $request, $entityManager, $translator, $routeName, $routeParams),
-                'twitter' => $this->buildTwitter($bibitem, $request, $routeName, $routeParams,
-                                                 [ 'citeProc' => $this->instantiateCiteProc($request->getLocale()) ]),
+                'twitter' => $this->buildTwitter(
+                    $bibitem,
+                    $request,
+                    $routeName,
+                    $routeParams,
+                    [ 'citeProc' => $this->instantiateCiteProc($request->getLocale()) ]
+                ),
             ],
         ]);
     }
 
     #[Route(path: '/bibliography/unapi', name: 'bibliography-unapi')]
-    public function unapiAction(Request $request,
-                                EntityManagerInterface $entityManager)
-    {
+    public function unapiAction(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
         /* see http://robotlibrarian.billdueber.com/2009/11/setting-up-your-opac-for-zotero-support-using-unapi/ */
         $format = $request->get('format');
 

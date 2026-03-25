@@ -1,30 +1,31 @@
 <?php
+
 // src/Controller/OrganizationController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class OrganizationController
-extends BaseController
+class OrganizationController extends BaseController
 {
     #[Route(path: '/organization', name: 'organization-index')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $organizations = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Organization')
-                ->findBy([ 'status' => [ 0, 1 ] ],
-                         [ 'name' => 'ASC' ]);
+                ->findBy(
+                    [ 'status' => [ 0, 1 ] ],
+                    [ 'name' => 'ASC' ]
+                );
 
         // the following doesn't work on windows, where we would probably need accent removal
         // for strcoll, so O-Umlaut sorts like O
@@ -39,8 +40,10 @@ extends BaseController
             // Since strcoll ignores . in de_DE.utf8, we replace by something that comes after z
             //   https://stackoverflow.com/a/25939502
             uasort($organizations, function ($a, $b) use ($locale) {
-                return strcoll(str_replace('.', 'Ω', $a->getNameLocalized($locale)),
-                               str_replace('.', 'Ω', $b->getNameLocalized($locale)));
+                return strcoll(
+                    str_replace('.', 'Ω', $a->getNameLocalized($locale)),
+                    str_replace('.', 'Ω', $b->getNameLocalized($locale))
+                );
             });
         }
 
@@ -55,9 +58,10 @@ extends BaseController
      *  https://de.wikipedia.org/wiki/Wikipedia:BEACON
      */
     #[Route(path: '/organization/gnd/beacon', name: 'organization-gnd-beacon')]
-    public function gndBeaconAction(EntityManagerInterface $entityManager,
-                                    TranslatorInterface $translator)
-    {
+    public function gndBeaconAction(
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $repo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Organization');
 
@@ -67,15 +71,17 @@ extends BaseController
                 ->andWhere('O.gnd IS NOT NULL')
                 ->orderBy('O.gnd')
                 ->getQuery()
-                ;
+        ;
 
         $organizations = $query->execute();
 
         $ret = '#FORMAT: BEACON' . "\n"
              . '#PREFIX: http://d-nb.info/gnd/'
              . "\n";
-        $ret .= sprintf('#TARGET: %s/gnd/{ID}',
-                        $this->generateUrl('organization-index', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL))
+        $ret .= sprintf(
+            '#TARGET: %s/gnd/{ID}',
+            $this->generateUrl('organization-index', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL)
+        )
               . "\n";
 
         $ret .= '#NAME: '
@@ -87,18 +93,23 @@ extends BaseController
             $ret .=  $organization->getGnd() . "\n";
         }
 
-        return new \Symfony\Component\HttpFoundation\Response($ret, \Symfony\Component\HttpFoundation\Response::HTTP_OK,
-                                                              [ 'Content-Type' => 'text/plain; charset=UTF-8' ]);
+        return new \Symfony\Component\HttpFoundation\Response(
+            $ret,
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK,
+            [ 'Content-Type' => 'text/plain; charset=UTF-8' ]
+        );
     }
 
     #[Route(path: '/organization/{id}.jsonld', name: 'organization-jsonld')]
     #[Route(path: '/organization/{id}', name: 'organization')]
     #[Route(path: '/organization/gnd/{gnd}.jsonld', name: 'organization-by-gnd-jsonld')]
     #[Route(path: '/organization/gnd/{gnd}', name: 'organization-by-gnd')]
-    public function detailAction(Request $request,
-                                 EntityManagerInterface $entityManager,
-                                 $id = null, $gnd = null)
-    {
+    public function detailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        $id = null,
+        $gnd = null
+    ) {
         $organizationRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Organization');
 

@@ -1,4 +1,5 @@
 <?php
+
 // src/Entity/Article.php
 
 namespace TeiEditionBundle\Entity;
@@ -25,11 +26,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\DiscriminatorMap(['interpretation' => 'Article', 'source' => 'SourceArticle', 'exhibition' => 'ExhibitionArticle'])]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
-class Article
-implements \JsonSerializable, JsonLdSerializable, OgSerializable,
-\Eko\FeedBundle\Item\Writer\RoutedItemInterface
+class Article implements
+    \JsonSerializable,
+    JsonLdSerializable,
+    OgSerializable,
+    \Eko\FeedBundle\Item\Writer\RoutedItemInterface
 {
-    static function truncate($value, $length = 30, $preserve = false, $separator = '...')
+    public static function truncate($value, $length = 30, $preserve = false, $separator = '...')
     {
         if (mb_strlen($value, 'UTF-8') > $length) {
             if ($preserve) {
@@ -41,13 +44,13 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
                 $length = $breakpoint;
             }
 
-            return rtrim(mb_substr($value, 0, $length, 'UTF-8')).$separator;
+            return rtrim(mb_substr($value, 0, $length, 'UTF-8')) . $separator;
         }
 
         return $value;
     }
 
-    static function formatDateIncomplete($dateStr)
+    public static function formatDateIncomplete($dateStr)
     {
         if (preg_match('/^\d{4}$/', $dateStr)) {
             $dateStr .= '-00-00';
@@ -1061,8 +1064,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
         if (!$this->personReferences->exists(
             function ($key, $element) use ($entityId) {
                 return $element->getEntity()->getId() == $entityId;
-            }))
-        {
+            }
+        )) {
             $this->personReferences->add($entityReference);
             $entityReference->setArticle($this);
         }
@@ -1082,8 +1085,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
         if (!$this->organizationReferences->exists(
             function ($key, $element) use ($entityId) {
                 return $element->getEntity()->getId() == $entityId;
-            }))
-        {
+            }
+        )) {
             $this->organizationReferences->add($entityReference);
             $entityReference->setArticle($this);
         }
@@ -1103,8 +1106,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
         if (!$this->placeReferences->exists(
             function ($key, $element) use ($entityId) {
                 return $element->getEntity()->getId() == $entityId;
-            }))
-        {
+            }
+        )) {
             $this->placeReferences->add($entityReference);
             $entityReference->setArticle($this);
         }
@@ -1124,8 +1127,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
         if (!$this->landmarkReferences->exists(
             function ($key, $element) use ($entityId) {
                 return $element->getEntity()->getId() == $entityId;
-            }))
-        {
+            }
+        )) {
             $this->landmarkReferences->add($entityReference);
             $entityReference->setArticle($this);
         }
@@ -1145,8 +1148,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
         if (!$this->eventReferences->exists(
             function ($key, $element) use ($entityId) {
                 return $element->getEntity()->getId() == $entityId;
-            }))
-        {
+            }
+        )) {
             $this->eventReferences->add($entityReference);
             $entityReference->setArticle($this);
         }
@@ -1166,8 +1169,8 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
         if (!$this->bibitemReferences->exists(
             function ($key, $element) use ($entityId) {
                 return $element->getEntity()->getId() == $entityId;
-            }))
-        {
+            }
+        )) {
             $this->bibitemReferences->add($entityReference);
             $entityReference->setArticle($this);
         }
@@ -1222,7 +1225,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable,
             'dateCreated' => $this->dateCreated,
             'dateCreatedDisplay' => $this->dateCreatedDisplay,
             'sourceType' => $this->sourceType,
-            'genre' => isset($this->genre) ? $this->genre : null,
+            'genre' => $this->genre ?? null,
             'keywords' => $this->keywords,
             'language' => $this->language,
             'translatedFrom' => $this->translatedFrom,

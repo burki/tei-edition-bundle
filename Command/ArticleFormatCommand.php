@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleFormatCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,17 +9,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use TeiEditionBundle\Utils\XmlFormatter\XmlFormatter;
 
 /**
  * Run XmlFormatter::formatFile() to normalize TEI.
  */
-class ArticleFormatCommand
-extends Command
+class ArticleFormatCommand extends Command
 {
     protected $formatter;
 

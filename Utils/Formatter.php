@@ -7,7 +7,6 @@ namespace TeiEditionBundle\Utils;
  */
 class Formatter
 {
-
     /** No instances */
     private function __construct() {}
 

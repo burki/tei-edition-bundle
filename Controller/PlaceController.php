@@ -1,20 +1,18 @@
 <?php
+
 // src/Controller/PlaceController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class PlaceController
-extends BaseController
+class PlaceController extends BaseController
 {
     use MapHelperTrait;
 
@@ -24,13 +22,16 @@ extends BaseController
     #[Route(path: '/map', name: 'place-map')]
     #[Route(path: '/map/place', name: 'place-map-mentioned')]
     #[Route(path: '/map/landmark', name: 'place-map-landmark')]
-    public function mapAction(Request $request,
-                              EntityManagerInterface $entityManager,
-                              TranslatorInterface $translator)
-    {
-        list($markers, $bounds) = $this->buildMap($entityManager,
-                                                  $request->getLocale(),
-                                                  str_replace('place-map-', '', $request->attributes->get('_route')));
+    public function mapAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
+        [$markers, $bounds] = $this->buildMap(
+            $entityManager,
+            $request->getLocale(),
+            str_replace('place-map-', '', $request->attributes->get('_route'))
+        );
 
         return $this->render('@TeiEdition/Place/map.html.twig', [
             'pageTitle' => $translator->trans('Map'),
@@ -40,10 +41,11 @@ extends BaseController
     }
 
     #[Route(path: '/map/popup-content/{ids}', name: 'place-map-popup-content')]
-    public function mapPopupContentAction(Request $request,
-                                          EntityManagerInterface $entityManager,
-                                          $ids)
-    {
+    public function mapPopupContentAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        $ids
+    ) {
         if (empty($ids)) {
             $articles = [];
         }
@@ -55,13 +57,13 @@ extends BaseController
                     ->getRepository(in_array($mode, [ 'mentioned', 'landmark' ])
                                              ? '\TeiEditionBundle\Entity\Article' : '\TeiEditionBundle\Entity\SourceArticle')
                     ->createQueryBuilder('A')
-                    ;
+            ;
 
             $qb->select('A')
                     ->distinct()
                     ->andWhere('A.status IN (1) AND P.id IN (:ids)')
                     ->setParameter('ids', $ids)
-                    ;
+            ;
 
             if ('mentioned' == $mode) {
                 $qb
@@ -77,7 +79,7 @@ extends BaseController
                 if (!empty($geo)) {
                     $qb->andWhere('P.geo = :geo')
                         ->setParameter('geo', $geo)
-                        ;
+                    ;
                 }
             }
             else {
@@ -87,7 +89,7 @@ extends BaseController
                 if (!empty($geo)) {
                     $qb->andWhere('A.geo = :geo OR (A.geo IS NULL AND P.geo = :geo)')
                         ->setParameter('geo', $geo)
-                        ;
+                    ;
                 }
             }
 
@@ -95,7 +97,7 @@ extends BaseController
             if (!empty($locale)) {
                 $qb->andWhere('A.language = :lang')
                     ->setParameter('lang', \TeiEditionBundle\Utils\Iso639::code1to3($locale))
-                    ;
+                ;
             }
 
             $qb->addOrderBy('A.dateCreated', 'ASC')
@@ -104,7 +106,7 @@ extends BaseController
             $articles = $qb
                     ->getQuery()
                     ->getResult();
-                    ;
+            ;
         }
 
         return $this->render('@TeiEdition/Place/map-popup-content.html.twig', [
@@ -113,23 +115,26 @@ extends BaseController
     }
 
     #[Route(path: '/place', name: 'place-index')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $qb = $entityManager
                 ->createQueryBuilder();
 
-        $nameSort = sprintf("COALESCE(JSON_UNQUOTE(JSON_EXTRACT(P.alternateName ,'$.%s')),P.name) HIDDEN nameSort",
-                            $request->getLocale());
+        $nameSort = sprintf(
+            "COALESCE(JSON_UNQUOTE(JSON_EXTRACT(P.alternateName ,'$.%s')),P.name) HIDDEN nameSort",
+            $request->getLocale()
+        );
         $qb->select([
-                'P',
-                $nameSort
-            ])
+            'P',
+            $nameSort,
+        ])
             ->from('\TeiEditionBundle\Entity\Place', 'P')
             ->where("P.type='inhabited place'")
             ->orderBy('nameSort')
-            ;
+        ;
 
         $places = $qb->getQuery()->getResult();
 
@@ -143,10 +148,12 @@ extends BaseController
     #[Route(path: '/place/{id}', name: 'place')]
     #[Route(path: '/place/tgn/{tgn}.jsonld', name: 'place-by-tgn-jsonld')]
     #[Route(path: '/place/tgn/{tgn}', name: 'place-by-tgn')]
-    public function detailAction(Request $request,
-                                 EntityManagerInterface $entityManager,
-                                 $id = null, $tgn = null)
-    {
+    public function detailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        $id = null,
+        $tgn = null
+    ) {
         $placeRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Place');
 
@@ -175,20 +182,20 @@ extends BaseController
                 ->createQueryBuilder();
 
         $qb->select([
-                'P',
-                "CONCAT(COALESCE(P.familyName,P.givenName), ' ', COALESCE(P.givenName, '')) HIDDEN nameSort"
-            ])
+            'P',
+            "CONCAT(COALESCE(P.familyName,P.givenName), ' ', COALESCE(P.givenName, '')) HIDDEN nameSort",
+        ])
             ->from('\TeiEditionBundle\Entity\Person', 'P')
             ->where("P.birthPlace = :place OR P.deathPlace = :place")
             ->andWhere('P.status <> -1')
             ->orderBy('P.birthDate')
             ->addOrderBy('nameSort')
-            ;
+        ;
 
         $persons = $qb->getQuery()
             ->setParameter('place', $place)
             ->getResult()
-            ;
+        ;
 
         return $this->render('@TeiEdition/Place/detail.html.twig', [
             'pageTitle' => $place->getNameLocalized($request->getLocale()),
@@ -202,10 +209,11 @@ extends BaseController
 
     #[Route(path: '/landmark/{id}.jsonld', name: 'landmark-jsonld')]
     #[Route(path: '/landmark/{id}', name: 'landmark')]
-    public function landmarkDetailAction(Request $request,
-                                         EntityManagerInterface $entityManager,
-                                         $id = null)
-    {
+    public function landmarkDetailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        $id = null
+    ) {
         $landmarkRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Landmark');
 

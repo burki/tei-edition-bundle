@@ -9,9 +9,9 @@ namespace TeiEditionBundle\Utils;
 
 class BiographicalWikidata
 {
-    const BASE_URL = 'https://query.wikidata.org/sparql';
+    public const BASE_URL = 'https://query.wikidata.org/sparql';
 
-    static $WIKIDATA_PROPERTY_MAP = [
+    public static $WIKIDATA_PROPERTY_MAP = [
         'P19' => 'placeOfBirth',
         'P20' => 'placeOfDeath',
         'P21' => 'gender',
@@ -23,7 +23,7 @@ class BiographicalWikidata
         'P244' => 'lc_naf',
     ];
 
-    static function fetchByGnd($gnd, $lang = 'en', $properties = null)
+    public static function fetchByGnd($gnd, $lang = 'en', $properties = null)
     {
         $entity = null;
 
@@ -42,20 +42,20 @@ class BiographicalWikidata
             $properties = self::lookupProperties($qid, array_keys(self::$WIKIDATA_PROPERTY_MAP), $lang);
 
             foreach ($properties as $property) {
-                $propertyId = (string)$property->propertyId;
+                $propertyId = (string) $property->propertyId;
                 $propertyValue = $property->property;
-                if ($propertyValue instanceOf \EasyRdf\Literal) {
+                if ($propertyValue instanceof \EasyRdf\Literal) {
                     $propertyValue = $propertyValue->getValue();
                 }
 
-                if ($propertyValue instanceOf \DateTime) {
+                if ($propertyValue instanceof \DateTime) {
                     $propertyValue = $propertyValue->format('Y-m-d');
                 }
 
                 if (!empty($propertyValue) && array_key_exists($propertyId, self::$WIKIDATA_PROPERTY_MAP)) {
                     switch ($propertyId) {
                         case 'P21': // sex or gender
-                            switch ((string)$propertyValue) {
+                            switch ((string) $propertyValue) {
                                 case 'http://www.wikidata.org/entity/Q6581072':
                                     $entity->{self::$WIKIDATA_PROPERTY_MAP[$propertyId]} = 'F';
                                     break;
@@ -70,7 +70,7 @@ class BiographicalWikidata
                             break;
 
                         default:
-                            if ($propertyValue instanceOf \EasyRdf\Resource) {
+                            if ($propertyValue instanceof \EasyRdf\Resource) {
                                 $propertyValue = $property->propertyLabel;
                             }
 
@@ -110,14 +110,17 @@ class BiographicalWikidata
 
     protected static function lookupQidByProperty($pid, $value, $sparqlClient = null)
     {
-        $query = sprintf("SELECT ?wd WHERE { ?wd wdt:%s '%s'. }",
-                         $pid, addslashes($value));
+        $query = sprintf(
+            "SELECT ?wd WHERE { ?wd wdt:%s '%s'. }",
+            $pid,
+            addslashes($value)
+        );
 
         $result = self::executeSparqlQuery($query, $sparqlClient);
 
         $ret = [];
         foreach ($result as $row) {
-            $uri = (string)$row->wd;
+            $uri = (string) $row->wd;
 
             if (preg_match('~/(Q\d+)$~', $uri, $matches)) {
                 $ret[] = $matches[1];
@@ -132,8 +135,12 @@ class BiographicalWikidata
         $unionParts = [];
 
         foreach ($propertyIds as $pid) {
-            $unionParts[] = sprintf('{ wd:%s wdt:%s ?property. BIND("%s" as ?propertyId) }',
-                                    $qid, $pid, $pid);
+            $unionParts[] = sprintf(
+                '{ wd:%s wdt:%s ?property. BIND("%s" as ?propertyId) }',
+                $qid,
+                $pid,
+                $pid
+            );
         }
 
         if (empty($unionParts)) {
@@ -153,16 +160,16 @@ class BiographicalWikidata
         return self::executeSparqlQuery($query);
     }
 
-    var $identifier = null;
-    var $gnd;
-    var $viaf = null;
-    var $lc_naf = null;
-    var $preferredName;
-    var $gender;
-    var $academicTitle;
-    var $dateOfBirth;
-    var $placeOfBirth;
-    var $placeOfResidence;
-    var $dateOfDeath;
-    var $placeOfDeath;
+    public $identifier = null;
+    public $gnd;
+    public $viaf = null;
+    public $lc_naf = null;
+    public $preferredName;
+    public $gender;
+    public $academicTitle;
+    public $dateOfBirth;
+    public $placeOfBirth;
+    public $placeOfResidence;
+    public $dateOfDeath;
+    public $placeOfDeath;
 }

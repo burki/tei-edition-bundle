@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/SourceController.php
 
 namespace TeiEditionBundle\Controller;
@@ -6,19 +7,15 @@ namespace TeiEditionBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use TeiEditionBundle\Entity\SourceArticle;
 use TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor;
 
 /**
  *
  */
-class SourceController
-extends ArticleController
+class SourceController extends ArticleController
 {
     /**
      * UTF-8 safe wordwrap
@@ -37,18 +34,18 @@ extends ArticleController
             $line = '';
             $actual = '';
             foreach ($words as $word) {
-                if (mb_strlen($actual.$word) <= $width) {
-                    $actual .= $word.' ';
+                if (mb_strlen($actual . $word) <= $width) {
+                    $actual .= $word . ' ';
                 }
                 else {
                     if ($actual != '') {
-                        $line .= rtrim($actual).$break;
+                        $line .= rtrim($actual) . $break;
                     }
 
                     $actual = $word;
                     if ($cut) {
                         while (mb_strlen($actual) > $width) {
-                            $line .= mb_substr($actual, 0, $width).$break;
+                            $line .= mb_substr($actual, 0, $width) . $break;
                             $actual = mb_substr($actual, $width);
                         }
                     }
@@ -92,11 +89,12 @@ extends ArticleController
     /**
      * Generate JsonLdRespone
      */
-    protected function buildJsonLdResponse(Request $request,
-                                           EntityManagerInterface $entityManager,
-                                           TranslatorInterface $translator,
-                                           SourceArticle $sourceArticle)
-    {
+    protected function buildJsonLdResponse(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        SourceArticle $sourceArticle
+    ) {
         $jsonLd = $sourceArticle->jsonLdSerialize($request->getLocale(), false, true);
 
         if (empty($jsonLd['thumbnailUrl'])) {
@@ -115,11 +113,13 @@ extends ArticleController
      * the mode (PDF or Browser-view)
      * as well as the sourceType (Text / Transcript / Audio / Video / Object)
      */
-    protected function renderSourceViewer(Request $request,
-                                          EntityManagerInterface $entityManager,
-                                          TranslatorInterface $translator,
-                                          $uid, SourceArticle $sourceArticle)
-    {
+    protected function renderSourceViewer(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $uid,
+        SourceArticle $sourceArticle
+    ) {
         if (in_array($request->attributes->get('_route'), [ 'source-jsonld' ])) {
             // return jsonld-rendition
             return $this->buildJsonLdResponse($request, $entityManager, $translator, $sourceArticle);
@@ -141,11 +141,13 @@ extends ArticleController
 
         // render the transcript / translation in the current language to get $license
         // and rendered content for non-iview2 display
-        $html = $this->renderTei($fname,
-                                 $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl',
-                                 $params);
+        $html = $this->renderTei(
+            $fname,
+            $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl',
+            $params
+        );
 
-        list($authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs) = $this->extractPartsFromHtml($html, $entityManager, $translator);
+        [$authors, $sectionHeaders, $license, $entities, $bibitemLookup, $glossaryTerms, $refs] = $this->extractPartsFromHtml($html, $entityManager, $translator);
 
         $interpretation = $sourceArticle->getIsPartOf();
         $interpretations = !is_null($interpretation)
@@ -180,7 +182,7 @@ extends ArticleController
         }
 
         if (!is_null($sourceDescription)) {
-            list($dummy, $dummy, $license, $entitiesSourceDescription, $bibitemLookup, $glossaryTermsSourceDescription, $refs) = $this->extractPartsFromHtml($sourceDescription['html'], $entityManager, $translator);
+            [$dummy, $dummy, $license, $entitiesSourceDescription, $bibitemLookup, $glossaryTermsSourceDescription, $refs] = $this->extractPartsFromHtml($sourceDescription['html'], $entityManager, $translator);
 
             $entities = array_merge($entities, $entitiesSourceDescription);
             $glossaryTerms += $glossaryTermsSourceDescription;
@@ -231,19 +233,19 @@ extends ArticleController
 
         if (in_array($sourceType, [ 'Transkript', 'Transcript' ])
             || (empty($firstFacs) && in_array($sourceArticle->getSourceType(), [
-                        'Audio', 'Video',
-                        'Bild', 'Image',
-                        'Objekt', 'Object',
-                    ])))
-        {
-            $html = $this->adjustMedia($html,
-                                       $request->getBaseURL() . '/viewer/' . $path);
+                'Audio', 'Video',
+                'Bild', 'Image',
+                'Objekt', 'Object',
+            ]))) {
+            $html = $this->adjustMedia(
+                $html,
+                $request->getBaseURL() . '/viewer/' . $path
+            );
             $sourceLocale = \TeiEditionBundle\Utils\Iso639::code3to1($sourceArticle->getLanguage());
 
             if (in_array($sourceType, [
-                    'Transkript', 'Transcript', 'Audio', 'Video',
-                ]))
-            {
+                'Transkript', 'Transcript', 'Audio', 'Video',
+            ])) {
                 $pullFeaturedMedia = false;
 
                 $variants = [ 'transcription' ];
@@ -251,8 +253,7 @@ extends ArticleController
 
                 $getTranslatedFrom = $sourceArticle->getTranslatedFrom();
                 if (!empty($getTranslatedFrom)
-                    && ($sourceArticle->getTranslatedFrom() != $sourceArticle->getLanguage()))
-                {
+                    && ($sourceArticle->getTranslatedFrom() != $sourceArticle->getLanguage())) {
                     if ('yid' == $sourceArticle->getTranslatedFrom()) {
                         // yiddish texts in hebrew script might have an additional
                         // transcript according to YIVO rules in latin script
@@ -293,20 +294,28 @@ extends ArticleController
                                 ],
                             ];
 
-                            $body = $this->adjustMedia($this->renderTei($transcriptionFname, $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl', $params),
-                                                       $request->getBaseURL() . '/viewer/' . $path);
+                            $body = $this->adjustMedia(
+                                $this->renderTei($transcriptionFname, $generatePrintView ? 'dtabf_article-printview.xsl' : 'dtabf_article.xsl', $params),
+                                $request->getBaseURL() . '/viewer/' . $path
+                            );
 
                             // so notes in different locales don't collide
                             // TODO: use lang in xsl to build the notes
-                            $body = preg_replace('/note\-(\d+)\-marker/',
-                                                 'note-' . $transcriptionLocale . '-\1-marker',
-                                                 $body);
-                            $body = preg_replace('/#note\-(\d+)/',
-                                                 '#note-' . $transcriptionLocale . '-\1',
-                                                 $body);
-                            $body = preg_replace('/name="note\-(\d+)/',
-                                                 'name="note-' . $transcriptionLocale . '-\1',
-                                                 $body);
+                            $body = preg_replace(
+                                '/note\-(\d+)\-marker/',
+                                'note-' . $transcriptionLocale . '-\1-marker',
+                                $body
+                            );
+                            $body = preg_replace(
+                                '/#note\-(\d+)/',
+                                '#note-' . $transcriptionLocale . '-\1',
+                                $body
+                            );
+                            $body = preg_replace(
+                                '/name="note\-(\d+)/',
+                                'name="note-' . $transcriptionLocale . '-\1',
+                                $body
+                            );
                         }
                         else {
                             $body = $bodies[$variant];
@@ -380,27 +389,26 @@ extends ArticleController
 
             $template = 'viewer-media.html.twig';
             if (in_array($sourceArticle->getSourceType(), [
-                        'Objekt', 'Object',
-                    ]))
-            {
+                'Objekt', 'Object',
+            ])) {
                 // check for object tag
                 if (preg_match('/<object([^>]*)><\/object>/', $html, $matches)) {
                     // build three-js structure
                     $object = new \SimpleXMLElement($matches[0]);
-                    $url = (string)$object->attributes()['data'];
+                    $url = (string) $object->attributes()['data'];
                     $tag = <<<EOT
-            <div id="glFullwidth">
-                <canvas id="canvas" data-src="{$url}"></canvas>
-            </div>
-            <div id="dat"></div>
-EOT;
+                                    <div id="glFullwidth">
+                                        <canvas id="canvas" data-src="{$url}"></canvas>
+                                    </div>
+                                    <div id="dat"></div>
+                        EOT;
                     $html = preg_replace('/<object([^>]*)><\/object>/', $html, $tag);
 
                     $template = 'viewer-model.html.twig';
                 }
             }
 
-            return $this->render('@TeiEdition/Article/' . $template , [
+            return $this->render('@TeiEdition/Article/' . $template, [
                 'article' => $sourceArticle,
                 'html' => $html,
                 'description' => $sourceDescription,
@@ -450,11 +458,12 @@ EOT;
     #[Route(path: '/source/{uid}.jsonld', name: 'source-jsonld')]
     #[Route(path: '/source/{uid}.pdf', name: 'source-pdf')]
     #[Route(path: '/source/{uid}', name: 'source', requirements: ['uid' => '.*source\-\d+'])]
-    public function sourceViewerAction(Request $request,
-                                       EntityManagerInterface $entityManager,
-                                       TranslatorInterface $translator,
-                                       $uid)
-    {
+    public function sourceViewerAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $uid
+    ) {
         $criteria = [ 'uid' => $uid ];
         $locale = $request->getLocale();
         if (!empty($locale)) {
@@ -488,10 +497,11 @@ EOT;
      * Render a README.txt with proper Meta-Data which
      * is packed into the ZIP-Folder for download
      */
-    protected function renderReadme(EntityManagerInterface $entityManager,
-                                    TranslatorInterface $translator,
-                                    $uid)
-    {
+    protected function renderReadme(
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $uid
+    ) {
         $fs = new \Symfony\Component\Filesystem\Filesystem();
 
         $result = $entityManager
@@ -510,8 +520,10 @@ EOT;
                     'meta' => $sourceArticle,
                 ]);
                 $tempnam = $fs->tempnam(sys_get_temp_dir(), 'readme-' . $locale);
-                file_put_contents($tempnam,
-                                  str_replace("\n", "\r\n", self::mb_wordwrap($content)));
+                file_put_contents(
+                    $tempnam,
+                    str_replace("\n", "\r\n", self::mb_wordwrap($content))
+                );
                 $ret[$translator->trans('README.txt')] = $tempnam;
             }
         }
@@ -612,7 +624,7 @@ EOT;
             return false;
         }
 
-        list($relPath, $filePath) = $dstPath;
+        [$relPath, $filePath] = $dstPath;
 
         $fnameZip = $this->buildFolderName($uid) . '.zip';
         $fullnameZip = $filePath . '/' . $fnameZip;
@@ -635,7 +647,7 @@ EOT;
         $urlZip = $scheme . '://' . $request->getHost() . $portAppend
                 . $request->getBaseUrl()
                 . $relPath . '/' . $fnameZip
-                ;
+        ;
 
         $flags = \ZipArchive::CREATE;
         if (file_exists($fullnameZip)) {
@@ -698,9 +710,11 @@ EOT;
     /**
      * Use ORM to lookup the entity by uid in the proper locale
      */
-    protected function findSourceArticle(EntityManagerInterface $entityManager,
-                                         $uid, $locale)
-    {
+    protected function findSourceArticle(
+        EntityManagerInterface $entityManager,
+        $uid,
+        $locale
+    ) {
         $criteria = [ 'uid' => $uid ];
         if (!empty($locale)) {
             $criteria['language'] = \TeiEditionBundle\Utils\Iso639::code1to3($locale);
@@ -715,12 +729,13 @@ EOT;
      * For downloadable sources, build the ZIP-archive and redirect to it
      */
     #[Route(path: '/source/{uid}.zip', name: 'source-download')]
-    public function downloadAction(Request $request,
-                                   EntityManagerInterface $entityManager,
-                                   TranslatorInterface $translator,
-                                   ImageMagickProcessor $imagickProcessor,
-                                   $uid)
-    {
+    public function downloadAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        ImageMagickProcessor $imagickProcessor,
+        $uid
+    ) {
         $article = $this->findSourceArticle($entityManager, $uid, $request->getLocale());
 
         if (!$article) {
@@ -758,10 +773,11 @@ EOT;
      * For downloadable sources, send TEI
      */
     #[Route(path: '/source/{uid}.tei.xml', name: 'source-tei')]
-    public function teiAction(Request $request,
-                              EntityManagerInterface $entityManager,
-                              $uid)
-    {
+    public function teiAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        $uid
+    ) {
         $article = $this->findSourceArticle($entityManager, $uid, $request->getLocale());
 
         if (!$article) {
@@ -773,8 +789,8 @@ EOT;
             $fnameFull = $this->locateTeiResource($fname);
 
             if (false !== $fnameFull) {
-                return new Response(file_get_contents($fnameFull) , 200, [
-                    'Content-Type' => 'text/xml;charset=UTF-8'
+                return new Response(file_get_contents($fnameFull), 200, [
+                    'Content-Type' => 'text/xml;charset=UTF-8',
                 ]);
             }
         }
@@ -787,11 +803,12 @@ EOT;
      * in the DFG-Viewer
      */
     #[Route(path: '/source/{uid}.mets.xml', name: 'source-mets')]
-    public function metsAction(Request $request,
-                               EntityManagerInterface $entityManager,
-                               \Twig\Environment $twig,
-                               $uid)
-    {
+    public function metsAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        \Twig\Environment $twig,
+        $uid
+    ) {
         $article = $this->findSourceArticle($entityManager, $uid, $request->getLocale());
 
         if (!$article) {
@@ -803,15 +820,18 @@ EOT;
             // if we are allowed to download, check for a mets container
             $dstPath = $this->buildViewerPath($uid);
             if (false !== $dstPath) {
-                list($relPath, $filePath) = $dstPath;
-                $fnameMets = sprintf('%s.%s.mets.xml',
-                                     $this->buildFolderName($uid),
-                                     $request->getLocale());
+                [$relPath, $filePath] = $dstPath;
+                $fnameMets = sprintf(
+                    '%s.%s.mets.xml',
+                    $this->buildFolderName($uid),
+                    $request->getLocale()
+                );
                 $fullnameMets = $filePath . '/' . $fnameMets;
                 try {
                     $resource = new \DOMDocument();
                     $resource->load($fullnameMets);
-                } catch (\Exception $e) {
+                }
+                catch (\Exception $e) {
                     $resource = null;
                     ; // import failed
                 }
@@ -872,8 +892,8 @@ EOT;
             $amdSec->appendChild($fragment);
         }
 
-        return new Response($resource->saveXML() , 200, [
-            'Content-Type' => 'text/xml;charset=UTF-8'
+        return new Response($resource->saveXML(), 200, [
+            'Content-Type' => 'text/xml;charset=UTF-8',
         ]);
     }
 
@@ -899,8 +919,12 @@ EOT;
         // source
         $uid = preg_replace('/[^0-9a-zA-Z_\-\:]/', '', $parts[0]);
         if (preg_match('/(article|source)\-(\d+)/', $uid, $matches)) {
-            $fname = sprintf('%s-%05d.%s',
-                             $matches[1], $matches[2], $locale);
+            $fname = sprintf(
+                '%s-%05d.%s',
+                $matches[1],
+                $matches[2],
+                $locale
+            );
         }
 
         $fname .= '.xml';
@@ -948,8 +972,11 @@ EOT;
                 ];
 
                 if (file_exists($pagesDir . '/' . $page)) {
-                    $html = $this->renderTei(realpath($pagesDir . '/' . $page), 'dtabf_viewer.xsl',
-                                             $params);
+                    $html = $this->renderTei(
+                        realpath($pagesDir . '/' . $page),
+                        'dtabf_viewer.xsl',
+                        $params
+                    );
                 }
             }
         }
@@ -991,10 +1018,11 @@ EOT;
         $iViewTiler = new \TeiEditionBundle\Utils\IViewTiler();
         $level = $iViewTiler->determineMaxZoom($width, $height);
 
-        $response = new Response(<<<EOX
-<?xml version="1.0" encoding="UTF-8"?>
-<imageinfo derivate="{$derivate}" path="{$fname}" tiles="1" width="{$width}" height="{$height}" zoomLevel="{$level}" />
-EOX
+        $response = new Response(
+            <<<EOX
+                <?xml version="1.0" encoding="UTF-8"?>
+                <imageinfo derivate="{$derivate}" path="{$fname}" tiles="1" width="{$width}" height="{$height}" zoomLevel="{$level}" />
+                EOX
         );
         $response->headers->set('Content-Type', 'text/xml');
 
