@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/MetsCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,15 +9,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 /**
  * Generate METS for MyCoRe-Viewer.
  */
-class MetsCommand
-extends BaseCommand
+class MetsCommand extends BaseCommand
 {
     protected function configure(): void
     {
@@ -115,7 +114,7 @@ extends BaseCommand
 
             $n = $element['n'];
             if (!empty($n)) {
-                $page['n'] = (string)$n;
+                $page['n'] = (string) $n;
             }
 
             $PAGES[$page['counter']] = $page;
@@ -164,7 +163,7 @@ extends BaseCommand
                                     // $last_physical: count all <pb> in all previous-siblings
                                     $part = [
                                         'TYPE' => 'section',
-                                        'LABEL' => (string)$head[0], // doesn't handle additional markup in <head>
+                                        'LABEL' => (string) $head[0], // doesn't handle additional markup in <head>
                                         'ORDER' => $order++,
                                         'physical_start' => $pbCount > 0 ? $pbCount : 1,
                                     ];
@@ -175,6 +174,7 @@ extends BaseCommand
                             }
                         }
                         // fallthrough
+                        // no break
                     default:
                         // increase $pbCount
                         $this->registerXpathNamespaces($toplevel);
@@ -193,9 +193,12 @@ extends BaseCommand
         $xw->startDocument('1.0', 'UTF-8');
 
         $xw->startElementNs('mets', 'mets', 'http://www.loc.gov/METS/');
-        $xw->writeAttributeNs('xsi', 'schemaLocation',
-                              'http://www.w3.org/2001/XMLSchema-instance',
-                              'http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd');
+        $xw->writeAttributeNs(
+            'xsi',
+            'schemaLocation',
+            'http://www.w3.org/2001/XMLSchema-instance',
+            'http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd'
+        );
 
         // Descriptive Metadata
         foreach ([ 'dmd', 'amd' ] as $sec) {
@@ -222,8 +225,11 @@ extends BaseCommand
 
                     if (preg_match('/^TEI\.TRANSLATION\.(.+)/', $group, $matches)) {
                         $code1 = strtolower($matches[1]);
-                        $hrefs[] = sprintf('tei/translation.%s/page-%d.xml',
-                                           $code1, $page);
+                        $hrefs[] = sprintf(
+                            'tei/translation.%s/page-%d.xml',
+                            $code1,
+                            $page
+                        );
                     }
                     else {
                         // language of the transcription
@@ -234,9 +240,11 @@ extends BaseCommand
                         $langTranscription = !empty($article->translatedFrom)
                             ? $article->translatedFrom : $article->language;
 
-                        $hrefs[] = sprintf('tei/transcription.%s/page-%d.xml',
-                                           \TeiEditionBundle\Utils\Iso639::code3to1($langTranscription),
-                                           $page);
+                        $hrefs[] = sprintf(
+                            'tei/transcription.%s/page-%d.xml',
+                            \TeiEditionBundle\Utils\Iso639::code3to1($langTranscription),
+                            $page
+                        );
                     }
                 }
 
@@ -258,9 +266,12 @@ extends BaseCommand
 
                     $xw->startElement('mets:FLocat');
                     $xw->writeAttribute('LOCTYPE', 'URL');
-                    $xw->writeAttributeNs('xlink', 'href',
-                                          'http://www.w3.org/1999/xlink',
-                                          $href);
+                    $xw->writeAttributeNs(
+                        'xlink',
+                        'href',
+                        'http://www.w3.org/1999/xlink',
+                        $href
+                    );
                     $xw->endElement(); // </mets:FLocat>
 
                     $xw->endElement(); // </mets:file>
@@ -290,7 +301,7 @@ extends BaseCommand
 
                     if (array_key_exists($order, $PAGES)) {
                         if (!empty($PAGES[$order]['n'])) {
-                           $xw->writeAttribute('ORDERLABEL', $PAGES[$order]['n']);
+                            $xw->writeAttribute('ORDERLABEL', $PAGES[$order]['n']);
                         }
                     }
 
@@ -339,16 +350,25 @@ extends BaseCommand
                         $from = 'log_' . $ID . '_' . $part['ORDER'];
                     }
 
-                    $to = sprintf('phys_dmd_%s_%s',
-                                  $ID, $page);
+                    $to = sprintf(
+                        'phys_dmd_%s_%s',
+                        $ID,
+                        $page
+                    );
                     $xw->startElement('mets:smLink');
                     $xw->writeAttribute('LOCTYPE', 'URL');
-                    $xw->writeAttributeNs('xlink', 'from',
-                                          'http://www.w3.org/1999/xlink',
-                                          $from);
-                    $xw->writeAttributeNs('xlink', 'to',
-                                          'http://www.w3.org/1999/xlink',
-                                          $to);
+                    $xw->writeAttributeNs(
+                        'xlink',
+                        'from',
+                        'http://www.w3.org/1999/xlink',
+                        $from
+                    );
+                    $xw->writeAttributeNs(
+                        'xlink',
+                        'to',
+                        'http://www.w3.org/1999/xlink',
+                        $to
+                    );
                     $xw->endElement(); // </mets:smlink>
                 }
 

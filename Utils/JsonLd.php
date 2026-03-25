@@ -31,8 +31,10 @@ class JsonLd
         $parts = date_parse($date);
         foreach ([ 'year', 'month', 'day' ] as $part) {
             if (0 != $parts[$part]) {
-                $ret[] = sprintf('year' == $part ? '%04d' : '%02d',
-                                 $parts[$part]);
+                $ret[] = sprintf(
+                    'year' == $part ? '%04d' : '%02d',
+                    $parts[$part]
+                );
             }
         }
         if (empty($ret)) {

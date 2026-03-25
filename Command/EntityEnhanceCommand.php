@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/EntityEnhanceCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,17 +9,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Set additional information from various Web services.
  */
-class EntityEnhanceCommand
-extends BaseCommand
+class EntityEnhanceCommand extends BaseCommand
 {
     protected $client;
 
@@ -59,8 +57,10 @@ extends BaseCommand
                 break;
         }
 
-        $output->writeln(sprintf('<error>invalid type: %s</error>',
-                                 $input->getArgument('type')));
+        $output->writeln(sprintf(
+            '<error>invalid type: %s</error>',
+            $input->getArgument('type')
+        ));
 
         return Command::FAILURE;
     }
@@ -107,7 +107,8 @@ extends BaseCommand
             if ($response->getStatus() < 400) {
                 $content = $response->getBody();
             }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             $content = null;
         }
 
@@ -134,7 +135,8 @@ extends BaseCommand
 
             try {
                 $fnameFull = $this->locateData($fname);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 return $gndBeacon; // no file found
             }
 
@@ -202,7 +204,7 @@ extends BaseCommand
                             $additional['wikidata'] = [];
                         }
 
-                        $additional['wikidata'][$locale] = (array)$wikidata;
+                        $additional['wikidata'][$locale] = (array) $wikidata;
                         $person->setAdditional($additional);
                         $persist = true;
                     }
@@ -218,10 +220,13 @@ extends BaseCommand
                         $method = 'get' . ucfirst($property) . 'Date';
                         $date = $person->$method();
                         if (empty($date)) {
-                            echo sprintf("Set %s %s: %s\thttps://www.wikidata.org/wiki/%s",
-                                         $property,
-                                         $wikidata[$key], $person->getId(),
-                                         $wikidata['identifier'])
+                            echo sprintf(
+                                "Set %s %s: %s\thttps://www.wikidata.org/wiki/%s",
+                                $property,
+                                $wikidata[$key],
+                                $person->getId(),
+                                $wikidata['identifier']
+                            )
                               . "\n";
                         }
                     }
@@ -346,8 +351,11 @@ extends BaseCommand
                             $persist = true;
                         }
                         else {
-                            echo sprintf("Lookup TGN: %s\thttps://d-nb.info/gnd/%s",
-                                         $placeInfo['name'], $placeInfo['gnd'])
+                            echo sprintf(
+                                "Lookup TGN: %s\thttps://d-nb.info/gnd/%s",
+                                $placeInfo['name'],
+                                $placeInfo['gnd']
+                            )
                               . "\n";
                         }
                     }
@@ -371,13 +379,12 @@ extends BaseCommand
         $placeRepository = $this->em->getRepository('\TeiEditionBundle\Entity\Place');
 
         foreach ([
-                'nation', 'country',
-                'state', 'metropolitan area',
-                'inhabited place', 'neighborhood'
-            ] as $type)
-        {
+            'nation', 'country',
+            'state', 'metropolitan area',
+            'inhabited place', 'neighborhood',
+        ] as $type) {
             $places = $placeRepository->findBy([ 'type' => $type,
-                                                 'geonames' => null]);
+                'geonames' => null]);
 
             foreach ($places as $place) {
                 $geo = $place->getGeo();
@@ -386,21 +393,23 @@ extends BaseCommand
                 }
 
                 $persist = false;
-                list($lat, $long) = explode(',', $geo, 2);
-                $url = sprintf('http://api.geonames.org/extendedFindNearby?lat=%s&lng=%s&username=burckhardtd',
-                               $lat, $long);
+                [$lat, $long] = explode(',', $geo, 2);
+                $url = sprintf(
+                    'http://api.geonames.org/extendedFindNearby?lat=%s&lng=%s&username=burckhardtd',
+                    $lat,
+                    $long
+                );
 
                 $xml = simplexml_load_file($url);
                 foreach ($xml->geoname as $geoname) {
                     $placeName = $place->getName();
                     if (in_array($geoname->fcode, [
-                            'PCLI',
-                            'ADM1', 'ADM2', 'ADM4',
-                            'PPLA3', 'PPLX',
-                        ]))
-                    {
-                        $geonameId =  (string)($geoname->geonameId);
-                        $geonameName =  (string)($geoname->name);
+                        'PCLI',
+                        'ADM1', 'ADM2', 'ADM4',
+                        'PPLA3', 'PPLX',
+                    ])) {
+                        $geonameId =  (string) ($geoname->geonameId);
+                        $geonameName =  (string) ($geoname->name);
                     }
 
                     switch ($type) {
@@ -486,8 +495,10 @@ extends BaseCommand
                     continue;
                 }
 
-                $url = sprintf('http://api.geonames.org/get?geonameId=%s&username=burckhardtd',
-                               $geonames);
+                $url = sprintf(
+                    'http://api.geonames.org/get?geonameId=%s&username=burckhardtd',
+                    $geonames
+                );
                 $xml = simplexml_load_file($url);
                 $json = json_encode($xml);
                 $info_array = json_decode($json, true);
@@ -502,7 +513,7 @@ extends BaseCommand
                         [ $info['north'], $info['east'] ],
                     ];
 
-                    foreach ( [ 'areaInSqKm', 'population' ] as $key) {
+                    foreach ([ 'areaInSqKm', 'population' ] as $key) {
                         if (array_key_exists($key, $info_array)) {
                             $additional[$key] = $info_array[$key];
                         }
@@ -604,7 +615,7 @@ extends BaseCommand
                         [ $info['north'], $info['east'] ],
                     ];
 
-                    foreach ( [ 'areaInSqKm', 'population' ] as $key) {
+                    foreach ([ 'areaInSqKm', 'population' ] as $key) {
                         if (array_key_exists($key, $info)) {
                             $additional[$key] = $info[$key];
                         }
@@ -642,9 +653,11 @@ extends BaseCommand
 
             $additional = $item->getAdditional();
             if (is_null($additional) || !array_key_exists('googleapis-books', $additional)) {
-                $url = sprintf('https://www.googleapis.com/books/v1/volumes?q=isbn:%s&key=%s',
-                               $isbns[0],
-                               $googleapisKey);
+                $url = sprintf(
+                    'https://www.googleapis.com/books/v1/volumes?q=isbn:%s&key=%s',
+                    $isbns[0],
+                    $googleapisKey
+                );
                 // var_dump($url);
                 $result = $this->executeJsonQuery($url, [
                     'Accept' => 'application/json',

@@ -9,7 +9,7 @@ class ImageMagickProcessor
 {
     protected $path = '';
 
-    var $config = [];
+    public $config = [];
 
     public function __construct($config = null)
     {

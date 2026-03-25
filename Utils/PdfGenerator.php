@@ -2,8 +2,7 @@
 
 namespace TeiEditionBundle\Utils;
 
-class PdfGenerator
-extends \Mpdf\Mpdf
+class PdfGenerator extends \Mpdf\Mpdf
 {
     // mpdf
     public function __construct($options = [])

@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleHeaderCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -7,10 +8,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -19,8 +18,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 /**
  * Lookup article-information from TEI header.
  */
-class ArticleHeaderCommand
-extends BaseCommand
+class ArticleHeaderCommand extends BaseCommand
 {
     protected function configure(): void
     {
@@ -50,7 +48,7 @@ extends BaseCommand
                 InputOption::VALUE_NONE,
                 'If set, an existing article will be set to published'
             )
-            ;
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -130,8 +128,10 @@ extends BaseCommand
 
             // set the (non-deleted)sources belonging to this article to publish as well
             $sourceArticles = $this->em->getRepository('\TeiEditionBundle\Entity\Article')
-                ->findBy([ 'isPartOf' => $entity  ],
-                         [ 'dateCreated' => 'ASC', 'name' => 'ASC']);
+                ->findBy(
+                    [ 'isPartOf' => $entity  ],
+                    [ 'dateCreated' => 'ASC', 'name' => 'ASC']
+                );
 
             foreach ($sourceArticles as $sourceArticle) {
                 if (0 == $sourceArticle->getStatus()) {
@@ -180,8 +180,7 @@ extends BaseCommand
             if (in_array($attribute, [ 'datePublished', 'dateModified' ])) {
                 // \DateTime
                 $method = 'set' . ucfirst($attribute);
-                $entity->$method(isset($article->$attribute)
-                                 ? $article->$attribute : null);
+                $entity->$method($article->$attribute ?? null);
                 continue;
             }
 
@@ -204,22 +203,22 @@ extends BaseCommand
                     $repoClass = 'Person';
                     $key = [];
                     $value = array_map(function ($related) use (&$key) {
-                            $slug = $related->getSlug();
-                            if (empty($slug)) {
-                                $gnd = $related->getGnd();
-                                if (!empty($gnd)) {
-                                    // lookup by gnd instead
-                                    $key[] = 'gnd';
+                        $slug = $related->getSlug();
+                        if (empty($slug)) {
+                            $gnd = $related->getGnd();
+                            if (!empty($gnd)) {
+                                // lookup by gnd instead
+                                $key[] = 'gnd';
 
-                                    return $gnd;
-                                }
+                                return $gnd;
                             }
-                            else {
-                                $key[] = 'slug';
-                            }
+                        }
+                        else {
+                            $key[] = 'slug';
+                        }
 
-                            return $slug;
-                        }, $related);
+                        return $slug;
+                    }, $related);
                     $creator = [];
                     break;
 
@@ -250,7 +249,7 @@ extends BaseCommand
                     $value = $related->getTgn();
                     break;
 
-                case 'isPartOf';
+                case 'isPartOf':
                     $repoClass = 'Article';
                     $criteria = [
                         'uid' => $related->getUid(),

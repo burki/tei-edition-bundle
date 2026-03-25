@@ -4,15 +4,17 @@ namespace TeiEditionBundle\Utils\XmlFormatter;
 
 class XmlFormatter
 {
-    var $config = [];
-    var $adapter = null;
+    public $config = [];
+    public $adapter = null;
 
     public static function addLinebreak($xml, $element = 'lb')
     {
         // hack to add a line break after <lb />
-        $xml = preg_replace('~([ \t]+)(.*?)(<' . $element . '\s*/>)~',
-                            "\\1\\2<" . $element . "/>\n\\1",
-                            $xml);
+        $xml = preg_replace(
+            '~([ \t]+)(.*?)(<' . $element . '\s*/>)~',
+            "\\1\\2<" . $element . "/>\n\\1",
+            $xml
+        );
 
         return $xml;
     }

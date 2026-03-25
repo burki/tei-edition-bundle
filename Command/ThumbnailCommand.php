@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ThumbnailCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,20 +9,17 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Command that creates a thumbnail for the source.
  */
-class ThumbnailCommand
-extends BaseCommand
+class ThumbnailCommand extends BaseCommand
 {
-    static $widthScaled = 293;
-    static $quality = 85;
+    public static $widthScaled = 293;
+    public static $quality = 85;
 
     protected function configure(): void
     {
@@ -101,8 +99,10 @@ extends BaseCommand
             }
 
             if (false == $fnameSrc) {
-                $output->writeln(sprintf('<error>%s.{jpg|png|pdf} does not exist</error>',
-                                         $srcDir . '/' . $facsimile));
+                $output->writeln(sprintf(
+                    '<error>%s.{jpg|png|pdf} does not exist</error>',
+                    $srcDir . '/' . $facsimile
+                ));
 
                 return 1;
             }
@@ -164,7 +164,7 @@ extends BaseCommand
             '-strip',
             $quality,
             $geom,
-            $this->imagickProcessor->escapeshellarg($fnameThumb)
+            $this->imagickProcessor->escapeshellarg($fnameThumb),
         ]);
 
         $this->imagickProcessor->convert($convertArgs);

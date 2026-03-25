@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleBiblioCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -7,15 +8,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 /**
  * Extract bibliographic items from TEI and insert/update into Bibitem.
  */
-class ArticleBiblioCommand
-extends BaseCommand
+class ArticleBiblioCommand extends BaseCommand
 {
     protected function configure(): void
     {
@@ -75,7 +74,8 @@ extends BaseCommand
                 return 1;
             }
 
-            $uid = $article->uid; $language = $article->language;
+            $uid = $article->uid;
+            $language = $article->language;
             $article = $this->em->getRepository('TeiEditionBundle\Entity\Article')
                 ->findOneBy([
                     'uid' => $uid,
@@ -83,8 +83,11 @@ extends BaseCommand
                 ]);
 
             if (is_null($article)) {
-                $output->writeln(sprintf('<error>no article found for uid %s and language %s</error>',
-                                         $uid, $language));
+                $output->writeln(sprintf(
+                    '<error>no article found for uid %s and language %s</error>',
+                    $uid,
+                    $language
+                ));
 
                 return 1;
             }

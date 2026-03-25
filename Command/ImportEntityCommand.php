@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ImportEntityCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -13,8 +14,7 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 /**
  * Import Entities from data/gnd2tgn.xlsx (currently only places).
  */
-class ImportEntityCommand
-extends BaseCommand
+class ImportEntityCommand extends BaseCommand
 {
     protected function configure(): void
     {
@@ -30,7 +30,8 @@ extends BaseCommand
 
         try {
             $fname = $this->locateData($fname);
-        } catch (\InvalidArgumentException $e) {
+        }
+        catch (\InvalidArgumentException $e) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
             return Command::FAILURE;

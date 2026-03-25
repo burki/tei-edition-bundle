@@ -11,9 +11,7 @@
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 trait SharingBuilderTrait
@@ -45,12 +43,14 @@ trait SharingBuilderTrait
      * Debug through https://developers.facebook.com/tools/debug/sharing/
      *
      */
-    public function buildOg($entity,
-                            Request $request,
-                            EntityManagerInterface $entityManager,
-                            TranslatorInterface $translator,
-                             $routeName, $routeParams = [])
-    {
+    public function buildOg(
+        $entity,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $routeName,
+        $routeParams = []
+    ) {
         if (empty($routeParams)) {
             $routeParams = [ 'id' => $entity->getId() ];
         }
@@ -58,8 +58,11 @@ trait SharingBuilderTrait
         $og = [
             'og:site_name' => /** @Ignore */ $translator->trans($this->getGlobal('siteName'), [], 'additional'),
             'og:locale' => $this->buildOgLocale($request),
-            'og:url' => $this->generateUrl($routeName, $routeParams,
-                                           \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL),
+            'og:url' => $this->generateUrl(
+                $routeName,
+                $routeParams,
+                \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL
+            ),
         ];
 
         $baseUri = $request->getUriForPath('/');
@@ -101,9 +104,11 @@ trait SharingBuilderTrait
                             // take the first source
                             $related = $entityManager
                                 ->getRepository('\TeiEditionBundle\Entity\Article')
-                                ->findBy([ 'isPartOf' => $entity ],
-                                         [ 'dateCreated' => 'ASC', 'name' => 'ASC'],
-                                         1);
+                                ->findBy(
+                                    [ 'isPartOf' => $entity ],
+                                    [ 'dateCreated' => 'ASC', 'name' => 'ASC'],
+                                    1
+                                );
                             if (count($related) > 0) {
                                 $uidSource = $related[0]->getUid();
                             }
@@ -111,8 +116,10 @@ trait SharingBuilderTrait
 
                         if (!is_null($uidSource)) {
                             // check for thumb
-                            $thumb = sprintf('viewer/source-%05d/thumb.jpg',
-                                             preg_replace('/.*source\-/', '', $uidSource));
+                            $thumb = sprintf(
+                                'viewer/source-%05d/thumb.jpg',
+                                preg_replace('/.*source\-/', '', $uidSource)
+                            );
 
                             if (file_exists($this->getGlobal('webDir') . '/' . $thumb)) {
                                 $og['og:image'] = $baseUri . $thumb;
@@ -121,6 +128,7 @@ trait SharingBuilderTrait
                         }
                         // fall-through
 
+                        // no break
                     default:
                         $og['og:image'] = $baseUri . 'img/icon/placeholder_article.png';
                 }

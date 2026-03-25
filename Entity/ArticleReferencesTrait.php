@@ -12,8 +12,10 @@ trait ArticleReferencesTrait
     protected function sortArticleReferences($articleReferences)
     {
         usort($articleReferences, function ($a, $b) {
-            return strcmp(mb_strtolower($a->getArticle()->getName(), 'UTF-8'),
-                          mb_strtolower($b->getArticle()->getName(), 'UTF-8'));
+            return strcmp(
+                mb_strtolower($a->getArticle()->getName(), 'UTF-8'),
+                mb_strtolower($b->getArticle()->getName(), 'UTF-8')
+            );
         });
 
         return $articleReferences;

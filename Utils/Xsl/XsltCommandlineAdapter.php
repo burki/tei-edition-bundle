@@ -4,8 +4,7 @@ namespace TeiEditionBundle\Utils\Xsl;
 
 use TeiEditionBundle\Utils\Sprintf;
 
-class XsltCommandlineAdapter
-implements XsltAdapterInterface
+class XsltCommandlineAdapter implements XsltAdapterInterface
 {
     protected $cmdTemplate;
     protected $config = [];
@@ -56,10 +55,10 @@ implements XsltAdapterInterface
         $this->errors = [];
 
         $cmd = trim(Sprintf::f($this->cmdTemplate, [
-                'source' => $this->escapeFilename($srcFilename),
-                'xsl' => $this->escapeFilename($xslFilename),
-                'additional' => $this->buildAdditional($options),
-            ]));
+            'source' => $this->escapeFilename($srcFilename),
+            'xsl' => $this->escapeFilename($xslFilename),
+            'additional' => $this->buildAdditional($options),
+        ]));
 
         $res = `$cmd`;
 

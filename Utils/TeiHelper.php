@@ -45,7 +45,7 @@ class TeiHelper
         $person = new \TeiEditionBundle\Entity\Person();
 
         if (!empty($element['corresp'])) {
-            $person->setSlug((string)$element['corresp']);
+            $person->setSlug((string) $element['corresp']);
         }
 
         if (!empty($element['ref'])) {
@@ -153,7 +153,7 @@ class TeiHelper
         foreach ($result as $element) {
             $facs = $element['facs'];
             if (!empty($facs)) {
-                $fnameFacs = (string)$facs;
+                $fnameFacs = (string) $facs;
                 break; // we only care about the first one
             }
         }
@@ -178,7 +178,7 @@ class TeiHelper
         foreach ($result as $element) {
             $facs = $element['facs'];
             if (!empty($facs)) {
-                $fnameFacs[] = (string)$facs;
+                $fnameFacs[] = (string) $facs;
             }
         }
 
@@ -249,11 +249,11 @@ class TeiHelper
         foreach ($result as $element) {
             switch ($element['type']) {
                 case 'firstPublication':
-                    $article->datePublished = new \DateTime((string)$element);
+                    $article->datePublished = new \DateTime((string) $element);
                     break;
 
                 case 'publication':
-                    $article->dateModified = new \DateTime((string)$element);
+                    $article->dateModified = new \DateTime((string) $element);
                     break;
             }
         }
@@ -263,15 +263,14 @@ class TeiHelper
         }
 
         if (!empty($article->datePublished) && !empty($article->dateModified)
-            && $article->datePublished->format('Y-m-d') == $article->dateModified->format('Y-m-d'))
-        {
+            && $article->datePublished->format('Y-m-d') == $article->dateModified->format('Y-m-d')) {
             unset($article->dateModified);
         }
 
         // license
         $result = $header('./tei:fileDesc/tei:publicationStmt/tei:availability/tei:licence');
         if ($result->length > 0) {
-            $article->license = (string)$result[0]['target'];
+            $article->license = (string) $result[0]['target'];
             $result = $header('./tei:fileDesc/tei:publicationStmt/tei:availability/tei:licence/tei:p');
             if ($result->length > 0) {
                 $article->rights = trim($this->extractTextContent($result[0], false));
@@ -287,13 +286,12 @@ class TeiHelper
 
         // uid, slug, shelfmark and doi
         foreach ([
-                'DTAID' => 'uid',
-                'DTADirName' => 'slug',
-            ] as $type => $target)
-        {
+            'DTAID' => 'uid',
+            'DTADirName' => 'slug',
+        ] as $type => $target) {
             $result = $header('(./tei:fileDesc/tei:publicationStmt/tei:idno/tei:idno[@type="' . $type . '"])[1]');
             if ($result->length > 0) {
-                $article->$target = (string)$result[0];
+                $article->$target = (string) $result[0];
             }
         }
 
@@ -304,13 +302,13 @@ class TeiHelper
 
             $result = $bibl('./tei:author');
             $article->creator = $result->length > 0
-                ? trim((string)$result[0])
+                ? trim((string) $result[0])
                 : null;
 
             $result = $bibl('./tei:placeName');
             if ($result->length > 0) {
                 $place = new \TeiEditionBundle\Entity\Place();
-                $place->setName((string)$result[0]);
+                $place->setName((string) $result[0]);
                 $uri = $result[0]->hasAttribute('ref')
                     ? $result[0]->getAttribute('ref')
                     : null;
@@ -318,8 +316,7 @@ class TeiHelper
                 if (!empty($uri)) {
                     if (preg_match('/^'
                                    . preg_quote('http://vocab.getty.edu/tgn/', '/')
-                                   . '(\d+)$/', $uri, $matches))
-                    {
+                                   . '(\d+)$/', $uri, $matches)) {
                         $place->setTgn($matches[1]);
                     }
                 }
@@ -347,8 +344,7 @@ class TeiHelper
                 if (!empty($uri)) {
                     if (preg_match('/^https?'
                                    . preg_quote('://d-nb.info/gnd/', '/')
-                                   . '(\d+[\-]?[\dxX]?)$/', $uri, $matches))
-                    {
+                                   . '(\d+[\-]?[\dxX]?)$/', $uri, $matches)) {
                         $org->setGnd($matches[1]);
                     }
                 }
@@ -359,7 +355,7 @@ class TeiHelper
             $result = $bibl('./tei:idno');
             $article->providerIdno =
                 $result->length > 0
-                    ? (string)($result[0]) : null;
+                    ? (string) ($result[0]) : null;
 
             $result = $bibl('./tei:date');
             if ($result->length > 0) {
@@ -378,7 +374,7 @@ class TeiHelper
         $article->url = null;
         $result = $header('(./tei:fileDesc/tei:sourceDesc/tei:msDesc/tei:msIdentifier/tei:idno/tei:idno[@type="URLImages"])[1]');
         if ($result->length > 0) {
-            $article->url = (string)$result[0];
+            $article->url = (string) $result[0];
         }
 
         // genre, classification and translatedFrom
@@ -386,7 +382,7 @@ class TeiHelper
         $keywords = [];
         $result = $header('./tei:profileDesc/tei:textClass/tei:classCode');
         foreach ($result as $element) {
-            $label_parts = explode(':', (string)$element, 2);
+            $label_parts = explode(':', (string) $element, 2);
             $label = $label_parts[0];
             if (count($label_parts) > 1) {
                 $article->sourceType = $label_parts[1];
@@ -437,7 +433,7 @@ class TeiHelper
         if (isset($article->genre) && 'source' == $article->genre) {
             $result = $header('./tei:fileDesc/tei:seriesStmt/tei:idno[@type="DTAID"]');
             foreach ($result as $element) {
-                $idno = trim((string)$element);
+                $idno = trim((string) $element);
                 if (!empty($idno)) {
                     if (preg_match('/^\#?(.*?(article|source)-\d+)$/', $idno, $matches)) {
                         $isPartOf = new \TeiEditionBundle\Entity\Article();
@@ -451,7 +447,7 @@ class TeiHelper
             $result = $header('./tei:fileDesc/tei:seriesStmt/tei:title[@type="main"]');
             foreach ($result as $element) {
                 if (!empty($element['corresp'])) {
-                    $corresp = (string)$element['corresp'];
+                    $corresp = (string) $element['corresp'];
                     if (preg_match('/^\#?(.*?(article|source)-\d+)$/', $corresp, $matches)) {
                         $isPartOf = new \TeiEditionBundle\Entity\Article();
                         $isPartOf->setUid($matches[1]);
@@ -466,7 +462,7 @@ class TeiHelper
         $result = $header('./tei:profileDesc/tei:langUsage/tei:language');
         foreach ($result as $element) {
             if (!empty($element['ident'])) {
-                $langIdents[] = (string)$element['ident'];
+                $langIdents[] = (string) $element['ident'];
             }
         }
         $article->language = join(', ', $langIdents);
@@ -476,12 +472,12 @@ class TeiHelper
 
     private function createElement($doc, $name, $content = null, ?array $attributes = null)
     {
-        list($prefix, $localName) = \FluentDOM\Utility\QualifiedName::split($name);
+        [$prefix, $localName] = \FluentDOM\Utility\QualifiedName::split($name);
 
         if (!empty($prefix)) {
             // check if prefix is equal to the default prefix, then we drop it
-            $namespaceURI = (string)$doc->namespaces()->resolveNamespace($prefix);
-            if (!empty($namespaceURI) && $namespaceURI === (string)$doc->namespaces()->resolveNamespace('#default')) {
+            $namespaceURI = (string) $doc->namespaces()->resolveNamespace($prefix);
+            if (!empty($namespaceURI) && $namespaceURI === (string) $doc->namespaces()->resolveNamespace('#default')) {
                 $name = $localName;
             }
         }
@@ -921,7 +917,7 @@ class TeiHelper
                     ? 'corresp' : 'ref';
 
                 if (empty($entity['attributes'][$attribute])) {
-                  continue;
+                    continue;
                 }
 
                 $uri = trim($entity['attributes'][$attribute]);
@@ -931,8 +927,7 @@ class TeiHelper
                         $type = 'place';
                         if (preg_match('/^'
                                        . preg_quote('http://vocab.getty.edu/tgn/', '/')
-                                       . '\d+$/', $uri))
-                        {
+                                       . '\d+$/', $uri)) {
                             ;
                         }
                         else if (preg_match('/geo\:(-?\d+\.\d*),\s*(-?\d+\.\d*)/', $uri, $matches)) {
@@ -949,7 +944,7 @@ class TeiHelper
                         }
                         break;
 
-                      case '{http://www.tei-c.org/ns/1.0}persName':
+                    case '{http://www.tei-c.org/ns/1.0}persName':
                         $type = 'person';
                         if (preg_match('/^https?'
                                        . preg_quote('://d-nb.info/gnd/', '/')
@@ -962,8 +957,7 @@ class TeiHelper
                             || preg_match('/^'
                                             . preg_quote('http://www.stolpersteine-hamburg.de/', '/')
                                             . '.*?BIO_ID=(\d+)/', $uri)
-                        )
-                        {
+                        ) {
                             ;
                         }
                         else if ($enableWikidata && preg_match('/^'
@@ -977,12 +971,11 @@ class TeiHelper
                         }
                         break;
 
-                      case '{http://www.tei-c.org/ns/1.0}orgName':
+                    case '{http://www.tei-c.org/ns/1.0}orgName':
                         $type = 'organization';
                         if (preg_match('/^https?'
                                        . preg_quote('://d-nb.info/gnd/', '/')
-                                       . '\d+\-?[\dxX]?$/', $uri))
-                        {
+                                       . '\d+\-?[\dxX]?$/', $uri)) {
                             ;
                         }
                         else if ($enableWikidata && preg_match('/^'
@@ -996,12 +989,11 @@ class TeiHelper
                         }
                         break;
 
-                      case '{http://www.tei-c.org/ns/1.0}date':
+                    case '{http://www.tei-c.org/ns/1.0}date':
                         $type = 'event';
                         if (preg_match('/^https?'
                                        . preg_quote('://d-nb.info/gnd/', '/')
-                                       . '\d+\-?[\dxX]?$/', $uri))
-                        {
+                                       . '\d+\-?[\dxX]?$/', $uri)) {
                             ;
                         }
                         else {
@@ -1010,7 +1002,7 @@ class TeiHelper
                         }
                         break;
 
-                      default:
+                    default:
                         unset($uri);
                 }
 
@@ -1051,7 +1043,7 @@ class TeiHelper
             $output = $reader->parse();
             foreach ($output as $item) {
                 if (empty($item['attributes']['corresp'])) {
-                  continue;
+                    continue;
                 }
 
                 $key = trim($item['attributes']['corresp']);
@@ -1081,7 +1073,7 @@ class TeiHelper
     {
         switch ($schemaType) {
             case 'relaxng':
-                $document = new \TeiEditionBundle\Utils\DOMDocument;
+                $document = new \TeiEditionBundle\Utils\DOMDocument();
                 if (is_resource($fname)) {
                     $document->loadXML(stream_get_contents($fname));
                 }
@@ -1093,7 +1085,7 @@ class TeiHelper
                 if (!$result) {
                     $errors = [];
                     foreach ($document->getValidationWarnings() as $message) {
-                        $errors[] = (object)[ 'message' => $message ];
+                        $errors[] = (object) [ 'message' => $message ];
                     }
                     $this->errors = $errors;
                 }
@@ -1107,10 +1099,9 @@ class TeiHelper
     }
 }
 
-class CollectingReader
-extends \Sabre\Xml\Reader
+class CollectingReader extends \Sabre\Xml\Reader
 {
-    static function adjustXml($source)
+    public static function adjustXml($source)
     {
         // hack for <?xml-model href="http://www.deutschestextarchiv.de/basisformat_ohne_header.rng"
         // type="application/xml"
@@ -1120,7 +1111,7 @@ extends \Sabre\Xml\Reader
 
     protected $collected;
 
-    function parse() : array
+    public function parse(): array
     {
         $this->collected = [];
         parent::parse();
@@ -1128,12 +1119,12 @@ extends \Sabre\Xml\Reader
         return $this->collected;
     }
 
-    function collect($output)
+    public function collect($output)
     {
         $this->collected[] = $output;
     }
 
-    static function collectElement(CollectingReader $reader)
+    public static function collectElement(CollectingReader $reader)
     {
         $name = $reader->getClark();
 

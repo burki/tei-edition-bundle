@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/TilesCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -8,18 +9,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Command that creates a tiles in proper zoom levels for the source.
  * For the naming scheme, see https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
  */
-class TilesCommand
-extends BaseCommand
+class TilesCommand extends BaseCommand
 {
     protected function configure(): void
     {
@@ -136,7 +134,7 @@ extends BaseCommand
                     $convertArgs = [
                         $this->imagickProcessor->escapeshellarg($fnameFull),
                         $geom,
-                        $this->imagickProcessor->escapeshellarg($fnameScaled)
+                        $this->imagickProcessor->escapeshellarg($fnameScaled),
                     ];
 
                     $this->imagickProcessor->convert($convertArgs);
@@ -160,8 +158,7 @@ extends BaseCommand
                 $this->imagickProcessor->convert($convertArgs);
 
                 foreach (glob($targetDir . DIRECTORY_SEPARATOR
-                              . $fnameBase . '_' . $i . '_*.jpg') as $tilename)
-                {
+                              . $fnameBase . '_' . $i . '_*.jpg') as $tilename) {
                     $pathinfo_tile = pathinfo($tilename);
                     if (preg_match('/(\d+)_(\d+)\-(\d+)$/', $pathinfo_tile['filename'], $matches)) {
                         $level = $matches[1];
@@ -176,10 +173,10 @@ extends BaseCommand
                                 . DIRECTORY_SEPARATOR . $row;
 
                             if (!is_dir($rowPath)) {
-                                mkdir($rowPath, 0777, true);
+                                mkdir($rowPath, 0o777, true);
                             }
 
-                            rename($tilename, $rowPath . DIRECTORY_SEPARATOR . $column. '.jpg');
+                            rename($tilename, $rowPath . DIRECTORY_SEPARATOR . $column . '.jpg');
                         }
                     }
                 }

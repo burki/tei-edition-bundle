@@ -1,27 +1,26 @@
 <?php
+
 // src/Controller/DateController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class DateController
-extends BaseController
+class DateController extends BaseController
 {
     #[Route(path: '/chronology/partial', name: 'date-chronology-partial')]
     #[Route(path: '/chronology', name: 'date-chronology')]
-    public function chronologyAction(Request $request,
-                                     EntityManagerInterface $entityManager,
-                                     TranslatorInterface $translator)
-    {
+    public function chronologyAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $criteria = [ 'status' => [ 1 ] ];
 
         $locale = $request->getLocale();
@@ -35,7 +34,7 @@ extends BaseController
                 ->from('\TeiEditionBundle\Entity\SourceArticle', 'S')
                 ->leftJoin('S.isPartOf', 'A')
                 ->orderBy('S.dateCreated', 'ASC')
-                ;
+        ;
 
         foreach ($criteria as $field => $cond) {
             $queryBuilder->andWhere('S.' . $field
@@ -54,18 +53,19 @@ extends BaseController
     }
 
     #[Route(path: '/event', name: 'event-index')]
-    public function indexAction(EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $qb = $entityManager
                 ->createQueryBuilder();
 
         $qb->select([
-                'E'            ])
+            'E'            ])
             ->from('\TeiEditionBundle\Entity\Event', 'E')
             ->where('E.status IN (0,1) AND E.startDate IS NOT NULL AND E.name IS NOT NULL')
             ->orderBy("CAST(E.startDate AS integer), E.startDate")
-            ;
+        ;
 
         $entities = $qb->getQuery()->getResult();
 
@@ -79,10 +79,12 @@ extends BaseController
     #[Route(path: '/event/{id}', name: 'event')]
     #[Route(path: '/event/gnd/{gnd}.jsonld', name: 'event-by-gnd-jsonld')]
     #[Route(path: '/event/gnd/{gnd}', name: 'event-by-gnd')]
-    public function detailAction(Request $request,
-                                 EntityManagerInterface $entityManager,
-                                 $id = null, $gnd = null)
-    {
+    public function detailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        $id = null,
+        $gnd = null
+    ) {
         $eventRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Event');
 
@@ -100,7 +102,8 @@ extends BaseController
             return $this->redirectToRoute('event-index');
         }
 
-        $routeName = 'event'; $routeParams = [];
+        $routeName = 'event';
+        $routeParams = [];
         if (!empty($gnd)) {
             $routeName = 'event-by-gnd';
             $routeParams = [ 'gnd' => $gnd ];

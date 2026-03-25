@@ -1,29 +1,28 @@
 <?php
+
 // src/Controller/PersonController.php
 
 namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  *
  */
-class PersonController
-extends BaseController
+class PersonController extends BaseController
 {
     use SharingBuilderTrait;
 
     #[Route(path: '/person', name: 'person-index')]
     #[Route(path: '/about/authors', name: 'about-authors')]
-    public function indexAction(Request $request,
-                                EntityManagerInterface $entityManager,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $route = $request->attributes->get('_route');
         $authorsOnly = 'about-authors' == $route;
 
@@ -31,20 +30,20 @@ extends BaseController
                 ->createQueryBuilder();
 
         $qb->select([
-                'P',
-                "CONCAT(COALESCE(P.familyName,P.givenName), ' ', COALESCE(P.givenName, '')) HIDDEN nameSort"
-            ])
+            'P',
+            "CONCAT(COALESCE(P.familyName,P.givenName), ' ', COALESCE(P.givenName, '')) HIDDEN nameSort",
+        ])
             ->from('\TeiEditionBundle\Entity\Person', 'P')
             ->where('P.status IN (0,1)')
             ->orderBy('nameSort')
-            ;
+        ;
 
         if ($authorsOnly) {
             // limit to authors: Person with published Article
             $qb->distinct()
                 ->innerJoin('P.articles', 'A')
                 ->andWhere('A.status IN (1)')
-                ;
+            ;
         }
 
         $labelAuthors = $translator->trans('Authors');
@@ -61,10 +60,11 @@ extends BaseController
      *  https://de.wikipedia.org/wiki/Wikipedia:BEACON
      */
     #[Route(path: '/person/gnd/beacon', name: 'person-gnd-beacon')]
-    public function gndBeaconAction(EntityManagerInterface $entityManager,
-                                    TranslatorInterface $translator,
-                                    \Twig\Environment $twig)
-    {
+    public function gndBeaconAction(
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        \Twig\Environment $twig
+    ) {
         $repo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Person');
 
@@ -74,15 +74,17 @@ extends BaseController
                 ->andWhere('P.gnd IS NOT NULL')
                 ->orderBy('P.gnd')
                 ->getQuery()
-                ;
+        ;
 
         $persons = $query->execute();
 
         $ret = '#FORMAT: BEACON' . "\n"
              . '#PREFIX: http://d-nb.info/gnd/'
              . "\n";
-        $ret .= sprintf('#TARGET: %s/gnd/{ID}',
-                        $this->generateUrl('person-index', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL))
+        $ret .= sprintf(
+            '#TARGET: %s/gnd/{ID}',
+            $this->generateUrl('person-index', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL)
+        )
               . "\n";
 
         $ret .= '#NAME: '
@@ -94,19 +96,24 @@ extends BaseController
             $ret .=  $person->getGnd() . "\n";
         }
 
-        return new \Symfony\Component\HttpFoundation\Response($ret, \Symfony\Component\HttpFoundation\Response::HTTP_OK,
-                                                              [ 'Content-Type' => 'text/plain; charset=UTF-8' ]);
+        return new \Symfony\Component\HttpFoundation\Response(
+            $ret,
+            \Symfony\Component\HttpFoundation\Response::HTTP_OK,
+            [ 'Content-Type' => 'text/plain; charset=UTF-8' ]
+        );
     }
 
     #[Route(path: '/person/{id}.jsonld', name: 'person-jsonld')]
     #[Route(path: '/person/{id}', name: 'person')]
     #[Route(path: '/person/gnd/{gnd}.jsonld', name: 'person-by-gnd-jsonld')]
     #[Route(path: '/person/gnd/{gnd}', name: 'person-by-gnd')]
-    public function detailAction(Request $request,
-                                 EntityManagerInterface $entityManager,
-                                 TranslatorInterface $translator,
-                                 $id = null, $gnd = null)
-    {
+    public function detailAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $id = null,
+        $gnd = null
+    ) {
         $personRepo = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Person');
 
@@ -124,7 +131,8 @@ extends BaseController
             return $this->redirectToRoute('person-index');
         }
 
-        $routeName = 'person'; $routeParams = [];
+        $routeName = 'person';
+        $routeParams = [];
         if (!empty($gnd)) {
             $routeName = 'person-by-gnd';
             $routeParams = [ 'gnd' => $gnd ];

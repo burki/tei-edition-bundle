@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/RenderTeiController.php
 
 /**
@@ -9,23 +10,17 @@ namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\HttpKernel\KernelInterface;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Cocur\Slugify\SlugifyInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use Sylius\Bundle\ThemeBundle\Context\SettableThemeContext;
-
 use TeiEditionBundle\Utils\Xsl\XsltProcessor;
 use TeiEditionBundle\Utils\PdfGenerator;
 
-abstract class RenderTeiController
-extends BaseController
+abstract class RenderTeiController extends BaseController
 {
-    use SharingBuilderTrait,
-        \TeiEditionBundle\Utils\RenderTeiTrait; // use shared method renderTei()
+    use SharingBuilderTrait;
+    use \TeiEditionBundle\Utils\RenderTeiTrait; // use shared method renderTei()
 
     protected $xsltProcessor;
     protected $pdfGenerator;
@@ -33,13 +28,14 @@ extends BaseController
     /**
      * Inject XsltProcessor and PdfGenerator
      */
-    public function __construct(KernelInterface $kernel,
-                                SlugifyInterface $slugify,
-                                SettableThemeContext $themeContext,
-                                \Twig\Environment $twig,
-                                XsltProcessor $xsltProcessor,
-                                PdfGenerator $pdfGenerator)
-    {
+    public function __construct(
+        KernelInterface $kernel,
+        SlugifyInterface $slugify,
+        SettableThemeContext $themeContext,
+        \Twig\Environment $twig,
+        XsltProcessor $xsltProcessor,
+        PdfGenerator $pdfGenerator
+    ) {
         parent::__construct($kernel, $slugify, $themeContext, $twig);
 
         $this->xsltProcessor = $xsltProcessor;
@@ -49,10 +45,12 @@ extends BaseController
     /**
      * lookup internal links
      */
-    protected function buildRefLookup($refs,
-                                      EntityManagerInterface $entityManager,
-                                      TranslatorInterface $translator, $language)
-    {
+    protected function buildRefLookup(
+        $refs,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $language
+    ) {
         $refMap = [];
 
         if (empty($refs)) {
@@ -60,9 +58,9 @@ extends BaseController
         }
 
         $refs = array_unique(array_map(function ($uid) {
-                // chop of anchor
-                return preg_replace('/\#.*/', '', $uid);
-            }, $refs));
+            // chop of anchor
+            return preg_replace('/\#.*/', '', $uid);
+        }, $refs));
 
         // make sure we only pick-up the published ones
         $query = $entityManager
@@ -73,7 +71,7 @@ extends BaseController
                           . (!empty($language) ? ' AND a.language=:language' : '')
                           . " ORDER BY a.name")
             ->setParameter('refs', $refs, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
-            ;
+        ;
 
         if (!empty($language)) {
             $query->setParameter('language', $language);
@@ -158,20 +156,17 @@ extends BaseController
                     foreach ($uriCount as $uri => $count) {
                         if (preg_match('/^https?'
                                        . preg_quote('://d-nb.info/gnd/', '/')
-                                       . '(\d+[xX]?)$/', $uri, $matches))
-                        {
+                                       . '(\d+[xX]?)$/', $uri, $matches)) {
                             $personGnds[$matches[1]] = $uri;
                         }
                         else if (preg_match('/^https?'
                                     . preg_quote('://www.dasjuedischehamburg.de/inhalt/', '/')
-                                    . '(.+)$/', $uri, $matches))
-                        {
+                                    . '(.+)$/', $uri, $matches)) {
                             $personDjhs[urldecode($matches[1])] = $uri;
                         }
                         else if (preg_match('/^https?'
                                             . preg_quote('://www.stolpersteine-hamburg.de/', '/')
-                                            . '.*?BIO_ID=(\d+)/', $uri, $matches))
-                        {
+                                            . '.*?BIO_ID=(\d+)/', $uri, $matches)) {
                             $personStolpersteine[$matches[1]] = $uri;
                         }
                     }
@@ -180,7 +175,7 @@ extends BaseController
                         $persons = $entityManager
                             ->getRepository('\TeiEditionBundle\Entity\Person')
                             ->findBy([ 'gnd' => array_keys($personGnds) ])
-                            ;
+                        ;
 
                         foreach ($persons as $person) {
                             if ($person->getStatus() >= 0) {
@@ -199,7 +194,7 @@ extends BaseController
                         $persons = $entityManager
                             ->getRepository('\TeiEditionBundle\Entity\Person')
                             ->findBy([ 'djh' => array_keys($personDjhs) ])
-                            ;
+                        ;
 
                         foreach ($persons as $person) {
                             if ($person->getStatus() >= 0) {
@@ -218,7 +213,7 @@ extends BaseController
                         $persons = $entityManager
                             ->getRepository('\TeiEditionBundle\Entity\Person')
                             ->findBy([ 'stolpersteine' => array_keys($personStolpersteine) ])
-                            ;
+                        ;
 
                         foreach ($persons as $person) {
                             if ($person->getStatus() >= 0) {
@@ -239,8 +234,7 @@ extends BaseController
                     foreach ($uriCount as $uri => $count) {
                         if (preg_match('/^'
                                        . preg_quote('http://vocab.getty.edu/tgn/', '/')
-                                       . '(\d+?)$/', $uri, $matches))
-                        {
+                                       . '(\d+?)$/', $uri, $matches)) {
                             $placeTgns[$matches[1]] = $uri;
                         }
                         else if (preg_match('/^geo\:(-?\d+\.\d*)(,)\s*(-?\d+\.\d*)/', $uri, $matches)) {
@@ -255,14 +249,14 @@ extends BaseController
                         $places = $entityManager
                             ->getRepository('\TeiEditionBundle\Entity\Place')
                             ->findBy([ 'tgn' => array_keys($placeTgns) ])
-                            ;
+                        ;
 
                         foreach ($places as $place) {
                             if ($place->getStatus() >= 0) {
                                 $uri = $placeTgns[$place->getTgn()];
                                 $details = [
                                     'url' => $this->generateUrl('place-by-tgn', [
-                                        'tgn' => $place->getTgn()
+                                        'tgn' => $place->getTgn(),
                                     ]),
                                 ];
                                 $entitiesByType[$type][$uri] += $details;
@@ -277,7 +271,7 @@ extends BaseController
                             $coords = explode(',', $latLong = str_replace('geo:', '', $uriNormalized));
                             $details = [
                                 'url' => $uriNormalized,
-                                'latLong' => [ (double)$coords[0], (double)$coords[1] ],
+                                'latLong' => [ (float) $coords[0], (float) $coords[1] ],
                             ];
                             $entitiesByType[$type][$uriOriginal] += $details;
 
@@ -291,7 +285,7 @@ extends BaseController
                                 'geo' => $geos,
                                 'status' => [ 0, 1 ],
                             ])
-                            ;
+                        ;
 
                         foreach ($landmarks as $landmark) {
                             if ($landmark->getStatus() >= 0) {
@@ -309,8 +303,7 @@ extends BaseController
                     foreach ($uriCount as $uri => $count) {
                         if (preg_match('/^'
                                        . preg_quote('http://d-nb.info/gnd/', '/')
-                                       . '(\d+[\-]?[\dxX]?)$/', $uri, $matches))
-                        {
+                                       . '(\d+[\-]?[\dxX]?)$/', $uri, $matches)) {
                             $organizationGnds[$matches[1]] = $uri;
                         }
                     }
@@ -319,7 +312,7 @@ extends BaseController
                         $organizations = $entityManager
                             ->getRepository('\TeiEditionBundle\Entity\Organization')
                             ->findBy([ 'gnd' => array_keys($organizationGnds) ])
-                            ;
+                        ;
 
                         foreach ($organizations as $organization) {
                             if ($organization->getStatus() >= 0) {
@@ -340,8 +333,7 @@ extends BaseController
                     foreach ($uriCount as $uri => $count) {
                         if (preg_match('/^'
                                        . preg_quote('http://d-nb.info/gnd/', '/')
-                                       . '(\d+[\-]?[\dxX]?)$/', $uri, $matches))
-                        {
+                                       . '(\d+[\-]?[\dxX]?)$/', $uri, $matches)) {
                             $dateGnds[$matches[1]] = $uri;
                         }
                     }
@@ -350,7 +342,7 @@ extends BaseController
                         $events = $entityManager
                             ->getRepository('\TeiEditionBundle\Entity\Event')
                             ->findBy([ 'gnd' => array_keys($dateGnds) ])
-                            ;
+                        ;
 
                         foreach ($events as $event) {
                             if ($event->getStatus() >= 0 && !is_null($event->getStartDate())) {
@@ -374,9 +366,11 @@ extends BaseController
     /**
      * lookup marked-up glossary terms
      */
-    protected function buildGlossaryLookup(EntityManagerInterface $entityManager,
-                                           $glossaryTerms, $locale)
-    {
+    protected function buildGlossaryLookup(
+        EntityManagerInterface $entityManager,
+        $glossaryTerms,
+        $locale
+    ) {
         $glossaryLookup = [];
 
         if (empty($glossaryTerms)) {
@@ -391,7 +385,8 @@ extends BaseController
             function ($term) use ($that) {
                 return $that->slugify($term);
             },
-            $glossaryTerms);
+            $glossaryTerms
+        );
 
         $termsBySlug = [];
 
@@ -399,11 +394,10 @@ extends BaseController
         foreach ($entityManager
                 ->getRepository('\TeiEditionBundle\Entity\GlossaryTerm')
                 ->findBy([
-                   'status' => [ 0, 1 ],
-                   'language' => $language,
-                   'slug' => $slugs,
-                ]) as $term)
-        {
+                    'status' => [ 0, 1 ],
+                    'language' => $language,
+                    'slug' => $slugs,
+                ]) as $term) {
             $termsBySlug[$term->getSlug()] = $term;
         }
 
@@ -503,10 +497,13 @@ extends BaseController
     /**
      * Adjust internal links
      */
-    protected function adjustRefs($html, $refs,
-                                  EntityManagerInterface $entityManager,
-                                  TranslatorInterface $translator, $language)
-    {
+    protected function adjustRefs(
+        $html,
+        $refs,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        $language
+    ) {
         if (empty($refs)) {
             // nothing to do
             return $html;
@@ -544,7 +541,7 @@ extends BaseController
                         }
                     }
                 }
-        });
+            });
 
         return preg_replace('/<\/?body>/', '', $crawler->html());
     }
@@ -571,10 +568,11 @@ extends BaseController
     /**
      * Use DomCrawler to extract specific parts from the HTML-representation
      */
-    protected function extractPartsFromHtml(string $html,
-                                            EntityManagerInterface $entityManager,
-                                            TranslatorInterface $translator)
-    {
+    protected function extractPartsFromHtml(
+        string $html,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator
+    ) {
         $crawler = new \Symfony\Component\DomCrawler\Crawler();
         $crawler->addHtmlContent($html);
 
@@ -647,7 +645,7 @@ extends BaseController
                               . ' FROM \TeiEditionBundle\Entity\Bibitem b'
                               . ' WHERE b.slug IN (:slugs) AND b.status >= 0')
                 ->setParameter('slugs', array_values($bibitemsMap))
-                ;
+            ;
 
             foreach ($query->getResult() as $bibitem) {
                 $corresps = array_keys($bibitemsMap, $bibitem['slug']);
@@ -699,12 +697,15 @@ extends BaseController
         foreach ($authorIdentifiers as $key => $identifiers) {
             if (!empty($identifiers)) {
                 $query = $entityManager
-                    ->createQuery(sprintf('SELECT p.%s, p.description, p.gender'
+                    ->createQuery(sprintf(
+                        'SELECT p.%s, p.description, p.gender'
                                           . ' FROM \TeiEditionBundle\Entity\Person p'
                                           . ' WHERE p.%s IN (:identifiers)',
-                                          $key, $key))
+                        $key,
+                        $key
+                    ))
                     ->setParameter('identifiers', $identifiers)
-                    ;
+                ;
 
                 foreach ($query->getResult() as $person) {
                     $authorsByIdentifier[$person[$key]]['gender'] = $person['gender'];

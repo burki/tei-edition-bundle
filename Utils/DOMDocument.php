@@ -30,7 +30,6 @@ namespace TeiEditionBundle\Utils;
 
 class DOMDocument extends \DOMDocument
 {
-
     /**
      * @var array
      */

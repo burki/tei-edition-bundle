@@ -1,13 +1,12 @@
 <?php
+
 // src/Entity/Organization.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -22,12 +21,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
-class Organization
-implements \JsonSerializable, JsonLdSerializable
+class Organization implements \JsonSerializable, JsonLdSerializable
 {
-    use AlternateNameTrait, ArticleReferencesTrait;
+    use AlternateNameTrait;
+    use ArticleReferencesTrait;
 
-    static function formatDateIncomplete($dateStr)
+    public static function formatDateIncomplete($dateStr)
     {
         if (preg_match('/^\d{4}$/', $dateStr)) {
             $dateStr .= '-00-00';
@@ -513,9 +512,9 @@ implements \JsonSerializable, JsonLdSerializable
             : \TeiEditionBundle\Utils\Iso639::code1to3($lang);
 
         return $this->providerOf->filter(
-            function($entity) use ($langCode3) {
-               return 1 == $entity->getStatus()
-                && (is_null($langCode3) || $entity->getLanguage() == $langCode3);
+            function ($entity) use ($langCode3) {
+                return 1 == $entity->getStatus()
+                 && (is_null($langCode3) || $entity->getLanguage() == $langCode3);
             }
         );
     }

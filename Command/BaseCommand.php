@@ -1,29 +1,23 @@
 <?php
+
 // src/Command/BaseCommand.php
 
 namespace TeiEditionBundle\Command;
 
 use Symfony\Component\Console\Command\Command;
-
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Cocur\Slugify\SlugifyInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use LodService\LodService;
 use LodService\Provider\DnbProvider;
 use LodService\Provider\GettyVocabulariesProvider;
 use LodService\Identifier\GndIdentifier;
 use LodService\Identifier\TgnIdentifier;
-
 use Sylius\Bundle\ThemeBundle\Context\SettableThemeContext;
 use Sylius\Bundle\ThemeBundle\Repository\ThemeRepositoryInterface;
-
 use TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor;
 use TeiEditionBundle\Utils\Xsl\XsltProcessor;
 use TeiEditionBundle\Utils\XmlFormatter\XmlFormatter;
@@ -31,8 +25,7 @@ use TeiEditionBundle\Utils\XmlFormatter\XmlFormatter;
 /**
  * Shared Base for all Commands.
  */
-abstract class BaseCommand
-extends Command
+abstract class BaseCommand extends Command
 {
     use \TeiEditionBundle\Utils\LocateDataTrait;
 
@@ -48,21 +41,21 @@ extends Command
     protected $xsltProcessor;
     protected $formatter;
 
-    public function __construct(EntityManagerInterface $em,
-                                KernelInterface $kernel,
-                                RouterInterface $router,
-                                TranslatorInterface $translator,
-                                SlugifyInterface $slugify,
-                                ParameterBagInterface $params,
-                                ThemeRepositoryInterface $themeRepository,
-                                SettableThemeContext $themeContext,
-                                ?string $siteTheme,
-                                ImageMagickProcessor $imagickProcessor,
-                                XsltProcessor $xsltProcessor,
-                                XmlFormatter $formatter,
-                                ?string $publicDir
-                            )
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        KernelInterface $kernel,
+        RouterInterface $router,
+        TranslatorInterface $translator,
+        SlugifyInterface $slugify,
+        ParameterBagInterface $params,
+        ThemeRepositoryInterface $themeRepository,
+        SettableThemeContext $themeContext,
+        ?string $siteTheme,
+        ImageMagickProcessor $imagickProcessor,
+        XsltProcessor $xsltProcessor,
+        XmlFormatter $formatter,
+        ?string $publicDir
+    ) {
         parent::__construct();
 
         $this->em = $em;
@@ -138,14 +131,12 @@ extends Command
 
         if (preg_match('/^https?'
                        . preg_quote('://www.dasjuedischehamburg.de/inhalt/', '/')
-                       . '(.+)$/', $uri, $matches))
-        {
+                       . '(.+)$/', $uri, $matches)) {
             $condition = [ 'djh' => urldecode($matches[1]) ];
         }
         else if (preg_match('/^https?'
                             . preg_quote('://www.stolpersteine-hamburg.de/', '/')
-                            . '.*?BIO_ID=(\d+)/', $uri, $matches))
-        {
+                            . '.*?BIO_ID=(\d+)/', $uri, $matches)) {
             $condition = [ 'stolpersteine' => $matches[1] ];
         }
 
@@ -189,14 +180,13 @@ extends Command
 
                     //  move properties from $resource to $person
                     foreach ([
-                            'familyName',
-                            'givenName',
-                            'disambiguatingDescription',
-                            'gender',
-                            'birthDate',
-                            'deathDate',
-                        ] as $src)
-                    {
+                        'familyName',
+                        'givenName',
+                        'disambiguatingDescription',
+                        'gender',
+                        'birthDate',
+                        'deathDate',
+                    ] as $src) {
                         $getter = 'get' . ucfirst($src);
                         $setter = 'set' . ucfirst($src);
                         $value = $resource->$getter();
@@ -275,13 +265,12 @@ extends Command
 
                     //  move properties from $resource to $organization
                     foreach ([
-                            'name',
-                            'foundingDate',
-                            'dissolutionDate',
-                            'disambiguatingDescription',
-                            'url',
-                        ] as $src)
-                    {
+                        'name',
+                        'foundingDate',
+                        'dissolutionDate',
+                        'disambiguatingDescription',
+                        'url',
+                    ] as $src) {
                         $getter = 'get' . ucfirst($src);
                         $setter = 'set' . ucfirst($src);
                         $value = $resource->$getter();
@@ -315,14 +304,12 @@ extends Command
 
         if (preg_match('/^'
                        . preg_quote('http://vocab.getty.edu/tgn/', '/')
-                       . '(\d+)$/', $uri, $matches))
-        {
+                       . '(\d+)$/', $uri, $matches)) {
             $condition = [ 'tgn' => $matches[1] ];
         }
         else if (preg_match('/^'
                        . preg_quote('http://www.wikidata.org/entity/', '/')
-                       . '(Q\d+)$/', $uri, $matches))
-        {
+                       . '(Q\d+)$/', $uri, $matches)) {
             $condition = [ 'wikidata' => $matches[1] ];
         }
 
@@ -360,8 +347,7 @@ extends Command
             if (!empty($additional['gnd'])
                 && preg_match('/^https?'
                               . preg_quote('://d-nb.info/gnd/', '/')
-                              . '(\d+[\-]?[\dxX]?)$/', $additional['gnd'], $matches))
-            {
+                              . '(\d+[\-]?[\dxX]?)$/', $additional['gnd'], $matches)) {
                 $gnd = $entity->getGnd();
                 if (empty($gnd)) {
                     $entity->setGnd($matches[1]);
@@ -424,19 +410,17 @@ extends Command
                         $uri = $additional['gnd'];
                         if (preg_match('/^https?'
                                        . preg_quote('://d-nb.info/gnd/', '/')
-                                       . '(\d+[\-]?[\dxX]?)$/', $uri, $matches))
-                        {
+                                       . '(\d+[\-]?[\dxX]?)$/', $uri, $matches)) {
                             $entity->setGnd($matches[1]);
                         }
                     }
 
                     //  move properties from $resource to $entity
                     foreach ([
-                            'name', 'alternateName',
-                            'geo',
-                            'additionalType',
-                        ] as $src)
-                    {
+                        'name', 'alternateName',
+                        'geo',
+                        'additionalType',
+                    ] as $src) {
                         $getter = 'get' . ucfirst($src);
                         $setter = 'set' . ucfirst($src);
                         $value = $resource->$getter();
@@ -542,12 +526,11 @@ extends Command
 
                     //  move properties from $resource to $entity
                     foreach ([
-                            'name',
-                            'disambiguatingDescription',
-                            'startDate',
-                            'endDate',
-                        ] as $src)
-                    {
+                        'name',
+                        'disambiguatingDescription',
+                        'startDate',
+                        'endDate',
+                    ] as $src) {
                         $getter = 'get' . ucfirst($src);
                         $setter = 'set' . ucfirst($src);
                         $value = $resource->$getter();

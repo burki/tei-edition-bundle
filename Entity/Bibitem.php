@@ -1,13 +1,12 @@
 <?php
+
 // src/Entity/Bibitem.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,9 +27,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\HasLifecycleCallbacks]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
-class Bibitem
-implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSerializable
+class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSerializable
 {
+    use ArticleReferencesTrait;
     /**
      * Build a list of normalized ISBNs of the book.
      *
@@ -301,8 +300,6 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
     #[Solr\Field(type: 'strings', getter: 'getDescriptionStrings')]
     protected $description;
 
-    use ArticleReferencesTrait;
-
     #[ORM\OneToMany(targetEntity: \ArticleBibitem::class, mappedBy: 'bibitem', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
@@ -339,9 +336,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
         return $slugify->slugify($corresp, '-');
     }
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     /**
      * Sets id.
@@ -754,7 +749,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
 
         // so we can renderCitation in search-index
         // JSON_UNESCAPED_UNICODE is important for Umlaute to be found
-        $this->description = [ 'raw' => json_encode($raw,  JSON_UNESCAPED_UNICODE) ];
+        $this->description = [ 'raw' => json_encode($raw, JSON_UNESCAPED_UNICODE) ];
 
         return $this;
     }
@@ -1021,8 +1016,11 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
         /* vertical-align: super doesn't render nicely:
            http://stackoverflow.com/a/1530819/2114681
         */
-        $ret = preg_replace('/style="([^"]*)vertical\-align\:\s*super;([^"]*)"/',
-                            'style="\1vertical-align: top; font-size: 66%;\2"', $ret);
+        $ret = preg_replace(
+            '/style="([^"]*)vertical\-align\:\s*super;([^"]*)"/',
+            'style="\1vertical-align: top; font-size: 66%;\2"',
+            $ret
+        );
 
         if ($purgeSeparator) {
             $reWrappingDiv = '/^\s*<div[^>]*>([\s\S]*)<\/div>\s*$/s';
@@ -1038,24 +1036,34 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
             }
 
             // make links clickable
-            $ret = preg_replace_callback('/(<span class="citeproc\-URL">)(.*?)(<\/span>)/',
+            $ret = preg_replace_callback(
+                '/(<span class="citeproc\-URL">)(.*?)(<\/span>)/',
                 function ($matches) {
                     return $matches[1]
-                        . sprintf('<a href="%s" target="_blank">%s</a>',
-                                  $matches[2], $matches[2])
+                        . sprintf(
+                            '<a href="%s" target="_blank">%s</a>',
+                            $matches[2],
+                            $matches[2]
+                        )
                         . $matches[3];
                 },
-                $ret);
+                $ret
+            );
 
             // make doi: clickable
-            $ret = preg_replace_callback('/doi\:(<span class="citeproc\-DOI">)(.*?)(<\/span>)/',
+            $ret = preg_replace_callback(
+                '/doi\:(<span class="citeproc\-DOI">)(.*?)(<\/span>)/',
                 function ($matches) {
                     return $matches[1]
-                        . sprintf('<a href="https://dx.doi.org/%s" target="_blank">doi:%s</a>',
-                                  $matches[2], $matches[2])
+                        . sprintf(
+                            '<a href="https://dx.doi.org/%s" target="_blank">doi:%s</a>',
+                            $matches[2],
+                            $matches[2]
+                        )
                         . $matches[3];
                 },
-                $ret);
+                $ret
+            );
         }
 
         return $ret;
@@ -1099,9 +1107,9 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
             $dateObj = \DateTime::createFromFormat('U', $formatter->parse($dateStr));
             if (false !== $dateObj) {
                 return [
-                    'year' => (int)$dateObj->format('Y'),
-                    'month' =>  (int)$dateObj->format('m'),
-                    'day' => (int)$dateObj->format('d'),
+                    'year' => (int) $dateObj->format('Y'),
+                    'month' =>  (int) $dateObj->format('m'),
+                    'day' => (int) $dateObj->format('d'),
                 ];
             }
         }
@@ -1149,7 +1157,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
         }
 
         if (!filter_var($dateStr, FILTER_VALIDATE_INT) === false) {
-            $parts[] = (int)$dateStr;
+            $parts[] = (int) $dateStr;
 
             return $parts;
         }
@@ -1237,9 +1245,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
                     $targetEntry['family'] = $creator['name'];
                 }
                 else {
-                    foreach ([ 'firstName' => 'given', 'lastName' => 'family']
-                             as $src => $dst)
-                    {
+                    foreach ([ 'firstName' => 'given', 'lastName' => 'family'] as $src => $dst) {
                         if (array_key_exists($src, $creator)) {
                             $targetEntry[$dst] = $creator[$src];
                         }
@@ -1296,7 +1302,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
                 $type = 'CreativeWork';
                 break;
 
-            // just for building isPartOf
+                // just for building isPartOf
             case 'issue':
                 $type = 'PublicationIssue';
                 break;
@@ -1333,8 +1339,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
             foreach ($this->creators as $creator) {
                 if (array_key_exists('creatorType', $creator) && in_array($creator['creatorType'], [ 'author', 'editor', 'translator' ])) {
                     if ('author' == $creator['creatorType']
-                        && in_array($type, [ 'PublicationIssue', 'Periodical' ]))
-                    {
+                        && in_array($type, [ 'PublicationIssue', 'Periodical' ])) {
                         continue;
                     }
                     else if ('editor' == $creator['creatorType'] && in_array($type, [ 'Chapter' ])) {
@@ -1396,7 +1401,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
             }
 
             if (!empty($this->numberOfPages) && preg_match('/^\d+$/', $this->numberOfPages)) {
-                $ret['numberOfPages'] = (int)$this->numberOfPages;
+                $ret['numberOfPages'] = (int) $this->numberOfPages;
             }
         }
         else if (in_array($type, [ 'ScholarlyArticle', 'Chapter' ])) {
@@ -1456,8 +1461,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable, TwitterSeriali
         }
 
         if (!is_null($this->datePublished)
-            && !in_array($type, [ 'ScholarlyArticle', 'Chapter', 'Periodical' ]))
-        {
+            && !in_array($type, [ 'ScholarlyArticle', 'Chapter', 'Periodical' ])) {
             $ret['datePublished'] = \TeiEditionBundle\Utils\JsonLd::formatDate8601($this->datePublished);
         }
 

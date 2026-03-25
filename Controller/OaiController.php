@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/OaiController.php
 
 namespace TeiEditionBundle\Controller;
@@ -6,28 +7,24 @@ namespace TeiEditionBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Use Picturae OAI-PMH package to implement an OAI-endpoint /oai
  */
-class OaiController
-extends AbstractController
+class OaiController extends AbstractController
 {
     #[Route(path: '/oai', name: 'oai')]
-    public function dispatchAction(Request $request,
-                                   EntityManagerInterface $entityManager,
-                                   TranslatorInterface $translator,
-                                   RouterInterface $router,
-                                   \Twig\Environment $twig)
-    {
+    public function dispatchAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        RouterInterface $router,
+        \Twig\Environment $twig
+    ) {
         // repositoryName is localized siteName
         $globals = $twig->getGlobals();
 
@@ -35,11 +32,13 @@ extends AbstractController
         $repository = new Repository(
             $request,
             $router,
-            $entityManager, [
+            $entityManager,
+            [
                 'repositoryName' => /** @Ignore */ $translator->trans($globals['siteName'], [], 'additional'),
                 'administrationEmails' => [ $globals['siteEmail'] ],
-                'publisher' => /** @Ignore */ $translator->trans($globals['sitePublisher'], [], 'additional')
-        ]);
+                'publisher' => /** @Ignore */ $translator->trans($globals['sitePublisher'], [], 'additional'),
+            ]
+        );
 
         // Instead of
         //   $provider = new \Picturae\OaiPmh\Provider($repository, $laminasRequest);
@@ -83,8 +82,7 @@ extends AbstractController
  * Override \Picturae\OaiPmh\Provider so we can inject the
  * Eprints: OAI2 to HTML XSLT Style Sheet
  */
-class OaiProvider
-extends \Picturae\OaiPmh\Provider
+class OaiProvider extends \Picturae\OaiPmh\Provider
 {
     private $xslUrl;
 
@@ -92,9 +90,10 @@ extends \Picturae\OaiPmh\Provider
      * @param Repository $repository
      * @param \Psr\Http\Message\ServerRequestInterface|null $request
      */
-    public function __construct(\Picturae\OaiPmh\Interfaces\Repository $repository,
-                                ?\Psr\Http\Message\ServerRequestInterface $request = null)
-    {
+    public function __construct(
+        \Picturae\OaiPmh\Interfaces\Repository $repository,
+        ?\Psr\Http\Message\ServerRequestInterface $request = null
+    ) {
         parent::__construct($repository, $request);
 
         $this->xslUrl = $repository->getStylesheetUrl();
@@ -115,17 +114,21 @@ extends \Picturae\OaiPmh\Provider
 
         // add xml-stylesheet processing instruction
         $document = new \DOMDocument('1.0', 'UTF-8');
-        $document->loadXML((string)$response->getBody());
+        $document->loadXML((string) $response->getBody());
 
-        $xslt = $document->createProcessingInstruction('xml-stylesheet',
-                                                       'type="text/xsl" href="' . htmlspecialchars($this->xslUrl) . '"');
+        $xslt = $document->createProcessingInstruction(
+            'xml-stylesheet',
+            'type="text/xsl" href="' . htmlspecialchars($this->xslUrl) . '"'
+        );
 
         // adding it to the document
         $document->insertBefore($xslt, $document->documentElement);
 
-        return new \GuzzleHttp\Psr7\Response($response->getStatusCode(),
-                                             $response->getHeaders(),
-                                             $document->saveXML());
+        return new \GuzzleHttp\Psr7\Response(
+            $response->getStatusCode(),
+            $response->getHeaders(),
+            $document->saveXML()
+        );
     }
 }
 
@@ -147,8 +150,7 @@ use Picturae\OaiPmh\Interfaces\Repository as InterfaceRepository;
 use Picturae\OaiPmh\Interfaces\Repository\Identity;
 use Picturae\OaiPmh\Interfaces\SetList as InterfaceSetList;
 
-class Repository
-implements InterfaceRepository
+class Repository implements InterfaceRepository
 {
     protected $request;
     protected $router;
@@ -156,7 +158,7 @@ implements InterfaceRepository
     protected $options = [];
     protected $limit = 20;
 
-    static function xmlEncode($str)
+    public static function xmlEncode($str)
     {
         if (is_null($str)) {
             return;
@@ -165,10 +167,12 @@ implements InterfaceRepository
         return htmlspecialchars(rtrim($str), ENT_XML1, 'utf-8');
     }
 
-    public function __construct($request, $router,
-                                EntityManagerInterface $entityManager,
-                                $options = [])
-    {
+    public function __construct(
+        $request,
+        $router,
+        EntityManagerInterface $entityManager,
+        $options = []
+    ) {
         $this->request = $request;
         $this->router = $router;
         $this->entityManager = $entityManager;
@@ -312,7 +316,9 @@ implements InterfaceRepository
         }
 
         // remove non-null
-        $items = array_filter($items, function($var) { return $var !== null; });
+        $items = array_filter($items, function ($var) {
+            return $var !== null;
+        });
 
         // TODO: handle case when $items is empty but $token is not null
         // which can happen if all are null but there are more to come
@@ -428,8 +434,7 @@ implements InterfaceRepository
         ];
 
         if (!empty($params['set'])
-            && in_array($params['set'], [ 'background', 'interpretation', 'source' ]))
-        {
+            && in_array($params['set'], [ 'background', 'interpretation', 'source' ])) {
             $criteria['articleSection'] = $params['set'];
         }
 
@@ -466,7 +471,7 @@ implements InterfaceRepository
             ->setMaxResults($this->limit + 1);
 
         if (!empty($params['offset']) && $params['offset'] > 0) {
-            $qb->setFirstResult((int)$params['offset']);
+            $qb->setFirstResult((int) $params['offset']);
         }
 
         $records = [];
@@ -489,7 +494,7 @@ implements InterfaceRepository
             ->findOneBy([
                 'uid' => $matches[1],
                 'language' => \TeiEditionBundle\Utils\Iso639::code1to3($locale = $matches[3]),
-                'status' => 1
+                'status' => 1,
             ]);
 
         if (is_null($article)) {
@@ -561,30 +566,31 @@ implements InterfaceRepository
 
         // oai_dc
         $xml = <<<EOT
-            <oai_dc:dc
-                 xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-                 xmlns:dc="http://purl.org/dc/elements/1.1/"
-                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
-                 http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-                <dc:language>{$locale}</dc:language>
-                <dc:title>{$title}</dc:title>
-                <dc:identifier>{$url}</dc:identifier>
-                <dc:creator>{$creator}</dc:creator>
-                <dc:publisher>{$publisher}</dc:publisher>
-                <dc:subject>{$subject}</dc:subject>
-                <dc:type>Online Ressource</dc:type>
-                <dc:description>{$description}</dc:description>
-                <dc:date>{$date}</dc:date>
-            </oai_dc:dc>
-EOT;
+                        <oai_dc:dc
+                             xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                             xmlns:dc="http://purl.org/dc/elements/1.1/"
+                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                             xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
+                             http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                            <dc:language>{$locale}</dc:language>
+                            <dc:title>{$title}</dc:title>
+                            <dc:identifier>{$url}</dc:identifier>
+                            <dc:creator>{$creator}</dc:creator>
+                            <dc:publisher>{$publisher}</dc:publisher>
+                            <dc:subject>{$subject}</dc:subject>
+                            <dc:type>Online Ressource</dc:type>
+                            <dc:description>{$description}</dc:description>
+                            <dc:date>{$date}</dc:date>
+                        </oai_dc:dc>
+            EOT;
 
         $recordMetadata = new \DOMDocument('1.0', 'UTF-8');
         $recordMetadata->loadXML($xml);
 
         $someRecord = new \Picturae\OaiPmh\Implementation\Record(
             new \Picturae\OaiPmh\Implementation\Record\Header($identifier, $datePublished, [], $article->getStatus() != 1),
-            $recordMetadata);
+            $recordMetadata
+        );
 
         return $someRecord;
     }

@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ImportGeoCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -6,20 +7,14 @@ namespace TeiEditionBundle\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
-
 use Cocur\Slugify\SlugifyInterface;
-
 use Sylius\Bundle\ThemeBundle\Context\SettableThemeContext;
 use Sylius\Bundle\ThemeBundle\Repository\ThemeRepositoryInterface;
-
 use TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor;
 use TeiEditionBundle\Utils\Xsl\XsltProcessor;
 use TeiEditionBundle\Utils\XmlFormatter\XmlFormatter;
@@ -28,31 +23,41 @@ use TeiEditionBundle\Utils\SimplifyGeojsonProcessor;
 /**
  * Import administrative boundaries downloaded from https://mapzen.com/data/borders/.
  */
-class ImportGeoCommand
-extends BaseCommand
+class ImportGeoCommand extends BaseCommand
 {
     protected $simplifier;
 
-    public function __construct(EntityManagerInterface $em,
-                                KernelInterface $kernel,
-                                RouterInterface $router,
-                                TranslatorInterface $translator,
-                                SlugifyInterface $slugify,
-                                ParameterBagInterface $params,
-                                ThemeRepositoryInterface $themeRepository,
-                                SettableThemeContext $themeContext,
-                                ?string $siteTheme,
-                                ImageMagickProcessor $imagickProcessor,
-                                XsltProcessor $xsltProcessor,
-                                XmlFormatter $formatter,
-                                ?string $publicDir,
-                                SimplifyGeojsonProcessor $simplifier
-                                )
-    {
-        parent::__construct($em, $kernel, $router, $translator, $slugify, $params,
-                            $themeRepository, $themeContext, $siteTheme,
-                            $imagickProcessor,
-                            $xsltProcessor, $formatter, $publicDir);
+    public function __construct(
+        EntityManagerInterface $em,
+        KernelInterface $kernel,
+        RouterInterface $router,
+        TranslatorInterface $translator,
+        SlugifyInterface $slugify,
+        ParameterBagInterface $params,
+        ThemeRepositoryInterface $themeRepository,
+        SettableThemeContext $themeContext,
+        ?string $siteTheme,
+        ImageMagickProcessor $imagickProcessor,
+        XsltProcessor $xsltProcessor,
+        XmlFormatter $formatter,
+        ?string $publicDir,
+        SimplifyGeojsonProcessor $simplifier
+    ) {
+        parent::__construct(
+            $em,
+            $kernel,
+            $router,
+            $translator,
+            $slugify,
+            $params,
+            $themeRepository,
+            $themeContext,
+            $siteTheme,
+            $imagickProcessor,
+            $xsltProcessor,
+            $formatter,
+            $publicDir
+        );
 
         $this->simplifier = $simplifier;
     }
@@ -104,7 +109,7 @@ extends BaseCommand
             $simplified = $this->simplify([
                 'type' => 'FeatureCollection',
                 'features' => [
-                    $feature
+                    $feature,
                 ],
             ], $country->getType());
 
@@ -125,20 +130,18 @@ extends BaseCommand
             $level4geojson = json_decode($info, true);
             if (false !== $level4geojson) {
                 foreach ($level4geojson['features'] as $feature) {
-                    if ($feature['osm_type'] == 'relation' && !empty($feature['properties']['ISO3166-2']))
-                    {
+                    if ($feature['osm_type'] == 'relation' && !empty($feature['properties']['ISO3166-2'])) {
                         $code = $feature['properties']['ISO3166-2'];
                         foreach ($country->getChildren() as $child) {
                             $additional = $child->getAdditional();
                             if (!is_null($additional)
                                 && array_key_exists('boundaryCode', $additional)
-                                && $additional['boundaryCode'] == $code)
-                            {
+                                && $additional['boundaryCode'] == $code) {
                                 $feature['properties'] = [ 'name' => $feature['properties']['name'] ];
                                 $simplified = $this->simplify([
                                     'type' => 'FeatureCollection',
                                     'features' => [
-                                        $feature
+                                        $feature,
                                     ],
                                 ], $child->getType());
 
@@ -178,7 +181,7 @@ extends BaseCommand
         $directories = [];
         foreach (new \GlobIterator($dir . '/*') as $subdir) {
             if ($subdir->isDir()) {
-                $directories[] = (string)$subdir;
+                $directories[] = (string) $subdir;
             }
         }
 

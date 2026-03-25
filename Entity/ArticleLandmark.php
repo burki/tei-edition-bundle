@@ -1,4 +1,5 @@
 <?php
+
 // src/Entity/ArticleLandmark.php
 
 namespace TeiEditionBundle\Entity;
@@ -6,8 +7,7 @@ namespace TeiEditionBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-class ArticleLandmark
-extends ArticleEntity
+class ArticleLandmark extends ArticleEntity
 {
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id', nullable: false)]
     #[ORM\ManyToOne(targetEntity: \Landmark::class, inversedBy: 'articleReferences')]

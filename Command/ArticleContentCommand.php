@@ -1,4 +1,5 @@
 <?php
+
 // src/Command/ArticleContentCommand.php
 
 namespace TeiEditionBundle\Command;
@@ -7,10 +8,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -18,8 +17,7 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 /**
  * Set Article.description as plain-text for Solr indexing.
  */
-class ArticleContentCommand
-extends BaseCommand
+class ArticleContentCommand extends BaseCommand
 {
     use \TeiEditionBundle\Utils\RenderTeiTrait; // use shared method renderTei()
 
@@ -47,7 +45,7 @@ extends BaseCommand
         $html2text = new \Html2Text\Html2Text($html, [
             'do_links' => is_bool($do_links) && !$do_links
                 ? 'none' : 'inline',
-            ]);
+        ]);
 
         return $html2text->getText();
     }
@@ -95,8 +93,11 @@ extends BaseCommand
             ]);
 
         if (is_null($entity)) {
-            $output->writeln(sprintf('<error>no article found for %s - %s</error>',
-                                     $uid, $language));
+            $output->writeln(sprintf(
+                '<error>no article found for %s - %s</error>',
+                $uid,
+                $language
+            ));
 
             return 1;
         }
@@ -114,18 +115,24 @@ extends BaseCommand
         switch ($entity->getArticleSection()) {
             case 'interpretation':
                 // sourceDescription
-                $html = $this->renderTei($fname, 'dtabf_note.xsl',
-                                         [ 'params' => $params,
-                                           'locateXmlResource' => false ]);
+                $html = $this->renderTei(
+                    $fname,
+                    'dtabf_note.xsl',
+                    [ 'params' => $params,
+                        'locateXmlResource' => false ]
+                );
                 $description = $this->html2Text($html, false);
                 $entity->setDescription(trim($description));
                 break;
 
             case 'background':
                 // sourceDescription
-                $html = $this->renderTei($fname, 'dtabf_summary.xsl',
-                                         [ 'params' => $params,
-                                           'locateXmlResource' => false ]);
+                $html = $this->renderTei(
+                    $fname,
+                    'dtabf_summary.xsl',
+                    [ 'params' => $params,
+                        'locateXmlResource' => false ]
+                );
                 $description = $this->html2Text($html);
                 $entity->setDescription(trim($description));
                 break;
@@ -136,9 +143,12 @@ extends BaseCommand
                 $interpretation = $entity->getIsPartOf();
                 if (is_null($interpretation)) {
                     // look for sourceDescription in $entity
-                    $html = $this->renderTei($fname, 'dtabf_note.xsl',
-                                            [ 'params' => $params,
-                                            'locateXmlResource' => false ]);
+                    $html = $this->renderTei(
+                        $fname,
+                        'dtabf_note.xsl',
+                        [ 'params' => $params,
+                            'locateXmlResource' => false ]
+                    );
                     $description = $this->html2Text($html, false);
                     $entity->setDescription(trim($description));
                 }
@@ -148,13 +158,17 @@ extends BaseCommand
                 die('TODO: handle ' . $entity->getArticleSection());
         }
 
-        $html = $this->renderTei($fname,
-                                 $fnameXslt,
-                                 [ 'params' => $params,
-                                   'locateXmlResource' => false ]);
+        $html = $this->renderTei(
+            $fname,
+            $fnameXslt,
+            [ 'params' => $params,
+                'locateXmlResource' => false ]
+        );
 
-        $html = $this->removeByCssSelector($html,
-                                           [ '.fn-intext', '.footnote > .fn-sign', '.gap' ]);
+        $html = $this->removeByCssSelector(
+            $html,
+            [ '.fn-intext', '.footnote > .fn-sign', '.gap' ]
+        );
 
         $text = ltrim(trim($this->html2Text($html)), '*'); // * comes from <li> in authors
 

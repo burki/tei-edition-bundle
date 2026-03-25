@@ -7,7 +7,6 @@ namespace TeiEditionBundle\Utils;
  */
 class Iso639
 {
-
     private static $languages = null;
 
     /** No instances */

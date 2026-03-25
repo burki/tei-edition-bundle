@@ -1,4 +1,5 @@
 <?php
+
 // src/Controller/SearchController.php
 
 namespace TeiEditionBundle\Controller;
@@ -6,9 +7,7 @@ namespace TeiEditionBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
 use Symfony\Contracts\Translation\TranslatorInterface;
-
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\ThemeBundle\Context\SettableThemeContext;
@@ -19,19 +18,19 @@ use Solarium\Component\Facet\JsonTerms;
 /**
  *
  */
-class SearchController
-extends BaseController
+class SearchController extends BaseController
 {
     protected $solr;
     protected $paginator;
 
-    public function __construct(KernelInterface $kernel,
-                                SlugifyInterface $slugify,
-                                SettableThemeContext $themeContext,
-                                \Twig\Environment $twig,
-                                SolrInterface $solr,
-                                PaginatorInterface $paginator)
-    {
+    public function __construct(
+        KernelInterface $kernel,
+        SlugifyInterface $slugify,
+        SettableThemeContext $themeContext,
+        \Twig\Environment $twig,
+        SolrInterface $solr,
+        PaginatorInterface $paginator
+    ) {
         parent::__construct($kernel, $slugify, $themeContext, $twig);
 
         $this->solr = $solr;
@@ -40,7 +39,8 @@ extends BaseController
 
     protected function getQuery(Request $request, $facetNames = [])
     {
-        $q = ''; $filter = [];
+        $q = '';
+        $filter = [];
 
         if ($request->getMethod() == 'POST') {
             $q = trim($request->request->get('q'));
@@ -80,16 +80,17 @@ extends BaseController
     }
 
     #[Route(path: '/search', name: 'search-index')]
-    public function indexAction(Request $request,
-                                TranslatorInterface $translator)
-    {
+    public function indexAction(
+        Request $request,
+        TranslatorInterface $translator
+    ) {
         $solrClient = $this->getSolrClient($request);
 
         $meta = $results = [];
         $pagination = null;
         $facetNames = [ 'entity' ];
 
-        list($q, $filter) = $this->getQuery($request, $facetNames);
+        [$q, $filter] = $this->getQuery($request, $facetNames);
 
         if (!empty($q) || !empty($filter)) {
             $meta['query'] = $q;
@@ -102,7 +103,7 @@ extends BaseController
             $solrQuery
                 ->setStart(0)
                 ->setRows($resultsPerPage)
-                ;
+            ;
 
             // actual query
             $edismax = $solrQuery->getEdisMax();
@@ -123,7 +124,7 @@ extends BaseController
                     $solrQuery->addFilterQuery([
                         'key' => $facetName,
                         'local_tag' => $facetName,
-                        'query' => $field . ':' . $filter[$facetName]
+                        'query' => $field . ':' . $filter[$facetName],
                     ]);
                 }
 
@@ -137,7 +138,7 @@ extends BaseController
 
                 $facetField
                     ->setMinCount(1) // only get the ones with matches
-                    ;
+                ;
 
                 $facetSet->addFacet($facetField);
             }
@@ -205,12 +206,13 @@ extends BaseController
     }
 
     #[Route(path: '/search/suggest', name: 'search-suggest')]
-    public function suggestAction(Request $request,
-                                  EntityManagerInterface $entityManager)
-    {
+    public function suggestAction(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
         $suggestions = [];
 
-        list($q, $filter) = $this->getQuery($request);
+        [$q, $filter] = $this->getQuery($request);
         if (empty($q) || mb_strlen($q, 'UTF-8') < 3) {
             return new \Symfony\Component\HttpFoundation\JsonResponse($suggestions);
         }
@@ -260,6 +262,7 @@ extends BaseController
                 case 'bibitem':
                     $route = 'bibliography';
                     ; // fall through
+                    // no break
                 default:
                     if (is_null($route)) {
                         $route = $parts[0];
@@ -279,12 +282,12 @@ extends BaseController
             $qb = $entityManager
                     ->getRepository('\TeiEditionBundle\Entity\Article')
                     ->createQueryBuilder('A')
-                    ;
+            ;
             $qb->select('A.id, A.uid, A.slug, A.articleSection')
                 ->where('A.status = 1')
                 ->andWhere('A.id IN (:ids)')
                 ->setParameter('ids', $articleIds)
-                ;
+            ;
 
             foreach ($qb->getQuery()->getResult() as $article) {
                 $articles[$article['id']] = $article;

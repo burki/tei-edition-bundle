@@ -31,9 +31,9 @@ trait MapHelperTrait
             if (!array_key_exists($geo, $markers)) {
                 unset($position['geo']);
 
-                $position['number'] = (int)($position['number']);
+                $position['number'] = (int) ($position['number']);
                 $latLng = explode(',', $geo);
-                $position['latLng'] = [ (double)$latLng[0], (double)$latLng[1] ];
+                $position['latLng'] = [ (float) $latLng[0], (float) $latLng[1] ];
                 $position['primary'] = is_null($geoPrimary) || array_key_exists($geo, $geoPrimary);
 
                 if (!empty($position['type'])) {
@@ -87,7 +87,7 @@ trait MapHelperTrait
         $qb = $entityManager
                 ->getRepository($entityName)
                 ->createQueryBuilder('A')
-                ;
+        ;
 
         $geoPrimary = null;
         if ('mentioned' == $mode) {
@@ -101,14 +101,17 @@ trait MapHelperTrait
                 ->andWhere('A.status IN (1) AND (P.geo IS NOT NULL OR A.geo IS NOT NULL)')
                 ->getQuery()
                 ->getScalarResult()
-                ;
+            ;
 
             // https://stackoverflow.com/a/13462039/2114681
-            $geoPrimary = array_reduce($geo,
+            $geoPrimary = array_reduce(
+                $geo,
                 function ($result, $row) {
                     $result[$row['geo']] = 1;
                     return $result;
-                }, []);
+                },
+                []
+            );
 
             $qb->select('COUNT(DISTINCT A.id) AS number, P.id AS places, P.name, P.alternateName, P.tgn, P.geo')
                     ->innerJoin('A.placeReferences', 'AP')
@@ -116,7 +119,7 @@ trait MapHelperTrait
                     ->andWhere('A.status IN (1) AND P.geo IS NOT NULL')
                     ->andWhere("NOT P.type IN('continent')")
                     ->groupBy('P.geo, P.id')
-                    ;
+            ;
         }
         else if ('landmark' == $mode) {
             $qb->select("COUNT(DISTINCT A.id) AS number, P.id AS places, P.id AS id, 'landmark' AS type, P.name, P.alternateName, COALESCE(A.geo,P.geo) AS geo")
@@ -124,14 +127,14 @@ trait MapHelperTrait
                 ->innerJoin('AL.landmark', 'P')
                 ->andWhere('A.status IN (1) AND (P.geo IS NOT NULL)')
                 ->groupBy('geo, P.id')
-                ;
+            ;
         }
         else {
             $qb->select('COUNT(DISTINCT A.id) AS number, P.id AS places, P.name, P.alternateName, COALESCE(A.geo,P.geo) AS geo')
                 ->innerJoin('A.contentLocation', 'P')
                 ->andWhere('A.status IN (1) AND (P.geo IS NOT NULL OR A.geo IS NOT NULL)')
                 ->groupBy('geo, P.id')
-                ;
+            ;
         }
 
         if (!empty($locale)) {
@@ -139,13 +142,13 @@ trait MapHelperTrait
 
             $qb->andWhere('A.language = :lang')
                 ->setParameter('lang', $language)
-                ;
+            ;
         }
 
         $result = $qb
                 ->getQuery()
                 ->getResult();
-                ;
+        ;
 
         $markers = $this->buildPlaceMarkers($result, $locale, $geoPrimary);
 

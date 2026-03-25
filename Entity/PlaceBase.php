@@ -1,13 +1,12 @@
 <?php
+
 // src/Entity/PlaceBase.php
 
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-
 use FS\SolrBundle\Doctrine\Annotation as Solr;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -18,8 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Provides common information for Place and LandmarksOrHistoricalBuildings
  */
 #[ORM\MappedSuperclass]
-class PlaceBase
-implements \JsonSerializable, JsonLdSerializable
+class PlaceBase implements \JsonSerializable, JsonLdSerializable
 {
     use AlternateNameTrait;
 
@@ -471,8 +469,7 @@ implements \JsonSerializable, JsonLdSerializable
     public function getNameLocalized($locale = 'en', $fallback = true)
     {
         if (is_array($this->alternateName)
-            && array_key_exists($locale, $this->alternateName))
-        {
+            && array_key_exists($locale, $this->alternateName)) {
             return $this->alternateName[$locale];
         }
 
@@ -517,7 +514,7 @@ implements \JsonSerializable, JsonLdSerializable
         }
 
         if (!(empty($this->geo) || false === strpos($this->geo, ','))) {
-            list($lat, $long) = explode(',', $this->geo, 2);
+            [$lat, $long] = explode(',', $this->geo, 2);
             $ret['geo'] = [
                 '@type' => 'GeoCoordinates',
                 'latitude' =>  $lat,
