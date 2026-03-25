@@ -23,7 +23,7 @@ License
     Bundle Code for the presentation of TEI-based Digital Source Editions
         Key Documents of German-Jewish History
 
-    (C) 2017-2025 Institut für die Geschichte der deutschen Juden,
+    (C) 2017-2026 Institut für die Geschichte der deutschen Juden,
         Daniel Burckhardt
 
 
