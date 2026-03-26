@@ -7,11 +7,8 @@ namespace TeiEditionBundle\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Command that creates a tiles in proper zoom levels for the source.
@@ -41,7 +38,7 @@ class TilesCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $DERIVATE = preg_replace('/\.(de|en)$/', '', pathinfo($fname, PATHINFO_FILENAME));
@@ -54,7 +51,7 @@ class TilesCommand extends BaseCommand
         catch (\InvalidArgumentException $e) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $srcPath));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $files = [];
@@ -102,7 +99,7 @@ class TilesCommand extends BaseCommand
         if (empty($targetDir)) {
             $output->writeln(sprintf('<error>%s could not be created</error>', $targetPath));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         foreach ($files as $fname) {
@@ -185,6 +182,6 @@ class TilesCommand extends BaseCommand
             }
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

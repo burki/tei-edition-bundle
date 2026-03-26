@@ -4,12 +4,12 @@
 
 namespace TeiEditionBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 /**
  * Extract bibliographic items from TEI and insert/update into Bibitem.
@@ -43,7 +43,8 @@ class ArticleBiblioCommand extends BaseCommand
 
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
-            return 1;
+
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -56,7 +57,7 @@ class ArticleBiblioCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         if ($input->getOption('set-references')) {
@@ -65,13 +66,13 @@ class ArticleBiblioCommand extends BaseCommand
             if (empty($article->uid)) {
                 $output->writeln(sprintf('<error>no uid found in %s</error>', $fname));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             if (empty($article->language)) {
                 $output->writeln(sprintf('<error>no language found in %s</error>', $fname));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $uid = $article->uid;
@@ -89,7 +90,7 @@ class ArticleBiblioCommand extends BaseCommand
                     $language
                 ));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $persist = false;
@@ -119,7 +120,7 @@ class ArticleBiblioCommand extends BaseCommand
             $output->writeln($this->jsonPrettyPrint($items));
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function setBibitemReference($article, $key)

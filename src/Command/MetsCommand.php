@@ -44,7 +44,7 @@ class MetsCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -56,13 +56,13 @@ class MetsCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         if (empty($article->language)) {
             $output->writeln(sprintf('<error>%s is missing the language</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         /* TODO: Move from simplexml to FluentDOM */
@@ -75,7 +75,7 @@ class MetsCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         libxml_use_internal_errors(false);
@@ -86,7 +86,7 @@ class MetsCommand extends BaseCommand
         if (empty($result)) {
             $output->writeln('<error>No pb found</error>');
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $ID = pathinfo($fname, PATHINFO_FILENAME);
@@ -382,6 +382,6 @@ class MetsCommand extends BaseCommand
 
         echo $xw->outputMemory(true);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

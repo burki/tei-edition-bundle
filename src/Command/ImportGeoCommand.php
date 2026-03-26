@@ -4,6 +4,7 @@
 
 namespace TeiEditionBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -61,7 +62,6 @@ class ImportGeoCommand extends BaseCommand
 
         $this->simplifier = $simplifier;
     }
-
 
     protected function configure(): void
     {
@@ -175,7 +175,7 @@ class ImportGeoCommand extends BaseCommand
         if (!$fs->exists($dir)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $directories = [];
@@ -203,6 +203,6 @@ class ImportGeoCommand extends BaseCommand
             gc_collect_cycles();
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -7,11 +7,8 @@ namespace TeiEditionBundle\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Command that creates a thumbnail for the source.
@@ -48,7 +45,7 @@ class ThumbnailCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -60,7 +57,7 @@ class ThumbnailCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $DERIVATE = preg_replace('/\.(de|en)$/', '', pathinfo($fname, PATHINFO_FILENAME));
@@ -104,7 +101,7 @@ class ThumbnailCommand extends BaseCommand
                     $srcDir . '/' . $facsimile
                 ));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $targetPath = sprintf('/viewer/%s', $DERIVATE);
@@ -116,26 +113,26 @@ class ThumbnailCommand extends BaseCommand
             if (empty($targetDir)) {
                 $output->writeln(sprintf('<error>%s could not be created</error>', $targetPath));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $fnameFull = realpath($srcDir . '/' . $fnameSrc);
             if (!file_exists($fnameFull)) {
                 $output->writeln(sprintf('<error>%s does not exist</error>', $fnameFull));
 
-                return 1;
+                return Command::FAILURE;
             }
         }
         else {
             switch ($article->sourceType) {
                 case 'Text':
-                    return 2;
+                    return Command::INVALID;
                     break;
 
                 default:
                     $figureFacs = $teiHelper->getFirstFigureFacs($fname);
                     if (empty($figureFacs)) {
-                        return 2;
+                        return Command::INVALID;
                     }
 
                     $targetDir = realpath($baseDir . '/' . sprintf('web/viewer/%s', $DERIVATE));
@@ -145,7 +142,7 @@ class ThumbnailCommand extends BaseCommand
                     if (!file_exists($fnameFull)) {
                         $output->writeln(sprintf('<error>%s does not exist</error>', $fnameFull));
 
-                        return 1;
+                        return Command::FAILURE;
                     }
             }
         }
@@ -169,6 +166,6 @@ class ThumbnailCommand extends BaseCommand
 
         $this->imagickProcessor->convert($convertArgs);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

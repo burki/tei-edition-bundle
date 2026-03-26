@@ -7,10 +7,8 @@ namespace TeiEditionBundle\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use TeiEditionBundle\Utils\XmlFormatter\XmlFormatter;
 
 /**
@@ -50,11 +48,11 @@ class ArticleFormatCommand extends Command
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         echo $this->formatter->formatFile($fname, $options);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

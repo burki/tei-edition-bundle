@@ -11,13 +11,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Cocur\Slugify\SlugifyInterface;
@@ -120,7 +116,7 @@ class ArticleDoiCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -133,7 +129,7 @@ class ArticleDoiCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $entity = $this->em->getRepository('TeiEditionBundle\Entity\Article')
@@ -145,7 +141,7 @@ class ArticleDoiCommand extends BaseCommand
         if (is_null($entity)) {
             $output->writeln(sprintf('<error>no entry for uid %s found</error>', $article->uid));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         [$url, $metadata] = $this->buildDataCite($entity, $this->prefix);
@@ -161,7 +157,7 @@ class ArticleDoiCommand extends BaseCommand
                     $entity->getDoi()
                 ));
 
-                return 0;
+                return Command::SUCCESS; // done
             }
         }
         else if ($input->getOption('update')) {
@@ -172,7 +168,7 @@ class ArticleDoiCommand extends BaseCommand
                     $entity->getUid()
                 ));
 
-                return 0;
+                return Command::SUCCESS; // done
             }
         }
 
@@ -190,7 +186,7 @@ class ArticleDoiCommand extends BaseCommand
                     $entity->getUid()
                 ));
 
-                return 2;
+                return Command::INVALID;
             }
         }
         else {
@@ -202,7 +198,7 @@ class ArticleDoiCommand extends BaseCommand
             $this->flushEm($this->em);
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function registerDoi($doi, $url, $metadata, $isActive = true)

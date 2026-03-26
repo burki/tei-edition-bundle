@@ -4,12 +4,12 @@
 
 namespace TeiEditionBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 /**
  * Extract entities from TEI and add missing or update relations.
@@ -50,7 +50,7 @@ class ArticleEntityCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -63,7 +63,7 @@ class ArticleEntityCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         if ($input->getOption('insert-missing')) {
@@ -98,13 +98,13 @@ class ArticleEntityCommand extends BaseCommand
             if (empty($article->uid)) {
                 $output->writeln(sprintf('<error>no uid found in %s</error>', $fname));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             if (empty($article->language)) {
                 $output->writeln(sprintf('<error>no language found in %s</error>', $fname));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $uid = $article->uid;
@@ -122,7 +122,7 @@ class ArticleEntityCommand extends BaseCommand
                     $language
                 ));
 
-                return 1;
+                return Command::FAILURE;
             }
 
             $persist = false;
@@ -186,7 +186,7 @@ class ArticleEntityCommand extends BaseCommand
             $output->writeln($this->jsonPrettyPrint($entities));
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     protected function setPersonReference($article, $uri)

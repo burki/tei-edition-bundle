@@ -4,15 +4,12 @@
 
 namespace TeiEditionBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * Set Article.description as plain-text for Solr indexing.
@@ -59,7 +56,7 @@ class ArticleContentCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -72,18 +69,19 @@ class ArticleContentCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         if (empty($article->uid)) {
             $output->writeln(sprintf('<error>no uid found in %s</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
+
         if (empty($article->language)) {
             $output->writeln(sprintf('<error>no language found in %s</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $entity = $this->em->getRepository('TeiEditionBundle\Entity\Article')
@@ -99,7 +97,7 @@ class ArticleContentCommand extends BaseCommand
                 $language
             ));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         // localize labels in xslt
@@ -177,13 +175,13 @@ class ArticleContentCommand extends BaseCommand
         $output->writeln($this->jsonPrettyPrint($entity));
 
         if (!($input->getOption('update'))) {
-            return 0; // done
+            return Command::SUCCESS; // done
         }
 
         $this->em->persist($entity);
         $this->flushEm($this->em);
         // $output->writeln($text);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
