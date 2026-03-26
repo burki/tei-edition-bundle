@@ -4,12 +4,12 @@
 
 namespace TeiEditionBundle\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -60,7 +60,7 @@ class ArticleHeaderCommand extends BaseCommand
         if (!$fs->exists($fname)) {
             $output->writeln(sprintf('<error>%s does not exist</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
@@ -73,7 +73,7 @@ class ArticleHeaderCommand extends BaseCommand
                 $output->writeln(sprintf('<error>  %s</error>', trim($error->message)));
             }
 
-            return 1;
+            return Command::FAILURE;
         }
 
         $output->writeln($this->jsonPrettyPrint($article));
@@ -107,13 +107,13 @@ class ArticleHeaderCommand extends BaseCommand
             else {
                 $output->writeln(sprintf('<error>no entry for uid %s found</error>', $article->uid));
 
-                return 1;
+                return Command::FAILURE;
             }
         }
         else if ($input->getOption('insert-missing')) {
             $output->writeln(sprintf('<info>entry for uid %s already exists</info>', $article->uid));
 
-            return 0;
+            return Command::SUCCESS;
         }
 
         if ($input->getOption('publish')) {
@@ -144,19 +144,19 @@ class ArticleHeaderCommand extends BaseCommand
         }
 
         if (!($input->getOption('insert-missing') || $input->getOption('update'))) {
-            return 0; // done
+            return Command::SUCCESS; // done
         }
 
         if (empty($article->uid)) {
             $output->writeln(sprintf('<error>no uid found in %s</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         if (empty($article->language)) {
             $output->writeln(sprintf('<error>no language found in %s</error>', $fname));
 
-            return 1;
+            return Command::FAILURE;
         }
 
         // TODO: pack the following into custom hydrator
@@ -310,6 +310,6 @@ class ArticleHeaderCommand extends BaseCommand
         $this->flushEm($this->em);
         // $output->writeln($text);
 
-        return 0;
+        return Command::SUCCESS;
     }
 }
