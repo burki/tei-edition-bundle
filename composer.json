@@ -41,7 +41,6 @@
         "liip/url-auto-converter-bundle": "dev-master",
         "symfony/asset": "^6.4|^7.4",
 
-        "doctrine/annotations": "^1.4|^2.0",
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/orm": "^2.19",
         "stof/doctrine-extensions-bundle": "^1.15",
@@ -76,7 +75,7 @@
 
         "mpdf/mpdf": "^8.2",
 
-        "boppy/solr-bundle": "dev-attributes",
+        "boppy/solr-bundle": "dev-attributes-only",
         "knplabs/knp-paginator-bundle": "^6.10",
 
         "knplabs/knp-menu-bundle": "^3.7",
