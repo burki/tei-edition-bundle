@@ -41,11 +41,11 @@
         "liip/url-auto-converter-bundle": "dev-master",
         "symfony/asset": "^6.4|^7.4",
 
-        "doctrine/doctrine-bundle": "^2.13",
-        "doctrine/orm": "^2.19",
+        "doctrine/doctrine-bundle": "^2.18",
+        "doctrine/orm": "^3.6",
         "stof/doctrine-extensions-bundle": "^1.15",
         "beberlei/doctrineextensions": "^1.5",
-        "oro/doctrine-extensions": "^2.0",
+        "oro/doctrine-extensions": "^3.0",
         "scienta/doctrine-json-functions": "^6.5",
 
         "gjuric/i18n-routing-bundle": "^3.2",
