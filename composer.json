@@ -50,11 +50,11 @@
 
         "gjuric/i18n-routing-bundle": "^3.2",
         "symfony/security-core": "^6.4|^7.4",
-        "jms/translation-bundle": "^2.6",
+        "jms/translation-bundle": "^2.7",
 
-        "cocur/slugify": "^4.6",
+        "cocur/slugify": "^4.7",
 
-        "sabre/xml": "^4.0",
+        "sabre/xml": "^4.1",
         "servo/fluidxml": "^2.0",
         "fluentdom/fluentdom": "^8.0",
 
@@ -73,7 +73,7 @@
 
         "gmo/iso-639": "^1.0",
 
-        "mpdf/mpdf": "^8.2",
+        "mpdf/mpdf": "^8.3",
 
         "boppy/solr-bundle": "dev-attributes-only",
         "knplabs/knp-paginator-bundle": "^6.10",
@@ -86,7 +86,7 @@
 
         "square-bit/oai-pmh": "^0.3",
         "symfony/psr-http-message-bridge": "^6.4|^7.4",
-        "laminas/laminas-diactoros": "^3.7",
+        "laminas/laminas-diactoros": "^3.8",
 
         "guzzlehttp/guzzle": "^7.10"
     },
