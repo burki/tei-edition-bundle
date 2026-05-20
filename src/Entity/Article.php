@@ -1362,22 +1362,22 @@ class Article implements
     }
 
     // RoutedItemInterface for Feed Generation
-    public function getFeedItemTitle()
+    public function getFeedItemTitle(): string
     {
         return $this->getAuthorDisplay() . ', ' . $this->getName();
     }
 
-    public function getFeedItemDescription()
+    public function getFeedItemDescription(): string
     {
         return $this->description;
     }
 
-    public function getFeedItemPubDate()
+    public function getFeedItemPubDate(): ?\DateTime
     {
         return $this->datePublished;
     }
 
-    public function getFeedItemRouteName()
+    public function getFeedItemRouteName(): string
     {
         if ('source' == $this->getGenre()) {
             return 'source';
@@ -1390,7 +1390,7 @@ class Article implements
         return 'article';
     }
 
-    public function getFeedItemRouteParameters()
+    public function getFeedItemRouteParameters(): array
     {
         if ('source' == $this->getGenre()) {
             return [ 'slug' => $this->getUid() ];
@@ -1399,7 +1399,7 @@ class Article implements
         return [ 'slug' => $this->getSlug(true) ];
     }
 
-    public function getFeedItemUrlAnchor()
+    public function getFeedItemUrlAnchor(): string
     {
         return '';
     }
@@ -1410,7 +1410,7 @@ class Article implements
      *
      * @return string
      */
-    public function indexHandler()
+    public function indexHandler(): string
     {
         if (!empty($this->language)) {
             return 'core_' . \TeiEditionBundle\Utils\Iso639::code3To1($this->language);
@@ -1423,7 +1423,7 @@ class Article implements
     /**
      * @return boolean
      */
-    public function shouldBeIndexed()
+    public function shouldBeIndexed(): bool
     {
         return $this->status == 1; // explicit publishing needed
     }
