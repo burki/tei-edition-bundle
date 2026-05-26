@@ -38,6 +38,7 @@ extends PlaceBase
     static $aatToType = [
         'facets (controlled vocabulary)' => 'root', // http://vocab.getty.edu/aat/300386699
         'continents' => 'continent',                // http://vocab.getty.edu/aat/300128176
+        'subcontinents' => 'subcontinent',          // http://vocab.getty.edu/aat/300182723
         'oceans' => 'ocean',                        // http://vocab.getty.edu/aat/300008687
         'oceans (marine bodies of water)' => 'ocean',  // http://vocab.getty.edu/aat/300008687
         'seas' => 'sea',                            // http://vocab.getty.edu/aat/300008694
