@@ -155,7 +155,7 @@ class AppExtension extends AbstractExtension
     {
         $locale = $this->getLocale();
 
-        $path = __DIR__ . '/../Resources/data/csl/jgo-infoclio-de.csl.xml';
+        $path = __DIR__ . '/../../Resources/data/csl/jgo-infoclio-de.csl.xml';
 
         $citeProc = new \Seboettg\CiteProc\CiteProc(file_get_contents($path), $locale);
 
