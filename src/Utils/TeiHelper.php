@@ -66,7 +66,7 @@ class TeiHelper
     }
 
     /**
-     * Register http://www.tei-c.org/ns/1.0 as default and tei namespace
+     * Register http://www.tei-c.org/ns/1.0 as default and tei namespace.
      */
     protected function registerNamespaces(FluentDOMDocument $dom)
     {
@@ -879,6 +879,16 @@ class TeiHelper
     {
         // $xml->registerXPathNamespace('xml', 'http://www.w3.org/XML/1998/namespace');
         $xml->registerXPathNamespace('tei', 'http://www.tei-c.org/ns/1.0');
+    }
+
+    protected function extractInnerContent($node)
+    {
+        $ret = '';
+        foreach ($node->childNodes as $child) {
+            $ret .= $node->ownerDocument->saveXML($child);
+        }
+
+        return $ret;
     }
 
     protected function extractTextContent($node, $normalizeWhitespace = true)

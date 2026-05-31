@@ -95,8 +95,10 @@ class ArticleRefreshCommand extends BaseCommand
             $outputText = $bufferedOutput->fetch();
             if ('' === trim($outputText)) {
                 $output->writeln('<info> [FAIL]</info>');
-                $output->writeln(sprintf('<error>article:adjust on %s did not produce any output</error>',
-                                         $fnameInput));
+                $output->writeln(sprintf(
+                    '<error>article:adjust on %s did not produce any output</error>',
+                    $fnameInput
+                ));
 
                 return 2;
             }
