@@ -93,8 +93,8 @@ class ArticleContentCommand extends BaseCommand
         if (is_null($entity)) {
             $output->writeln(sprintf(
                 '<error>no article found for %s - %s</error>',
-                $uid,
-                $language
+                $article->uid,
+                $article->language
             ));
 
             return Command::FAILURE;

@@ -40,6 +40,7 @@ abstract class BaseCommand extends Command
     protected $imagickProcessor;
     protected $xsltProcessor;
     protected $formatter;
+    protected $publicDir;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -375,7 +376,7 @@ abstract class BaseCommand extends Command
 
                     if (empty($resource->getName())) {
                         var_dump($resource);
-                        die($tgn);
+                        die($value);
                     }
 
                     $entity->setTgn($value);
@@ -448,7 +449,7 @@ abstract class BaseCommand extends Command
                     break;
 
                 default:
-                    die('TODO: handle field ' . $field);
+                    die('TODO: handle namespace ' . $prefix);
             }
         }
 
@@ -549,7 +550,7 @@ abstract class BaseCommand extends Command
                     break;
 
                 default:
-                    die('TODO: handle field ' . $field);
+                    die('TODO: handle namespace ' . $prefix);
             }
         }
 
