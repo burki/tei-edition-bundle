@@ -130,22 +130,22 @@ class Article implements
     #[Solr\Field(type: 'string')]
     protected $geo;
 
-    #[ORM\OneToMany(targetEntity: \ArticlePerson::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticlePerson::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $personReferences;
 
-    #[ORM\OneToMany(targetEntity: \ArticleOrganization::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleOrganization::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $organizationReferences;
 
-    #[ORM\OneToMany(targetEntity: \ArticlePlace::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticlePlace::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $placeReferences;
 
-    #[ORM\OneToMany(targetEntity: \ArticleLandmark::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleLandmark::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $landmarkReferences;
 
-    #[ORM\OneToMany(targetEntity: \ArticleEvent::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleEvent::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $eventReferences;
 
-    #[ORM\OneToMany(targetEntity: \ArticleBibitem::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleBibitem::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $bibitemReferences;
 
     /**

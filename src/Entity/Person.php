@@ -205,10 +205,10 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
-    #[ORM\ManyToMany(targetEntity: \Article::class, mappedBy: 'author')]
+    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'author')]
     protected $articles;
 
-    #[ORM\OneToMany(targetEntity: \ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**

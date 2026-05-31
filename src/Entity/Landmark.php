@@ -25,7 +25,7 @@ class Landmark extends PlaceBase
     #[ORM\Column(type: 'string', nullable: true)]
     protected $djh;
 
-    #[ORM\OneToMany(targetEntity: \ArticleLandmark::class, mappedBy: 'landmark', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleLandmark::class, mappedBy: 'landmark', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**

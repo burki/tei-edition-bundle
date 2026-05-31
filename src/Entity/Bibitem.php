@@ -4,7 +4,6 @@
 
 namespace TeiEditionBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
 use FS\SolrBundle\Doctrine\Annotation as Solr;
@@ -300,7 +299,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     #[Solr\Field(type: 'strings', getter: 'getDescriptionStrings')]
     protected $description;
 
-    #[ORM\OneToMany(targetEntity: \ArticleBibitem::class, mappedBy: 'bibitem', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleBibitem::class, mappedBy: 'bibitem', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
