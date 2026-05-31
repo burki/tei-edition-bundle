@@ -5,10 +5,8 @@
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
 use FS\SolrBundle\Doctrine\Annotation as Solr;
 use Symfony\Component\String\Inflector\EnglishInflector;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entities that have a somewhat fixed, physical extension.
@@ -28,6 +26,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Place extends PlaceBase
 {
     use ArticleReferencesTrait;
+
     public static $zoomLevelByType = [
         'neighborhood' => 12,
         'city district' => 11,
@@ -160,17 +159,17 @@ class Place extends PlaceBase
     }
 
     #[ORM\JoinColumn(referencedColumnName: 'id', onDelete: 'CASCADE')]
-    #[ORM\ManyToOne(targetEntity: \Place::class, inversedBy: 'children')]
+    #[ORM\ManyToOne(targetEntity: Place::class, inversedBy: 'children')]
     protected $parent;
 
-    #[ORM\OneToMany(targetEntity: \Place::class, mappedBy: 'parent')]
+    #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'parent')]
     #[ORM\OrderBy(['type' => 'ASC', 'name' => 'ASC'])]
     private $children;
 
-    #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'contentLocation')]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'contentLocation')]
     protected $articles;
 
-    #[ORM\OneToMany(targetEntity: \ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     public function showCenterMarker()

@@ -5,8 +5,6 @@
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'article_entity')]
@@ -22,14 +20,16 @@ abstract class ArticleEntity
 
     public function setArticle(Article $article)
     {
-        $this->article = $article;
+        if (property_exists($this, 'article')) {
+            $this->article = $article;
+        }
 
         return $this;
     }
 
     public function getArticle()
     {
-        return $this->article;
+        return property_exists($this, 'article') ? $this->article : null;
     }
 
     abstract public function setEntity($entity);

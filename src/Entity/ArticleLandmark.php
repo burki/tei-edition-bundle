@@ -10,11 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 class ArticleLandmark extends ArticleEntity
 {
     #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id', nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \Landmark::class, inversedBy: 'articleReferences')]
+    #[ORM\ManyToOne(targetEntity: Landmark::class, inversedBy: 'articleReferences')]
     protected $landmark;
 
     #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', nullable: false)]
-    #[ORM\ManyToOne(targetEntity: \Article::class, inversedBy: 'landmarkReferences')]
+    #[ORM\ManyToOne(targetEntity: Article::class, inversedBy: 'landmarkReferences')]
     protected $article;
 
     public function setEntity($entity)

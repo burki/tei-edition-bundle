@@ -80,7 +80,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
      * @var Place The location of for example where the event is happening, an organization is located, or where an action takes place..
      */
     #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
+    #[ORM\ManyToOne(targetEntity: Place::class)]
     protected $location;
 
     /**
@@ -102,7 +102,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
-    #[ORM\OneToMany(targetEntity: \ArticleEvent::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleEvent::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**

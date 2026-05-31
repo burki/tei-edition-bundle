@@ -97,7 +97,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
      * @var Place|null The place where the Organization was founded.
      */
     #[ORM\JoinColumn(name: 'foundingLocation_id', referencedColumnName: 'id')]
-    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
+    #[ORM\ManyToOne(targetEntity: Place::class)]
     protected $foundingLocation;
 
     /**
@@ -112,7 +112,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $wikidata;
 
-    #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'provider')]
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'provider')]
     #[ORM\OrderBy(['dateCreated' => 'ASC', 'name' => 'ASC'])]
     protected $providerOf;
 
@@ -123,16 +123,16 @@ class Organization implements \JsonSerializable, JsonLdSerializable
      * @var Organization|null The organization that preceded this on.
      */
     #[ORM\JoinColumn(name: 'precedingId', referencedColumnName: 'id')]
-    #[ORM\OneToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, inversedBy: 'succeedingOrganization')]
+    #[ORM\OneToOne(targetEntity: Organization::class, inversedBy: 'succeedingOrganization')]
     protected $precedingOrganization;
 
     /**
      * @var Organization|null The organization that suceeded this on.
      */
-    #[ORM\OneToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, mappedBy: 'precedingOrganization')]
+    #[ORM\OneToOne(targetEntity: Organization::class, mappedBy: 'precedingOrganization')]
     protected $succeedingOrganization;
 
-    #[ORM\OneToMany(targetEntity: \ArticleOrganization::class, mappedBy: 'organization', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleOrganization::class, mappedBy: 'organization', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
