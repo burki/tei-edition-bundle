@@ -48,7 +48,6 @@
         "oro/doctrine-extensions": "^3.0",
         "scienta/doctrine-json-functions": "^6.5",
 
-        "gjuric/i18n-routing-bundle": "^3.2",
         "symfony/security-core": "^6.4|^7.4",
         "jms/translation-bundle": "^2.7",
 
