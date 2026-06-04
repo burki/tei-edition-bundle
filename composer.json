@@ -10,36 +10,36 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-curl": "*",
 
-        "symfony/yaml": "^6.4|^7.4",
-        "symfony/config": "^6.4|^7.4",
-        "symfony/expression-language": "^6.4|^7.4",
-        "symfony/console": "^6.4|^7.4",
-        "symfony/framework-bundle": "^6.4|^7.4",
+        "symfony/yaml": "^6.4|^7.4|^8.0",
+        "symfony/config": "^6.4|^7.4|^8.0",
+        "symfony/expression-language": "^6.4|^7.4|^8.0",
+        "symfony/console": "^6.4|^7.4|^8.0",
+        "symfony/framework-bundle": "^6.4|^7.4|^8.0",
 
-        "symfony/translation": "^6.4|^7.4",
-        "symfony/twig-bridge": "^6.4|^7.4",
-        "symfony/twig-bundle": "^6.4|^7.4",
-        "symfony/intl": "^6.4|^7.4",
+        "symfony/translation": "^6.4|^7.4|^8.0",
+        "symfony/twig-bridge": "^6.4|^7.4|^8.0",
+        "symfony/twig-bundle": "^6.4|^7.4|^8.0",
+        "symfony/intl": "^6.4|^7.4|^8.0",
 
-        "symfony/var-dumper": "^6.4|^7.4",
-        "symfony/var-exporter": "^6.4|^7.4",
-        "symfony/http-foundation": "^6.4|^7.4",
-        "symfony/routing": "^6.4|^7.4",
-        "symfony/mime": "^6.4|^7.4",
-        "symfony/dom-crawler": "^6.4|^7.4",
-        "symfony/css-selector": "^6.4|^7.4",
+        "symfony/var-dumper": "^6.4|^7.4|^8.0",
+        "symfony/var-exporter": "^6.4|^7.4|^8.0",
+        "symfony/http-foundation": "^6.4|^7.4|^8.0",
+        "symfony/routing": "^6.4|^7.4|^8.0",
+        "symfony/mime": "^6.4|^7.4|^8.0",
+        "symfony/dom-crawler": "^6.4|^7.4|^8.0",
+        "symfony/css-selector": "^6.4|^7.4|^8.0",
 
-        "symfony/serializer": "^6.4|^7.4",
+        "symfony/serializer": "^6.4|^7.4|^8.0",
 
         "twig/twig": "^3.24",
         "twig/extra-bundle": "^3.24",
         "twig/intl-extra": "^3.24",
         "twig/string-extra": "^3.24",
-        "liip/url-auto-converter-bundle": "dev-master",
-        "symfony/asset": "^6.4|^7.4",
+        "liip/url-auto-converter-bundle": "dev-symfony-8",
+        "symfony/asset": "^6.4|^7.4|^8.0",
 
         "doctrine/doctrine-bundle": "^2.18|^3.2",
         "doctrine/orm": "^3.6",
@@ -48,8 +48,8 @@
         "oro/doctrine-extensions": "^3.0",
         "scienta/doctrine-json-functions": "^6.5",
 
-        "symfony/security-core": "^6.4|^7.4",
-        "jms/translation-bundle": "^2.7",
+        "symfony/security-core": "^6.4|^7.4|^8.0",
+        "jms/translation-bundle": "dev-symfony-8",
 
         "cocur/slugify": "^4.7",
 
@@ -81,10 +81,10 @@
 
         "sylius/theme-bundle": "^2.5",
 
-        "eko/feedbundle": "^2.2",
+        "eko/feedbundle": "dev-symfony-8",
 
         "square-bit/oai-pmh": "^0.3",
-        "symfony/psr-http-message-bridge": "^6.4|^7.4",
+        "symfony/psr-http-message-bridge": "^6.4|^7.4|^8.0",
         "laminas/laminas-diactoros": "^3.8",
 
         "guzzlehttp/guzzle": "^7.10"
