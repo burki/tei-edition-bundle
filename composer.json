@@ -41,7 +41,7 @@
         "liip/url-auto-converter-bundle": "dev-master",
         "symfony/asset": "^6.4|^7.4",
 
-        "doctrine/doctrine-bundle": "^2.18",
+        "doctrine/doctrine-bundle": "^2.18|^3.2",
         "doctrine/orm": "^3.6",
         "stof/doctrine-extensions-bundle": "^1.15",
         "beberlei/doctrineextensions": "^1.5",
