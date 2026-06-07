@@ -288,14 +288,12 @@ class EntityEnhanceCommand extends BaseCommand
                                     }
                                     else {
                                         $date = \DateTime::createFromFormat('F d, Y', $value);
-                                        unset($value);
-                                        if (isset($date)) {
-                                            $res = \DateTime::getLastErrors();
-                                            if (0 == $res['warning_count'] && 0 == $res['error_count']) {
-                                                $date_str = $date->format('Y-m-d');
-                                                if ('0000-00-00' !== $date_str) {
-                                                    $value = $date_str;
-                                                }
+                                        unset($value); // will be reassigned from $date if $date is valid
+                                        $res = \DateTime::getLastErrors();
+                                        if (0 == $res['warning_count'] && 0 == $res['error_count']) {
+                                            $date_str = $date->format('Y-m-d');
+                                            if ('0000-00-00' !== $date_str) {
+                                                $value = $date_str;
                                             }
                                         }
                                     }
@@ -399,13 +397,15 @@ class EntityEnhanceCommand extends BaseCommand
                 $xml = simplexml_load_file($url);
                 foreach ($xml->geoname as $geoname) {
                     $placeName = $place->getName();
+                    $geonameId = $geonameName = null;
+
                     if (in_array($geoname->fcode, [
                         'PCLI',
                         'ADM1', 'ADM2', 'ADM4',
                         'PPLA3', 'PPLX',
                     ])) {
-                        $geonameId =  (string) ($geoname->geonameId);
-                        $geonameName =  (string) ($geoname->name);
+                        $geonameId = (string) ($geoname->geonameId);
+                        $geonameName = (string) ($geoname->name);
                     }
 
                     switch ($type) {

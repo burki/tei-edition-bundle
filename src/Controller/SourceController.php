@@ -928,7 +928,7 @@ class SourceController extends ArticleController
                 $matches[1],
                 $matches[2],
                 $locale
-            ) . 'xml';
+            ) . '.xml';
 
             // check if source is splitted into individual files one per page
             $targetPath = sprintf('/viewer/%s', $uid);
