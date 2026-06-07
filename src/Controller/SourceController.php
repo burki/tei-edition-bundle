@@ -6,7 +6,7 @@ namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use TeiEditionBundle\Entity\SourceArticle;
@@ -249,6 +249,7 @@ class SourceController extends ArticleController
                 $pullFeaturedMedia = false;
 
                 $variants = [ 'transcription' ];
+                $key = null; // index into $bodies
                 $bodies = []; // rendered content by variant
 
                 $getTranslatedFrom = $sourceArticle->getTranslatedFrom();
@@ -281,7 +282,8 @@ class SourceController extends ArticleController
 
                         if (!array_key_exists($variant, $bodies)) {
                             $transcriptionLocale = 'transcription_yl' == $variant
-                                ? 'yl' : \TeiEditionBundle\Utils\Iso639::code3to1($sourceArticle->getTranslatedFrom());
+                                ? 'yl'
+                                : \TeiEditionBundle\Utils\Iso639::code3to1($sourceArticle->getTranslatedFrom());
                             $transcriptionFname = $this->buildArticleFnameFromUid($sourceArticle->getUid(), $transcriptionLocale) . '.xml';
 
                             $params = [
@@ -916,6 +918,8 @@ class SourceController extends ArticleController
             $page = preg_replace('/[^0-9a-zA-Z\.\-]/', '', $parts[1]);
         }
 
+        $html = 'TODO: A problem occured';
+
         // source
         $uid = preg_replace('/[^0-9a-zA-Z_\-\:]/', '', $parts[0]);
         if (preg_match('/(article|source)\-(\d+)/', $uid, $matches)) {
@@ -924,59 +928,56 @@ class SourceController extends ArticleController
                 $matches[1],
                 $matches[2],
                 $locale
-            );
-        }
+            ) . 'xml';
 
-        $fname .= '.xml';
+            // check if source is splitted into individual files one per page
+            $targetPath = sprintf('/viewer/%s', $uid);
+            $targetDir = $this->getGlobal('public_dir') . $targetPath;
 
-        // check if source is splitted into individual files one per page
-        $targetPath = sprintf('/viewer/%s', $uid);
-        $targetDir = $this->getGlobal('public_dir') . $targetPath;
-
-        $html = 'TODO: A problem occured';
-        if (!empty($targetDir)) {
-            $pagesPath = 'pages.' . $locale;
-            if (!is_dir($targetDir . '/' . $pagesPath)) {
-                mkdir($targetDir . '/' . $pagesPath);
-            }
-
-            if (is_dir($targetDir . '/' . $pagesPath)) {
-                $pagesDir = realpath($targetDir . '/' . $pagesPath);
-
-                $pageExistsAndIsCurrent = false;
-                if (file_exists($pagesDir . '/' . $page)) {
-                    // page exists, check if it is current
-                    $fnameFull = $this->locateTeiResource($fname);
-
-                    $modifiedSource = filemtime($fnameFull);
-                    $modifiedTarget = filemtime($pagesDir . '/' . $page);
-
-                    // target is older than source, so run again
-                    $pageExistsAndIsCurrent = $modifiedTarget >= $modifiedSource;
+            if (false !== realpath($targetDir)) {
+                $pagesPath = 'pages.' . $locale;
+                if (!is_dir($targetDir . '/' . $pagesPath)) {
+                    mkdir($targetDir . '/' . $pagesPath);
                 }
 
-                if (!$pageExistsAndIsCurrent) {
-                    // (re-)generate
-                    $pagesDirUri = 'file:///' . str_replace('\\', '/', $pagesDir);
-                    // we have to split the source file to pages
-                    $res = $this->renderTei($fname, 'split-pages.xsl', [
-                        'params' => [ 'outdir' => $pagesDirUri ],
-                    ]);
-                }
+                if (is_dir($targetDir . '/' . $pagesPath)) {
+                    $pagesDir = realpath($targetDir . '/' . $pagesPath);
 
-                $params = [
-                    'locateXmlResource' => false,
-                    'params' => [
-                        'lang' => \TeiEditionBundle\Utils\Iso639::code1To3($locale), // localize labels in xslt
-                    ],
-                ];
+                    $pageExistsAndIsCurrent = false;
+                    if (file_exists($pagesDir . '/' . $page)) {
+                        // page exists, check if it is current
+                        $fnameFull = $this->locateTeiResource($fname);
 
-                if (file_exists($pagesDir . '/' . $page)) {
-                    $html = $this->renderTei(
-                        realpath($pagesDir . '/' . $page),
-                        'dtabf_viewer.xsl',
-                        $params
-                    );
+                        $modifiedSource = filemtime($fnameFull);
+                        $modifiedTarget = filemtime($pagesDir . '/' . $page);
+
+                        // target is older than source, so run again
+                        $pageExistsAndIsCurrent = $modifiedTarget >= $modifiedSource;
+                    }
+
+                    if (!$pageExistsAndIsCurrent) {
+                        // (re-)generate
+                        $pagesDirUri = 'file:///' . str_replace('\\', '/', $pagesDir);
+                        // we have to split the source file to pages
+                        $res = $this->renderTei($fname, 'split-pages.xsl', [
+                            'params' => [ 'outdir' => $pagesDirUri ],
+                        ]);
+                    }
+
+                    $params = [
+                        'locateXmlResource' => false,
+                        'params' => [
+                            'lang' => \TeiEditionBundle\Utils\Iso639::code1To3($locale), // localize labels in xslt
+                        ],
+                    ];
+
+                    if (file_exists($pagesDir . '/' . $page)) {
+                        $html = $this->renderTei(
+                            realpath($pagesDir . '/' . $page),
+                            'dtabf_viewer.xsl',
+                            $params
+                        );
+                    }
                 }
             }
         }
