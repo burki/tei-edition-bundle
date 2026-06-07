@@ -3,7 +3,7 @@
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 
 /**
  * Common logic for alternateName property
@@ -55,8 +55,6 @@ trait AlternateNameTrait
 
     /**
      * @var array|null An alias for the item.
-     *
-     * @Solr\Field(type="strings", getter="getAlternateNameValues")
      */
     #[ORM\Column(type: 'json', nullable: true)]
     #[Solr\Field(type: 'strings', getter: 'getAlternateNameValues')]

@@ -6,7 +6,7 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,9 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * See also [blog post](http://blog.schema.org/2014/09/schemaorg-support-for-bibliographic_2.html).
  *
  * @see http://schema.org/Article Documentation on Schema.org
- *
- * @Solr\Document(indexHandler="indexHandler")
- * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'article')]
@@ -64,8 +61,6 @@ class Article implements
 
     /**
      * @var int
-     *
-     * @Solr\Id
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -81,8 +76,6 @@ class Article implements
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[ORM\Column(nullable: true)]
     #[Solr\Field(type: 'string')]
@@ -94,8 +87,6 @@ class Article implements
      * Please note that author is special in that HTML 5 provides
      * a special mechanism for indicating authorship via the rel tag.
      * That is equivalent to this and may be used interchangeably.
-     *
-     * @Solr\Field(type="strings", getter="getFullname")
      */
     #[ORM\ManyToMany(targetEntity: \TeiEditionBundle\Entity\Person::class, inversedBy: 'articles')]
     #[Solr\Field(type: 'strings', getter: 'getFullname')]
@@ -122,8 +113,6 @@ class Article implements
 
     /**
      * @var string The geo coordinates of the place.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -182,8 +171,6 @@ class Article implements
 
     /**
      * @var string A short description of the item.
-     *
-     * @Solr\Field(type="string")
      */
     #[ORM\Column(type: 'text', length: 65535, nullable: true)]
     #[Solr\Field(type: 'string')]
@@ -232,8 +219,6 @@ class Article implements
 
     /**
      * @var string The name of the item.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[Assert\NotNull]
@@ -251,8 +236,6 @@ class Article implements
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column]
@@ -261,8 +244,6 @@ class Article implements
 
     /**
      * @var string The textual content of this CreativeWork.
-     *
-     * @Solr\Field(type="text")
      */
     #[ORM\Column(type: 'text', length: 16777215, nullable: true)]
     #[Solr\Field(type: 'text')]
@@ -270,8 +251,6 @@ class Article implements
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -280,8 +259,6 @@ class Article implements
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -297,8 +274,6 @@ class Article implements
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
