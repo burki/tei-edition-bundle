@@ -96,7 +96,7 @@ class TilesCommand extends BaseCommand
         }
 
         $targetDir = $this->publicDir . $targetPath;
-        if (empty($targetDir)) {
+        if (false === realpath($targetDir)) {
             $output->writeln(sprintf('<error>%s could not be created</error>', $targetPath));
 
             return Command::FAILURE;

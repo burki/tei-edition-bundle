@@ -7,10 +7,8 @@ namespace TeiEditionBundle\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 /**
  * Generate METS for MyCoRe-Viewer.
@@ -230,13 +228,13 @@ class MetsCommand extends BaseCommand
                             $code1,
                             $page
                         );
+
+                        if (empty($article->translatedFrom)) {
+                            die('translationFrom is not set for translation into ' . $code1);
+                        }
                     }
                     else {
                         // language of the transcription
-                        if (!empty($translations) && empty($article->translatedFrom)) {
-                            die('translationFrom is not set');
-                        }
-
                         $langTranscription = !empty($article->translatedFrom)
                             ? $article->translatedFrom : $article->language;
 

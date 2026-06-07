@@ -931,6 +931,7 @@ class TeiHelper
                 }
 
                 $uri = trim($entity['attributes'][$attribute]);
+                $type = null;
 
                 switch ($entity['name']) {
                     case '{http://www.tei-c.org/ns/1.0}placeName':
@@ -1016,7 +1017,7 @@ class TeiHelper
                         unset($uri);
                 }
 
-                if (isset($uri)) {
+                if (isset($uri) && !is_null($type)) {
                     if (!isset($additional[$type])) {
                         $additional[$type] = [];
                     }
