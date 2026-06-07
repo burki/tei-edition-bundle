@@ -6,7 +6,7 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,11 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  * See also [blog post](http://blog.schema.org/2014/09/schemaorg-support-for-bibliographic_2.html).
  *
  * @see http://schema.org/CreativeWork and derived documents Documentation on Schema.org
- *
- * @Solr\Document(indexHandler="indexHandler")
- * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- *
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'bibitem')]
@@ -113,8 +108,6 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
 
     /**
      * @var int
-     *
-     * @Solr\Id
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -238,8 +231,6 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
 
     /**
      * @var string The name (title) of the item.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[Assert\NotNull]
@@ -270,8 +261,6 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -280,8 +269,6 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
 
     /**
      * @var string
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -290,10 +277,6 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
 
     /**
      * @var array A short description of the item. Generated for solr
-     *
-     *
-     * @Solr\Field(type="strings", getter="getDescriptionStrings")
-     *
      */
     #[ORM\Column(type: 'json', nullable: true)]
     #[Solr\Field(type: 'strings', getter: 'getDescriptionStrings')]

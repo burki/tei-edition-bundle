@@ -5,7 +5,7 @@
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\String\Inflector\EnglishInflector;
 
 /**
@@ -15,9 +15,6 @@ use Symfony\Component\String\Inflector\EnglishInflector;
  *
  * Might actually be the more specific City / Country / State
  * extending AdministrativeArea
- *
- * @Solr\Document(indexHandler="indexHandler")
- * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'place')]
@@ -127,7 +124,7 @@ class Place extends PlaceBase
         return null;
     }
 
-    public static function buildTypeLabel($type)
+    public static function buildTypeLabel($type): string
     {
         if ('root' == $type) {
             return '';
@@ -140,7 +137,7 @@ class Place extends PlaceBase
         return $type;
     }
 
-    public static function buildPluralizedTypeLabel($type, $count)
+    public static function buildPluralizedTypeLabel($type, $count): string
     {
         if (empty($type)) {
             return '';
@@ -158,21 +155,39 @@ class Place extends PlaceBase
         return ucfirst($label);
     }
 
+    /**
+     * The parent place.
+     *
+     * @var Place|null
+     */
     #[ORM\JoinColumn(referencedColumnName: 'id', onDelete: 'CASCADE')]
     #[ORM\ManyToOne(targetEntity: Place::class, inversedBy: 'children')]
     protected $parent;
 
+    /**
+     * The child places.
+     *
+     * @var Place[]|null
+     */
     #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'parent')]
     #[ORM\OrderBy(['type' => 'ASC', 'name' => 'ASC'])]
     private $children;
 
+
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'contentLocation')]
     protected $articles;
 
+    /**
+     * @var ArticlePlace[]|null References to articles mentioning this place.
+     */
     #[ORM\OneToMany(targetEntity: ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
-    public function showCenterMarker()
+    /**
+     * Whether to show a marker in the center of the place on the map.
+     * This is true for places that are point- and not area-like.
+     */
+    public function showCenterMarker(): bool
     {
         $ancestorOrSelf = $this;
         while (!is_null($ancestorOrSelf)) {
@@ -186,7 +201,10 @@ class Place extends PlaceBase
         return false;
     }
 
-    public function getDefaultZoomlevel()
+    /**
+     * Default zoom level for the place type, used for map display.
+     */
+    public function getDefaultZoomlevel(): int
     {
         if (array_key_exists($this->type, self::$zoomLevelByType)) {
             return self::$zoomLevelByType[$this->type];
@@ -195,21 +213,43 @@ class Place extends PlaceBase
         return 8;
     }
 
+    /**
+     * Sets parent.
+     *
+     * @param Place|null $parent
+     */
     public function setParent(?Place $parent = null)
     {
         $this->parent = $parent;
+
+        return $this;
     }
 
+    /**
+     * Gets parent.
+     *
+     * @return Place|null
+     */
     public function getParent()
     {
         return $this->parent;
     }
 
+    /**
+     * Gets children.
+     *
+     * @return Place[]|null
+     */
     public function getChildren()
     {
         return $this->children;
     }
 
+    /**
+     * Gets children grouped by type.
+     *
+     * @return array|null
+     */
     public function getChildrenByType()
     {
         if (is_null($this->children)) {
@@ -252,11 +292,21 @@ class Place extends PlaceBase
         return $ret;
     }
 
+    /**
+     * Gets type label.
+     *
+     * @return string
+     */
     public function getTypeLabel()
     {
         return self::buildTypeLabel($this->type);
     }
 
+    /**
+     * Gets path from root to this place.
+     *
+     * @return Place[] Path from root to this place, excluding this place itself.
+     */
     public function getPath()
     {
         $path = [];
@@ -275,7 +325,7 @@ class Place extends PlaceBase
     }
 
     // solr-stuff
-    public function indexHandler()
+    public function indexHandler(): string
     {
         return '*';
     }
@@ -285,7 +335,7 @@ class Place extends PlaceBase
      *
      * @return boolean
      */
-    public function shouldBeIndexed()
+    public function shouldBeIndexed(): bool
     {
         return $this->status >= 0;
     }

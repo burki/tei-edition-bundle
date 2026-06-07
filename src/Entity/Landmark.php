@@ -5,8 +5,6 @@
 namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * An historical landmark or building.
@@ -20,18 +18,21 @@ class Landmark extends PlaceBase
     use ArticleReferencesTrait;
 
     /**
-     * @var string
+     * @var string|null The slug within dasjuedischehamburg.de, for example 'max-mustermann' for https://www.dasjuedischehamburg.de/personen/max-mustermann
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $djh;
 
+    /**
+     * @var ArticleLandmark[]|null References to articles mentioning this landmark.
+     */
     #[ORM\OneToMany(targetEntity: ArticleLandmark::class, mappedBy: 'landmark', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
      * Sets djh.
      *
-     * @param string $djh
+     * @param string|null $djh
      *
      * @return $this
      */
@@ -45,14 +46,14 @@ class Landmark extends PlaceBase
     /**
      * Gets djh.
      *
-     * @return string
+     * @return string|null
      */
     public function getDjh()
     {
         return $this->djh;
     }
 
-    public function getDefaultZoomlevel()
+    public function getDefaultZoomlevel(): int
     {
         return 12;
     }
@@ -60,7 +61,7 @@ class Landmark extends PlaceBase
     /*
      * Overridden to get more concrete type
      */
-    protected function getSchemaType()
+    protected function getSchemaType(): string
     {
         return 'LandmarksOrHistoricalBuildings';
     }

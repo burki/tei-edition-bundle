@@ -6,7 +6,7 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -23,8 +23,6 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
 
     /**
      * @var int
-     *
-     * @Solr\Id
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -46,8 +44,6 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
 
     /**
      * @var string|null The geo coordinates of the place.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -56,8 +52,6 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
 
     /**
      * @var string The name of the item.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: false)]
@@ -71,7 +65,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     protected $description;
 
     /**
-     * @Solr\Field(type="string")
+     * @var string|null The country code of the place, in ISO 3166-1 alpha-2 format.
      */
     #[ORM\Column(name: 'country_code', type: 'string', nullable: true)]
     #[Solr\Field(type: 'string')]
@@ -91,38 +85,38 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     protected $url;
 
     /**
-     * @var string|null
+     * @var string|null The Getty Thesaurus of Geographic Names Identifier for the place.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $tgn;
 
     /**
-     * @var string|null
+     * @var string|null The GND identifier for the place.
      */
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $gnd;
 
     /**
-     * @var string|null
+     * @var string|null The GeoNames identifier for the place.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $geonames;
 
     /**
-     * @var string|null
+     * @var string|null The Wikidata QID for the place.
      */
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $wikidata;
 
     /**
-     * @var \DateTime
+     * @var \DateTime The date and time when the item was created.
      */
     #[Gedmo\Timestampable(on: 'create')]
     #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var \DateTime The date and time when the item was last changed.
      */
     #[Gedmo\Timestampable(on: 'update')]
     #[ORM\Column(name: 'changed_at', type: 'datetime')]
@@ -380,7 +374,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Gets Getty Thesaurus of Geographic Names.
+     * Gets Getty Thesaurus of Geographic Names Identifier.
      *
      * @return string|null
      */
@@ -390,7 +384,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Sets gnd.
+     * Sets GND identifier.
      *
      * @param string|null $gnd
      *
@@ -404,7 +398,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Gets gnd.
+     * Gets GND identifier.
      *
      * @return string|null
      */
@@ -414,7 +408,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Sets geonames.
+     * Sets GeoNames identifier.
      *
      * @param string|null $geonames
      *
@@ -428,7 +422,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     }
 
     /**
-     * Gets geonames.
+     * Gets GeoNames identifier.
      *
      * @return string|null
      */
@@ -496,12 +490,12 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     /*
      * Might be overriden to get more concrete type
      */
-    protected function getSchemaType()
+    protected function getSchemaType(): string
     {
         return 'Place';
     }
 
-    public function jsonLdSerialize($locale, $omitContext = false, $standalone = false)
+    public function jsonLdSerialize($locale, $omitContext = false, $standalone = false): array
     {
         $ret = [
             '@context' => 'http://schema.org',
@@ -545,7 +539,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     }
 
     // solr-stuff
-    public function indexHandler()
+    public function indexHandler(): string
     {
         return '*';
     }
@@ -555,7 +549,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
      *
      * @return boolean
      */
-    public function shouldBeIndexed()
+    public function shouldBeIndexed(): bool
     {
         return $this->status >= 0;
     }

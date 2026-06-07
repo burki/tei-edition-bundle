@@ -6,16 +6,13 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * An event happening at a certain time (and location)
  *
  * @see http://schema.org/Event Documentation on Schema.org
- *
- * @Solr\Document(indexHandler="indexHandler")
- * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'event')]
@@ -44,7 +41,6 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * @var int
      *
-     * @Solr\Id
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -59,34 +55,32 @@ class Event implements \JsonSerializable, JsonLdSerializable
     protected $status = 0;
 
     /**
-     * @var string A short description of the item.
+     * @var mixed|null A short description of the item.
      */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $description;
 
     /**
-     * @var string The end date (and time) of the item.
+     * @var string|null The end date (and time) of the item.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $endDate;
 
     /**
-     * @var string The start date (and time) of the item.
+     * @var string|null The start date (and time) of the item.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $startDate;
 
     /**
-     * @var Place The location of for example where the event is happening, an organization is located, or where an action takes place..
+     * @var Place|null The location of for example where the event is happening, an organization is located, or where an action takes place..
      */
     #[ORM\JoinColumn(name: 'location_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Place::class)]
     protected $location;
 
     /**
-     * @var string The name of the item.
-     *
-     * @Solr\Field(type="string")
+     * @var string|null The name of the item.
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -94,14 +88,20 @@ class Event implements \JsonSerializable, JsonLdSerializable
     protected $name;
 
     /**
-     * @var string
+     * @var string|null The GND identifier for the event.
      */
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $gnd;
 
+    /**
+     * @var array|null Additional information for the event.
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
+    /**
+     * @var ArticleEvent[]|null References to articles about this event.
+     */
     #[ORM\OneToMany(targetEntity: ArticleEvent::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
@@ -143,7 +143,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets id.
      *
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -177,7 +177,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets description.
      *
-     * @param string $description
+     * @param array|null $description
      *
      * @return $this
      */
@@ -191,17 +191,22 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets description.
      *
-     * @return string
+     * @return array|null
      */
     public function getDescription()
     {
         return $this->description;
     }
 
+    /**
+     * Gets description in a specific locale.
+     *
+     * @return string|null
+     */
     public function getDescriptionLocalized($locale)
     {
         if (empty($this->description)) {
-            return;
+            return null;
         }
 
         if (is_array($this->description)) {
@@ -217,11 +222,11 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets endDate.
      *
-     * @param string $endDate
+     * @param string|null $endDate
      *
      * @return $this
      */
-    public function setEndDate($endDate = null)
+    public function setEndDate($endDate)
     {
         $this->endDate = self::formatDateIncomplete($endDate);
 
@@ -231,7 +236,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets endDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getEndDate()
     {
@@ -241,11 +246,11 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets startDate.
      *
-     * @param string $startDate
+     * @param string|null $startDate
      *
      * @return $this
      */
-    public function setStartDate($startDate = null)
+    public function setStartDate($startDate)
     {
         $this->startDate = self::formatDateIncomplete($startDate);
 
@@ -255,7 +260,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets startDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getStartDate()
     {
@@ -279,7 +284,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -289,7 +294,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets localized name.
      *
-     * @return string
+     * @return string|null
      */
     public function getNameLocalized($locale = 'en')
     {
@@ -311,7 +316,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
      *
      * @return $this
      */
-    public function setLocation(?Place $location = null)
+    public function setLocation(?Place $location)
     {
         $this->location = $location;
 
@@ -331,7 +336,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets gnd.
      *
-     * @param string $gnd
+     * @param string|null $gnd
      *
      * @return $this
      */
@@ -345,7 +350,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets gnd.
      *
-     * @return string
+     * @return string|null
      */
     public function getGnd()
     {
@@ -355,7 +360,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets additional.
      *
-     * @param array $additional
+     * @param array|null $additional
      *
      * @return $this
      */
@@ -369,7 +374,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets additional.
      *
-     * @return array
+     * @return array|null
      */
     public function getAdditional()
     {
@@ -393,7 +398,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets slug.
      *
-     * @return string
+     * @return string|null
      */
     public function getSlug()
     {
@@ -411,7 +416,9 @@ class Event implements \JsonSerializable, JsonLdSerializable
         ];
     }
 
-    public function jsonLdSerialize($locale, $omitContext = false, $standalone = false)
+    /**
+     */
+    public function jsonLdSerialize($locale, $omitContext = false, $standalone = false): array
     {
         $ret = [
             '@context' => 'http://schema.org',
@@ -455,7 +462,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     }
 
     // solr-stuff
-    public function indexHandler()
+    public function indexHandler(): string
     {
         return '*';
     }
@@ -465,7 +472,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
      *
      * @return boolean
      */
-    public function shouldBeIndexed()
+    public function shouldBeIndexed(): bool
     {
         return $this->status >= 0;
     }

@@ -6,16 +6,13 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A person (alive, dead, undead, or fictional).
  *
  * @see http://schema.org/Person Documentation on Schema.org
- *
- * @Solr\Document(indexHandler="indexHandler")
- * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'person')]
@@ -40,8 +37,6 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
 
     /**
      * @var int
-     *
-     * @Solr\Id
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -83,9 +78,6 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
 
     /**
      * @var array|null A short description of the item.
-     *
-     *
-     * @Solr\Field(type="strings", getter="getDescriptionValues")
      */
     #[ORM\Column(type: 'json', nullable: true)]
     #[Solr\Field(type: 'strings', getter: 'getDescriptionValues')]
@@ -93,8 +85,6 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
 
     /**
      * @var string|null Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -110,8 +100,6 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
 
     /**
      * @var string|null Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -170,44 +158,56 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     protected $honoricSuffix;
 
     /**
-     * @var string|null
+     * @var string|null The GND identifier for the person.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $gnd;
 
     /**
-     * @var string|null
+     * @var string|null The stolpersteine (stumbling stones) ID for the person, for example 'https://www.stolpersteine-hamburg.de/index.php?MAIN_ID=7&BIO_ID=1234' for https://www.stolpersteine-hamburg.de/index.php?MAIN_ID=7&BIO_ID=1234
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $stolpersteine;
 
     /**
-     * @var string|null
+     * @var string|null The slug within dasjuedischehamburg.de, for example 'max-mustermann' for https://www.dasjuedischehamburg.de/personen/max-mustermann
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $djh;
 
     /**
-     * @var string|null
+     * @var string|null The VIAF identifier for the person.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $viaf;
 
     /**
-     * @var string|null
+     * @var string|null The Wikidata QID for the person.
      */
     #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $wikidata;
 
+    /**
+     * @var array|null Entityfacts for the person, for example from https://www.dnb.de/EN/Service/OpenData/EntityFacts/entityfacts.html
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $entityfacts;
 
+    /**
+     * @var array|null Additional information for the person.
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
+    /**
+     * @var ArticlePerson[]|null References to articles authored by this person.
+     */
     #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'author')]
     protected $articles;
 
+    /**
+     * @var ArticlePerson[]|null References to articles about this person.
+     */
     #[ORM\OneToMany(targetEntity: ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
@@ -249,7 +249,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets id.
      *
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -283,7 +283,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets additionalName.
      *
-     * @param string $additionalName
+     * @param string|null $additionalName
      *
      * @return $this
      */
@@ -297,7 +297,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets additionalName.
      *
-     * @return string
+     * @return string|null
      */
     public function getAdditionalName()
     {
@@ -307,7 +307,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets award.
      *
-     * @param string $award
+     * @param string|null $award
      *
      * @return $this
      */
@@ -321,7 +321,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets award.
      *
-     * @return string
+     * @return string|null
      */
     public function getAward()
     {
@@ -335,7 +335,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
      *
      * @return $this
      */
-    public function setBirthDate($birthDate = null)
+    public function setBirthDate($birthDate)
     {
         $this->birthDate = self::formatDateIncomplete($birthDate);
 
@@ -345,7 +345,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets birthDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getBirthDate()
     {
@@ -355,11 +355,11 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets deathDate.
      *
-     * @param string $deathDate
+     * @param string|null $deathDate
      *
      * @return $this
      */
-    public function setDeathDate($deathDate = null)
+    public function setDeathDate($deathDate)
     {
         $this->deathDate = self::formatDateIncomplete($deathDate);
 
@@ -369,7 +369,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets deathDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getDeathDate()
     {
@@ -581,7 +581,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
      *
      * @return $this
      */
-    public function setBirthPlace(?Place $birthPlace = null)
+    public function setBirthPlace(?Place $birthPlace)
     {
         $this->birthPlace = $birthPlace;
 
@@ -664,7 +664,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
      *
      * @return $this
      */
-    public function setDeathPlace(?Place $deathPlace = null)
+    public function setDeathPlace(?Place $deathPlace)
     {
         $this->deathPlace = $deathPlace;
 

@@ -15,7 +15,7 @@ class SourceArticle extends Article
      *
      * @return string
      */
-    public function getGenre()
+    public function getGenre(): string
     {
         return 'source';
     }
@@ -68,7 +68,12 @@ class SourceArticle extends Article
         return self::buildDateBucket($this->dateCreated);
     }
 
-    public function licenseAllowsDownload()
+    /**
+     * Checks if the license allows downloading the source.
+     *
+     * @return boolean
+     */
+    public function licenseAllowsDownload(): bool
     {
         // check if we are allowed to download
         $license = $this->getLicense();
@@ -89,7 +94,16 @@ class SourceArticle extends Article
         return false;
     }
 
-    public function jsonLdSerialize($locale, $omitContext = false, $standalone = false)
+    /**
+     * Serializes the source article to JSON-LD format.
+     *
+     * @param string $locale
+     * @param bool $omitContext
+     * @param bool $standalone
+     *
+     * @return array
+     */
+    public function jsonLdSerialize($locale, $omitContext = false, $standalone = false): array
     {
         $ret = parent::jsonLdSerialize($locale, $omitContext, $standalone);
 

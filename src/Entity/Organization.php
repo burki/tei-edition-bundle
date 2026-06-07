@@ -6,19 +6,17 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
-use FS\SolrBundle\Doctrine\Annotation as Solr;
+use FS\SolrBundle\Attribute as Solr;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * An organization such as a school, NGO, corporation, club, etc.
  *
  * @see http://schema.org/Organization Documentation on Schema.org
- *
- * @Solr\Document(indexHandler="indexHandler")
- * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
+")
  */
-#[ORM\Table(name: 'organization')]
 #[ORM\Entity]
+#[ORM\Table(name: 'organization')]
 #[Solr\Document(indexHandler: 'indexHandler')]
 #[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Organization implements \JsonSerializable, JsonLdSerializable
@@ -43,8 +41,6 @@ class Organization implements \JsonSerializable, JsonLdSerializable
 
     /**
      * @var int
-     *
-     * @Solr\Id
      */
     #[ORM\Column(type: 'integer')]
     #[ORM\Id]
@@ -59,7 +55,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     protected $status = 0;
 
     /**
-     * @var string A short description of the item.
+     * @var array|null A short description of the item.
      */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $description;
@@ -71,15 +67,13 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     protected $dissolutionDate;
 
     /**
-     * @var string The date that this organization was founded.
+     * @var string|null The date that this organization was founded.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $foundingDate;
 
     /**
      * @var string|null The name of the item.
-     *
-     * @Solr\Field(type="string")
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -116,6 +110,9 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     #[ORM\OrderBy(['dateCreated' => 'ASC', 'name' => 'ASC'])]
     protected $providerOf;
 
+    /**
+     * @var array|null Additional information for the organization.
+     */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
@@ -132,6 +129,9 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     #[ORM\OneToOne(targetEntity: Organization::class, mappedBy: 'precedingOrganization')]
     protected $succeedingOrganization;
 
+    /**
+     * @var ArticleOrganization[]|null References to articles about this organization.
+     */
     #[ORM\OneToMany(targetEntity: ArticleOrganization::class, mappedBy: 'organization', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
@@ -231,7 +231,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets description in a specific locale.
      *
-     * @return string
+     * @return string|null
      */
     public function getDescriptionLocalized($locale)
     {
@@ -324,7 +324,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets localized name.
      *
-     * @return string
+     * @return string|null
      */
     public function getNameLocalized($locale = 'en')
     {
