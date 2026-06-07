@@ -74,7 +74,7 @@
 
         "mpdf/mpdf": "^8.3",
 
-        "boppy/solr-bundle": "dev-attributes-only",
+        "boppy/solr-bundle": "dev-doctrine-event-listener",
         "knplabs/knp-paginator-bundle": "^6.10",
 
         "knplabs/knp-menu-bundle": "^3.7",
