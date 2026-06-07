@@ -6,7 +6,7 @@ namespace TeiEditionBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -250,6 +250,7 @@ class SearchController extends BaseController
             // build route from $suggestion['payload']
             $parts = explode('_', $suggestion['payload'], 2);
             $route = null;
+            $routeParams = [];
             switch ($parts[0]) {
                 case 'sourcearticle':
                 case 'article':
