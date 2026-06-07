@@ -8,7 +8,6 @@
 
 namespace TeiEditionBundle\Controller;
 
-use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Cocur\Slugify\SlugifyInterface;
@@ -63,6 +62,10 @@ abstract class RenderTeiController extends BaseController
         }, $refs));
 
         // make sure we only pick-up the published ones
+        $paramStrArray = defined('\Doctrine\DBAL\Connection::PARAM_STR_ARRAY')
+            ? \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+            : \Doctrine\DBAL\ArrayParameterType::STRING; // DBAL 4
+
         $query = $entityManager
             ->createQuery("SELECT a"
                           . " FROM \TeiEditionBundle\Entity\Article a"
@@ -70,7 +73,7 @@ abstract class RenderTeiController extends BaseController
                           . " AND a.uid IN (:refs)"
                           . (!empty($language) ? ' AND a.language=:language' : '')
                           . " ORDER BY a.name")
-            ->setParameter('refs', $refs, \Doctrine\DBAL\Connection::PARAM_STR_ARRAY)
+            ->setParameter('refs', $refs, $paramStrArray)
         ;
 
         if (!empty($language)) {
