@@ -75,6 +75,16 @@ class ArticleController extends RenderTeiController
         return $this->adjustRefs($html, $refs, $entityManager, $translator, $language);
     }
 
+    protected function buildRelated(EntityManagerInterface $entityManager, $article)
+    {
+        return $entityManager
+                    ->getRepository('\TeiEditionBundle\Entity\Article')
+                    ->findBy(
+                        [ 'isPartOf' => $article ],
+                        [ 'dateCreated' => 'ASC', 'name' => 'ASC']
+                    );
+    }
+
     /**
      * Call 'dtabf_article.xsl' or 'dtabf_article-printview.xsl'
      * to render article
@@ -125,12 +135,7 @@ class ArticleController extends RenderTeiController
         );
 
         $sourceDescription = $this->renderSourceDescription($article, $entityManager, $translator);
-        $related = $entityManager
-            ->getRepository('\TeiEditionBundle\Entity\Article')
-            ->findBy(
-                [ 'isPartOf' => $article ],
-                [ 'dateCreated' => 'ASC', 'name' => 'ASC']
-            );
+        $related = $this->buildRelated($entityManager, $article);
 
         if ($generatePrintView) {
             $html = $this->removeByCssSelector(

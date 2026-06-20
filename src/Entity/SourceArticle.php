@@ -10,16 +10,6 @@ use TeiEditionBundle\Utils\JsonLd;
 #[ORM\Entity]
 class SourceArticle extends Article
 {
-    /**
-     * Gets genre.
-     *
-     * @return string
-     */
-    public function getGenre(): string
-    {
-        return 'source';
-    }
-
     public static function buildDateBucket($date)
     {
         // we only care about the year
@@ -61,6 +51,16 @@ class SourceArticle extends Article
         }
 
         return [ $bucket, $key ];
+    }
+
+    /**
+     * Gets genre.
+     *
+     * @return string
+     */
+    public function getGenre(): string
+    {
+        return 'source';
     }
 
     public function getEpochLabel()

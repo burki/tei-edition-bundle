@@ -12,6 +12,8 @@ person.oneormany:                   "{count, plural, one {Person} other {Persons
 place.oneormany:                    "{count, plural, one {Place} other {Places}}"
 organization.oneormany:             "{count, plural, one {Organization} other {Organizations}}"
 bibitem.oneormany:                  "Bibliography"
+related.oneormany:                  "{count, plural, =0 {Related Articles} one {Related Article} other {Related Articles}}"
+overview.oneormany:                 "{count, plural, =0 {Geographical Overviews} one {Geographical Overview} other {Geographical Overviews}}"
 result.oneormany:                   "{count, plural, one {result} other {results}}"
 epoch.century:                      "{century}th Century"
 epoch.century-st:                   "{century}st Century"

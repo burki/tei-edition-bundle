@@ -186,6 +186,12 @@ class Place extends PlaceBase
     protected $articleReferences;
 
     /**
+     * @var ArticleSpatialCoverage[]|null References to articles covering this place.
+     */
+    #[ORM\OneToMany(targetEntity: ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected $articleCoveredReferences;
+
+    /**
      * Whether to show a marker in the center of the place on the map.
      * This is true for places that are point- and not area-like.
      */

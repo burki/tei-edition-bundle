@@ -88,14 +88,14 @@ class Article implements
      * a special mechanism for indicating authorship via the rel tag.
      * That is equivalent to this and may be used interchangeably.
      */
-    #[ORM\ManyToMany(targetEntity: \TeiEditionBundle\Entity\Person::class, inversedBy: 'articles')]
+    #[ORM\ManyToMany(targetEntity: Person::class, inversedBy: 'articles')]
     #[Solr\Field(type: 'strings', getter: 'getFullname')]
     protected $author;
 
     /**
-     * @var Person Organization or person who adapts a creative work to different languages, regional differences and technical requirements of a target market, or that translates during some event..
+     * @var Person Organization or person who adapts a creative work to different languages, regional differences and technical requirements of a target market, or that translates during some event.
      */
-    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Person::class)]
+    #[ORM\ManyToOne(targetEntity: Person::class)]
     protected $translator;
 
     /**
@@ -108,7 +108,7 @@ class Article implements
     /**
      * @var Place The location depicted or described in the content.
      */
-    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class, inversedBy: 'articles')]
+    #[ORM\ManyToOne(targetEntity: Place::class, inversedBy: 'articles')]
     protected $contentLocation;
 
     /**
@@ -130,6 +130,9 @@ class Article implements
 
     #[ORM\OneToMany(targetEntity: ArticleLandmark::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $landmarkReferences;
+
+    #[ORM\OneToMany(targetEntity: ArticleSpatialCoverage::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    protected $spatialCoverageReferences;
 
     #[ORM\OneToMany(targetEntity: ArticleEvent::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $eventReferences;
@@ -180,13 +183,13 @@ class Article implements
      * @var Article Indicates a CreativeWork that this CreativeWork is (in some sense) part of.
      */
     #[ORM\JoinColumn(name: 'isPartOf_id', referencedColumnName: 'id', nullable: true)]
-    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Article::class)]
+    #[ORM\ManyToOne(targetEntity: Article::class)]
     protected $isPartOf;
 
     /**
      * @var Organization Holding institution.
      */
-    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, inversedBy: 'providerOf')]
+    #[ORM\ManyToOne(targetEntity: Organization::class, inversedBy: 'providerOf')]
     protected $provider;
 
     /**
@@ -292,6 +295,8 @@ class Article implements
         $this->author = new ArrayCollection();
         $this->personReferences = new ArrayCollection();
         $this->placeReferences = new ArrayCollection();
+        $this->landmarkReferences = new ArrayCollection();
+        $this->spatialCoverageReferences = new ArrayCollection();
         $this->organizationReferences = new ArrayCollection();
         $this->bibitemReferences = new ArrayCollection();
     }
@@ -493,7 +498,7 @@ class Article implements
     /**
      * Sets content location.
      *
-     * @param Place $contentLocation
+     * @param Place|null $contentLocation
      *
      * @return $this
      */
@@ -507,7 +512,7 @@ class Article implements
     /**
      * Gets content location.
      *
-     * @return Place
+     * @return Place|null
      */
     public function getContentLocation()
     {
@@ -555,7 +560,7 @@ class Article implements
     /**
      * Gets creator.
      *
-     * @return string
+     * @return string|null
      */
     public function getCreator()
     {
@@ -579,7 +584,7 @@ class Article implements
     /**
      * Gets dateCreated.
      *
-     * @return string
+     * @return string|null
      */
     public function getDateCreated()
     {
@@ -603,7 +608,7 @@ class Article implements
     /**
      * Gets dateCreatedDisplay.
      *
-     * @return string
+     * @return string|null
      */
     public function getDateCreatedDisplay()
     {
@@ -1114,6 +1119,34 @@ class Article implements
     public function getLandmarkReferences()
     {
         return $this->landmarkReferences;
+    }
+
+    public function clearSpatialCoverageReferences()
+    {
+        if (!is_null($this->spatialCoverageReferences)) {
+            $this->spatialCoverageReferences->clear();
+        }
+    }
+
+    public function addSpatialCoverageReference(ArticleEntity $entityReference)
+    {
+        $entityId = $entityReference->getEntity()->getId();
+
+        if (!$this->spatialCoverageReferences->exists(
+            function ($key, $element) use ($entityId) {
+                return $element->getEntity()->getId() == $entityId;
+            }
+        )) {
+            $this->spatialCoverageReferences->add($entityReference);
+            $entityReference->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function getSpatialCoverageReferences()
+    {
+        return $this->spatialCoverageReferences;
     }
 
     public function addEventReference(ArticleEntity $entityReference)

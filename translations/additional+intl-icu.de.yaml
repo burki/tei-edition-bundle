@@ -13,6 +13,8 @@ organization.oneormany:             "{count, plural, one {Organisation} other {O
 place.oneormany:                    "{count, plural, one {Ort} other {Orte}}"
 result.oneormany:                   "{count, plural, one {Ergebnis} other {Ergebnisse}}"
 bibitem.oneormany:                  "Bibliografie"
+related.oneormany:                  "{count, plural, =0 {Zugehörige Beiträge} one {Zugehöriger Beitrag} other {Zugehörige Beiträge}}"
+overview.oneormany:                 "{count, plural, =0 {Länderstudien} one {Länderstudie} other {Länderstudie}}"
 epoch.century:                      "{century}. Jahrhundert"
 epoch.century-st:                   "{century}. Jahrhundert"
 epoch.century-nd:                   "{century}. Jahrhundert"
