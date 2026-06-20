@@ -380,16 +380,19 @@ class TeiHelper
         // genre, classification and translatedFrom
         $article->translatedFrom = null; // so legacy value gets cleared if now longer set
         $keywords = [];
+        $spatialCoverage = [];
         $result = $header('./tei:profileDesc/tei:textClass/tei:classCode');
         foreach ($result as $element) {
-            $label_parts = explode(':', (string) $element, 2);
-            $label = $label_parts[0];
-            if (count($label_parts) > 1) {
-                $article->sourceType = $label_parts[1];
-            }
+            $label = (string) $element;
 
             switch ($element['scheme']) {
                 case $this->schemePrefix . 'genre':
+                    $label_parts = explode(':', (string) $element, 2);
+                    $label = $label_parts[0];
+                    if (count($label_parts) > 1) {
+                        $article->sourceType = $label_parts[1];
+                    }
+
                     switch ($label) {
                         case 'Quelle':
                         case 'Source':
@@ -419,6 +422,21 @@ class TeiHelper
                     $keywords[] = $label;
                     break;
 
+                case $this->schemePrefix . 'coverage':
+                    // currently only spatial
+                    $uri = $label;
+
+                    if (!empty($uri)) {
+                        if (preg_match('/^'
+                                    . preg_quote('http://vocab.getty.edu/tgn/', '/')
+                                    . '(\d+)$/', $uri, $matches)) {
+                            $place = new \TeiEditionBundle\Entity\Place();
+                            $place->setTgn($matches[1]);
+                            $spatialCoverage[] = $place;
+                        }
+                    }
+                    break;
+
                 case $this->schemePrefix . 'translated-from':
                     if (!empty($label)) {
                         $article->translatedFrom = $label;
@@ -428,6 +446,7 @@ class TeiHelper
         }
 
         $article->keywords = $keywords;
+        $article->spatialCoverage = $spatialCoverage;
 
         // isPartOf
         if (isset($article->genre) && 'source' == $article->genre) {
@@ -854,6 +873,21 @@ class TeiHelper
                     foreach ($data['topic'] as $topic) {
                         $self = $parent->appendElement('classCode', $topic);
                         $self->setAttribute('scheme', $this->schemePrefix . 'topic');
+                    }
+
+                    return $self;
+                },
+            ]);
+        }
+
+        if (!empty($data['coverage'])) {
+            $this->addDescendants($header, 'tei:profileDesc/tei:textClass/tei:classCode[contains(@scheme, "coverage")]', [
+                'tei:classCode[contains(@scheme, "coverage")]' => function ($parent, $name) use ($data) {
+                    $self = null;
+                    foreach ($data['coverage'] as $term) {
+                        $ref = is_array($term) ? $term['@ref'] : $term;
+                        $self = $parent->appendElement('classCode', $ref);
+                        $self->setAttribute('scheme', $this->schemePrefix . 'coverage');
                     }
 
                     return $self;

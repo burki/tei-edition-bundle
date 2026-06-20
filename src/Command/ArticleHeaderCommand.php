@@ -164,7 +164,9 @@ class ArticleHeaderCommand extends BaseCommand
         $ignoredAttributes = [
             'datePublished', 'dateModified',
             'author', 'translator',
-            'provider', 'contentLocation', 'isPartOf',
+            'provider',
+            'contentLocation', 'spatialCoverage',
+            'isPartOf',
         ];
         $normalizer = new ObjectNormalizer(null, null, null, null, null, null, [
             AbstractNormalizer::IGNORED_ATTRIBUTES => $ignoredAttributes,
@@ -249,6 +251,15 @@ class ArticleHeaderCommand extends BaseCommand
                     $value = $related->getTgn();
                     break;
 
+                case 'spatialCoverage':
+                    $repoClass = 'Place';
+                    $key = [];
+                    $value = array_map(function ($related) use (&$key) {
+                        $key[] = 'tgn';
+                        return $related->getTgn();
+                    }, $related);
+                    break;
+
                 case 'isPartOf':
                     $repoClass = 'Article';
                     $criteria = [
@@ -259,32 +270,55 @@ class ArticleHeaderCommand extends BaseCommand
             }
 
             if (is_array($value)) {
-                $methodGet = 'get' . ucfirst($attribute);
-                $currentValues = $entity->$methodGet();
-                foreach ($value as $idx => $singleValue) {
-                    $criteria = [ $key[$idx] => $singleValue ];
-                    $relatedEntity = $this->em->getRepository('\TeiEditionBundle\Entity\\' . $repoClass)
-                        ->findOneBy($criteria);
+                if ('spatialCoverage' == $attribute) {
+                    $methodClear =  'clear' . ucfirst($attribute) . 'References';
+                    $entity->$methodClear();
 
-                    if (!is_null($relatedEntity)) {
-                        if ('author' == $attribute) {
-                            // collect author into creator for quick sorting
-                            $creator[] = $relatedEntity->getFullname();
-                        }
+                    $method = 'add' . ucfirst($attribute) . 'Reference';
+                    foreach ($value as $idx => $singleValue) {
+                        $criteria = [ $key[$idx] => $singleValue ];
+                        $relatedEntity = $this->em->getRepository('\TeiEditionBundle\Entity\\' . $repoClass)
+                            ->findOneBy($criteria);
 
-                        if (!$currentValues->contains($relatedEntity)) {
-                            $method = 'add' . ucfirst($attribute);
-                            $entity->$method($relatedEntity);
+                        if (!is_null($relatedEntity)) {
+                            $entityReference = new \TeiEditionBundle\Entity\ArticleSpatialCoverage();
+                            $entityReference->setEntity($relatedEntity);
+
+                            $entity->$method($entityReference);
                         }
-                    }
-                    else {
-                        die('TeiEditionBundle:' . $repoClass . '->findOneBy' . json_encode($criteria) . ' failed');
+                        else {
+                            die('TeiEditionBundle:' . $repoClass . '->findOneBy' . json_encode($criteria) . ' failed');
+                        }
                     }
                 }
+                else {
+                    $methodGet = 'get' . ucfirst($attribute);
+                    $method = 'add' . ucfirst($attribute);
+                    $currentValues = $entity->$methodGet();
+                    foreach ($value as $idx => $singleValue) {
+                        $criteria = [ $key[$idx] => $singleValue ];
+                        $relatedEntity = $this->em->getRepository('\TeiEditionBundle\Entity\\' . $repoClass)
+                            ->findOneBy($criteria);
 
-                $currentValues = $entity->$methodGet();
-                if ('author' == $attribute) {
-                    $entity->setCreator(join('; ', $creator));
+                        if (!is_null($relatedEntity)) {
+                            if ('author' == $attribute) {
+                                // collect author into creator for quick sorting
+                                $creator[] = $relatedEntity->getFullname();
+                            }
+
+                            if (!$currentValues->contains($relatedEntity)) {
+                                $entity->$method($relatedEntity);
+                            }
+                        }
+                        else {
+                            die('TeiEditionBundle:' . $repoClass . '->findOneBy' . json_encode($criteria) . ' failed');
+                        }
+                    }
+
+                    $currentValues = $entity->$methodGet();
+                    if ('author' == $attribute) {
+                        $entity->setCreator(join('; ', $creator));
+                    }
                 }
             }
             else {
