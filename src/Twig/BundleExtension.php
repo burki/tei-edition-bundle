@@ -1,19 +1,18 @@
 <?php
 
-// src/Twig/AppExtension.php
+// src/Twig/BundleExtension.php
 
 /**
  * see http://symfony.com/doc/current/cookbook/templating/twig_extension.html
  *
  * If not auto-registered, you can activate in
- *   config/services.yml
+ *  config/services.yml
  * as
- * services:
- *   app.twig_extension:
- *       class: TeiEditionBundle\Twig\AppExtension
- *       public: false
- *       tags:
- *           - { name: twig.extension }
+ *  services:
+ *      TeiEditionBundle\Twig\BundleExtension
+ *          public: false
+ *          tags:
+ *          - { name: twig.extension }
  *
  */
 
@@ -25,7 +24,7 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Cocur\Slugify\SlugifyInterface;
 
-class AppExtension extends AbstractExtension
+class BundleExtension extends AbstractExtension
 {
     private $translator;
     private $slugifyer;
@@ -178,6 +177,6 @@ class AppExtension extends AbstractExtension
 
     public function getName()
     {
-        return 'app_extension';
+        return 'tei_edition_extension';
     }
 }
