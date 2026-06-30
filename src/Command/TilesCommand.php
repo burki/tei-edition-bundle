@@ -92,7 +92,7 @@ class TilesCommand extends BaseCommand
 
         $targetPath = sprintf('/viewer/%s', $DERIVATE);
         if (!is_dir($this->publicDir . $targetPath)) {
-            mkdir($this->publicDir . '/' . $targetPath);
+            mkdir($this->publicDir . $targetPath);
         }
 
         $targetDir = $this->publicDir . $targetPath;

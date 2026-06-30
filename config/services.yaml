@@ -1,0 +1,303 @@
+services:
+    # tei_edition.imagemagick.*
+    TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor:
+        class: TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor
+        arguments: [ "%tei_edition.imagemagick.processor.arguments%" ]
+
+    tei_edition.imagemagick.processor:
+        alias: TeiEditionBundle\Utils\ImageMagick\ImageMagickProcessor
+
+    TeiEditionBundle\Utils\SimplifyGeojsonProcessor:
+
+    # tei_edition.pdf_generator.*
+    TeiEditionBundle\Utils\PdfGenerator:
+        arguments: [ "%tei_edition.pdf_generator.arguments%" ]
+
+    TeiEditionBundle\Utils\XmlFormatter\XmlFormatter:
+
+    # tei_edition.xsl.*
+    tei_edition.xsl.commandline_adapter:
+        class: TeiEditionBundle\Utils\Xsl\XsltCommandlineAdapter
+        arguments: [ '%tei_edition.xsl.commandline.template%', { xslpath: '%kernel.project_dir%/data/styles' } ]
+
+    tei_edition.xsl.saxonc_adapter:
+        class: TeiEditionBundle\Utils\Xsl\XsltSaxonProcessorAdapter
+
+    TeiEditionBundle\Utils\Xsl\XsltProcessor:
+        calls:
+            - [ setAdapter, [ "@= parameter('tei_edition.xsl.saxonc_enabled') ? service('tei_edition.xsl.saxonc_adapter') : (parameter('tei_edition.xsl.cache_enabled') ? service('tei_edition.xsl.cached_commandline_adapter') : service('tei_edition.xsl.commandline_adapter'))" ]]
+
+    tei_edition.xsl.processor:
+        alias: "TeiEditionBundle\\Utils\\Xsl\\XsltProcessor"
+
+    # Twig extension
+    TeiEditionBundle\Twig\BundleExtension:
+        arguments: [ "@translator.default", "@cocur_slugify"  ]
+        public: false
+        tags:
+            - { name: twig.extension }
+
+    # Commands
+    TeiEditionBundle\Command\ArticleHeaderCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleBiblioCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleContentCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleDoiCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleEntityCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleFormatCommand:
+        arguments:
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleRefreshCommand:
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ArticleValidateCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\EntityEnhanceCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ExtractGeoCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ImportEntityCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ImportGeoCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+            - "@TeiEditionBundle\\Utils\\SimplifyGeojsonProcessor"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ImportGlossaryCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\MetsCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\ThumbnailCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
+
+    TeiEditionBundle\Command\TilesCommand:
+        arguments:
+            - "@doctrine.orm.default_entity_manager"
+            - "@kernel"
+            - "@router"
+            - "@translator.default"
+            - "@cocur_slugify"
+            - "@parameter_bag"
+            - "@sylius.repository.theme"
+            - "@sylius.theme.context.settable"
+            - null
+            - "@tei_edition.imagemagick.processor"
+            - "@tei_edition.xsl.processor"
+            - "@TeiEditionBundle\\Utils\\XmlFormatter\\XmlFormatter"
+            - "%tei_edition.public_dir%"
+        tags:
+            - { name: console.command }
