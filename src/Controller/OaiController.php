@@ -136,7 +136,6 @@ class OaiProvider extends \Picturae\OaiPmh\Provider
  * Custom Repository
  */
 use DateTime;
-use OpenSkos2\OaiPmh\Concept as OaiConcept;
 use Picturae\OaiPmh\Exception\IdDoesNotExistException;
 use Picturae\OaiPmh\Implementation\MetadataFormatType as ImplementationMetadataFormatType;
 use Picturae\OaiPmh\Implementation\RecordList as OaiRecordList;
@@ -508,7 +507,6 @@ class Repository implements InterfaceRepository
         $creatorParts = $subjectParts = [];
         $datePublished = $article->getDatePublished();
         if ('source' == $article->getGenre()) {
-            $keywords = '';
             $route = 'source';
             $params = [ 'uid' => $article->getUid() ];
             // for sources, creator is free-text
@@ -566,22 +564,22 @@ class Repository implements InterfaceRepository
 
         // oai_dc
         $xml = <<<EOT
-                        <oai_dc:dc
-                             xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-                             xmlns:dc="http://purl.org/dc/elements/1.1/"
-                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                             xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
-                             http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-                            <dc:language>{$locale}</dc:language>
-                            <dc:title>{$title}</dc:title>
-                            <dc:identifier>{$url}</dc:identifier>
-                            <dc:creator>{$creator}</dc:creator>
-                            <dc:publisher>{$publisher}</dc:publisher>
-                            <dc:subject>{$subject}</dc:subject>
-                            <dc:type>Online Ressource</dc:type>
-                            <dc:description>{$description}</dc:description>
-                            <dc:date>{$date}</dc:date>
-                        </oai_dc:dc>
+                <oai_dc:dc
+                        xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+                        xmlns:dc="http://purl.org/dc/elements/1.1/"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
+                        http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+                    <dc:language>{$locale}</dc:language>
+                    <dc:title>{$title}</dc:title>
+                    <dc:identifier>{$url}</dc:identifier>
+                    <dc:creator>{$creator}</dc:creator>
+                    <dc:publisher>{$publisher}</dc:publisher>
+                    <dc:subject>{$subject}</dc:subject>
+                    <dc:type>Online Ressource</dc:type>
+                    <dc:description>{$description}</dc:description>
+                    <dc:date>{$date}</dc:date>
+                </oai_dc:dc>
             EOT;
 
         $recordMetadata = new \DOMDocument('1.0', 'UTF-8');
