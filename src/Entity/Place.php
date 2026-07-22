@@ -188,7 +188,7 @@ class Place extends PlaceBase
     /**
      * @var ArticleSpatialCoverage[]|null References to articles covering this place.
      */
-    #[ORM\OneToMany(targetEntity: ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ArticleSpatialCoverage::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleCoveredReferences;
 
     /**
