@@ -60,7 +60,7 @@ class XsltCommandlineAdapter implements XsltAdapterInterface
             'additional' => $this->buildAdditional($options),
         ]));
 
-        $res = `$cmd`;
+        $res = shell_exec($cmd);
 
         // TODO: implement error-handling
         return $res;
