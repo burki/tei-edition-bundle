@@ -592,9 +592,10 @@ class TeiHelper
      *
      * @param string $fname
      * @param array $data
+     * @param callable|null $plainToTeiTransformer A callable to transform plain text to TEI format
      * @return \FluentDOM\DOM\Document|false
      */
-    public function adjustHeader($fname, array $data)
+    public function adjustHeader(string $fname, array $data, $plainToTeiTransformer = null)
     {
         $dom = $this->loadXml($fname);
         if (false === $dom) {
@@ -735,7 +736,7 @@ class TeiHelper
 
             if (!empty($data['license'])) {
                 $this->addDescendants($header, 'tei:fileDesc/tei:publicationStmt/tei:availability', [
-                    'tei:availability' => function ($parent, $name) use ($data) {
+                    'tei:availability' => function ($parent, $name) use ($data, $plainToTeiTransformer) {
                         $nameParts = explode(':', $name, 2);
                         if (count($nameParts) == 2 && 'tei' == $nameParts[0]) {
                             // default namespace
@@ -749,12 +750,22 @@ class TeiHelper
                             if (!empty($target)) {
                                 $self = $self->appendElement('licence');
                                 $self->setAttribute('target', $target);
-                                $this->addChildStructure($self, [ 'p' => $data['license'][$target] ]);
+                                if (!is_null($plainToTeiTransformer)) {
+                                    $self->appendXml($plainToTeiTransformer($data['license'][$target]));
+                                }
+                                else {
+                                    $this->addChildStructure($self, [ 'p' => $data['license'][$target] ]);
+                                }
                             }
                             else {
                                 $availability = $data['license'][$target];
                                 if (!empty($availability)) {
-                                    $this->addChildStructure($self, [ 'p' => $availability ]);
+                                    if (!is_null($plainToTeiTransformer)) {
+                                        $self->appendXml($plainToTeiTransformer($data['license'][$target]));
+                                    }
+                                    else {
+                                        $this->addChildStructure($self, [ 'p' => $data['license'][$target] ]);
+                                    }
                                 }
                             }
                         }
