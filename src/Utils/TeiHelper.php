@@ -273,7 +273,13 @@ class TeiHelper
             $article->license = (string) $result[0]['target'];
             $result = $header('./tei:fileDesc/tei:publicationStmt/tei:availability/tei:licence/tei:p');
             if ($result->length > 0) {
-                $article->rights = trim($this->extractTextContent($result[0], false));
+                $parts = array_map(function ($element) {
+                    return trim($this->extractTextContent($element, false));
+                }, iterator_to_array($result));
+
+                $article->rights = join("\n\n", array_filter($parts, function ($part) {
+                    return !empty($part);
+                }));
             }
         }
         else {
