@@ -9,6 +9,44 @@
             "role": "Developer"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/igdj/lod-service"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/converter"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/LibRIS"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/SolrBundle"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/LiipUrlAutoConverterBundle"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/FluentDOM"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/lfiweb/OaiPmh"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/JmsTranslationBundle"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/burki/FeedBundle"
+        }
+    ],
     "require": {
         "php": "^8.3",
         "ext-curl": "*",
@@ -55,7 +93,7 @@
 
         "sabre/xml": "^4.1",
         "servo/fluidxml": "^2.0",
-        "fluentdom/fluentdom": "^8.0",
+        "fluentdom/fluentdom": "dev-master as 8.0",
 
         "html2text/html2text": "^4.3",
 
@@ -83,11 +121,13 @@
 
         "eko/feedbundle": "dev-symfony-8",
 
-        "square-bit/oai-pmh": "^0.3",
+        "lfiweb/oai-pmh": "dev-master#0bd7d43bbda920119399f3323ee8823d94cc0056",
         "symfony/psr-http-message-bridge": "^6.4|^7.4|^8.0",
-        "laminas/laminas-diactoros": "^3.8",
 
         "guzzlehttp/guzzle": "^7.10"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.95"
     },
     "autoload": {
         "psr-4": {

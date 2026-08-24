@@ -40,10 +40,11 @@ class OaiController extends AbstractController
             ]
         );
 
+        $serverRequest = $this->buildRequest();
         // Instead of
-        //   $provider = new \Picturae\OaiPmh\Provider($repository, $laminasRequest);
+        //   $provider = new \Picturae\OaiPmh\Provider($repository, $serverRequest);
         // we use a derived class referencing oai.xsl
-        $provider = new OaiProvider($repository, $this->buildRequest());
+        $provider = new OaiProvider($repository, $serverRequest);
 
         // use HttpFoundationFactory to convert $psrResponse
         $httpFoundationFactory = new HttpFoundationFactory();
@@ -52,9 +53,7 @@ class OaiController extends AbstractController
     }
 
     /**
-     * build Laminas\Diactoros\Request which implements
-     * Psr\Http\Message\RequestInterface
-     * from globals
+     * Build Psr\Http\Message\RequestInterface from globals
      */
     private function buildRequest(): \Psr\Http\Message\RequestInterface
     {
@@ -74,7 +73,7 @@ class OaiController extends AbstractController
             }
         }
 
-        return \Laminas\Diactoros\ServerRequestFactory::fromGlobals();
+        return \GuzzleHttp\Psr7\ServerRequest::fromGlobals();
     }
 }
 
@@ -84,7 +83,7 @@ class OaiController extends AbstractController
  */
 class OaiProvider extends \Picturae\OaiPmh\Provider
 {
-    private $xslUrl;
+    private ?string $xslUrl;
 
     /**
      * @param Repository $repository
@@ -104,7 +103,7 @@ class OaiProvider extends \Picturae\OaiPmh\Provider
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getResponse()
+    public function getResponse(): \Psr\Http\Message\ResponseInterface
     {
         $response = parent::getResponse();
 
@@ -112,17 +111,35 @@ class OaiProvider extends \Picturae\OaiPmh\Provider
             return $response;
         }
 
-        // add xml-stylesheet processing instruction
-        $document = new \DOMDocument('1.0', 'UTF-8');
-        $document->loadXML((string) $response->getBody());
+        $xml = (string) $response->getBody();
 
-        $xslt = $document->createProcessingInstruction(
-            'xml-stylesheet',
-            'type="text/xsl" href="' . htmlspecialchars($this->xslUrl) . '"'
+        // revert switch to https links
+        // https://github.com/lfiweb/OaiPmh/commit/f0f6526687b000685b4cf9f19da3dad8916bfab6
+        $xml = str_replace(
+            'xmlns="https://www.openarchives.org/OAI/2.0/"',
+            'xmlns="http://www.openarchives.org/OAI/2.0/"',
+            $xml
         );
 
-        // adding it to the document
-        $document->insertBefore($xslt, $document->documentElement);
+        $xml = str_replace(
+            'xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"',
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+            $xml
+        );
+
+        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document->loadXML($xml);
+
+        if (!empty($this->xslUrl)) {
+            // add xml-stylesheet processing instruction
+            $xslt = $document->createProcessingInstruction(
+                'xml-stylesheet',
+                'type="text/xsl" href="' . htmlspecialchars($this->xslUrl) . '"'
+            );
+
+            // adding it to the document
+            $document->insertBefore($xslt, $document->documentElement);
+        }
 
         return new \GuzzleHttp\Psr7\Response(
             $response->getStatusCode(),
@@ -146,7 +163,6 @@ use Picturae\OaiPmh\Interfaces\MetadataFormatType;
 use Picturae\OaiPmh\Interfaces\Record;
 use Picturae\OaiPmh\Interfaces\RecordList;
 use Picturae\OaiPmh\Interfaces\Repository as InterfaceRepository;
-use Picturae\OaiPmh\Interfaces\Repository\Identity;
 use Picturae\OaiPmh\Interfaces\SetList as InterfaceSetList;
 
 class Repository implements InterfaceRepository
@@ -181,26 +197,26 @@ class Repository implements InterfaceRepository
     /**
      * @return string the base URL of the repository
      */
-    public function getBaseUrl()
+    public function getBaseUrl(): string
     {
         // create a generator
         return $this->router->generate('oai', [], \Symfony\Component\Routing\Generator\UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     /**
-     * @return string stylesheet url
+     * @return string|null stylesheet url
      */
-    public function getStylesheetUrl()
+    public function getStylesheetUrl(): ?string
     {
         return $this->router->getContext()->getBaseUrl() . '/assets/oai.xsl';
     }
 
     /**
-     * @return string
      * the finest harvesting granularity supported by the repository. The legitimate values are
      * YYYY-MM-DD and YYYY-MM-DDThh:mm:ssZ with meanings as defined in ISO8601.
+     * @return string
      */
-    public function getGranularity()
+    public function getGranularity(): string
     {
         return \Picturae\OaiPmh\Interfaces\Repository\Identity::GRANULARITY_YYYY_MM_DD;
     }
@@ -208,7 +224,7 @@ class Repository implements InterfaceRepository
     /**
      * @return Identity
      */
-    public function identify()
+    public function identify(): ImplementationIdentity
     {
         return new ImplementationIdentity(
             array_key_exists('repositoryName', $this->options)
@@ -224,7 +240,7 @@ class Repository implements InterfaceRepository
     /**
      * @return InterfaceSetList
      */
-    public function listSets()
+    public function listSets(): InterfaceSetList
     {
         $items = [];
 
@@ -239,7 +255,7 @@ class Repository implements InterfaceRepository
      * @param string $token
      * @return InterfaceSetList
      */
-    public function listSetsByToken($token)
+    public function listSetsByToken($token): InterfaceSetList
     {
         $params = $this->decodeResumptionToken($token);
 
@@ -251,7 +267,7 @@ class Repository implements InterfaceRepository
      * @param string $identifier
      * @return Record
      */
-    public function getRecord($metadataFormat, $identifier)
+    public function getRecord(?string $metadataFormat, string $identifier): Record
     {
         // Fetch record
         $record = $this->getSomeRecord($metadataFormat, $identifier);
@@ -272,7 +288,7 @@ class Repository implements InterfaceRepository
      * @param string|null $set name of the set containing this record
      * @return RecordList
      */
-    public function listRecords($metadataFormat = null, ?DateTime $from = null, ?DateTime $until = null, $set = null)
+    public function listRecords(?string $metadataFormat = null, ?DateTime $from = null, ?DateTime $until = null, ?string $set = null): RecordList
     {
         $params = [
             'offset' => 0,
@@ -289,7 +305,7 @@ class Repository implements InterfaceRepository
      * @param string $token
      * @return RecordList
      */
-    public function listRecordsByToken($token)
+    public function listRecordsByToken(string $token): RecordList
     {
         $params = $this->decodeResumptionToken($token);
 
@@ -326,10 +342,10 @@ class Repository implements InterfaceRepository
     }
 
     /**
-     * @param string $identifier
+     * @param string|null $identifier
      * @return MetadataFormatType[]
      */
-    public function listMetadataFormats($identifier = null)
+    public function listMetadataFormats(?string $identifier = null): array
     {
         $formats = [];
 
