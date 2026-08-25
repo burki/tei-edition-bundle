@@ -95,7 +95,7 @@ abstract class BaseCommand extends Command
         return json_encode($structure, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
-    private function buildGndConditionbyUri($uri, $hyphenAllowed = true)
+    private function buildGndConditionByUri($uri, $hyphenAllowed = true)
     {
         $condition = null;
 
@@ -106,6 +106,19 @@ abstract class BaseCommand extends Command
 
         if (preg_match($regExp, $uri, $matches)) {
             $condition = [ 'gnd' => $matches[1] ];
+        }
+
+        return $condition;
+    }
+
+    private function buildWikidataConditionByUri($uri)
+    {
+        $condition = null;
+
+        if (preg_match('/^http'
+            . preg_quote('://www.wikidata.org/entity/', '/')
+            . '(Q\d+)$/', $uri, $matches)) {
+            $condition = [ 'wikidata' => $matches[1] ];
         }
 
         return $condition;
@@ -126,6 +139,11 @@ abstract class BaseCommand extends Command
     protected function buildPersonConditionByUri($uri)
     {
         $condition = $this->buildGndConditionByUri($uri, false);
+        if (!empty($condition)) {
+            return $condition;
+        }
+
+        $condition = $this->buildWikidataConditionByUri($uri);
         if (!empty($condition)) {
             return $condition;
         }
@@ -215,7 +233,7 @@ abstract class BaseCommand extends Command
                     break;
 
                 default:
-                    die('TODO: handle field ' . $field . ' for ' . $value);
+                    die('TODO: handle prefix ' . $field . ' for ' . $value);
             }
         }
 
@@ -227,7 +245,12 @@ abstract class BaseCommand extends Command
 
     protected function buildOrganizationConditionByUri($uri)
     {
-        return $this->buildGndConditionByUri($uri);
+        $condition = $this->buildGndConditionByUri($uri);
+        if (!empty($condition)) {
+            return $condition;
+        }
+
+        return $this->buildWikidataConditionByUri($uri);
     }
 
     protected function findOrganizationByUri($uri)
@@ -289,7 +312,7 @@ abstract class BaseCommand extends Command
                     break;
 
                 default:
-                    die('TODO: handle field ' . $field);
+                    die('TODO: handle prefix ' . $field . ' for ' . $value);
             }
         }
 
@@ -449,7 +472,7 @@ abstract class BaseCommand extends Command
                     break;
 
                 default:
-                    die('TODO: handle namespace ' . $prefix);
+                    die('TODO: handle prefix ' . $prefix . ' for ' . $uri);
             }
         }
 
@@ -550,7 +573,7 @@ abstract class BaseCommand extends Command
                     break;
 
                 default:
-                    die('TODO: handle namespace ' . $prefix);
+                    die('TODO: handle prefix ' . $prefix . ' for ' . $uri);
             }
         }
 

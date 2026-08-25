@@ -55,7 +55,9 @@ class ArticleEntityCommand extends BaseCommand
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
 
-        $entities = $teiHelper->extractEntities($fname);
+        // entities with wikidata uris must currently be added manually,
+        // so we don't insert missing ones for now
+        $entities = $teiHelper->extractEntities($fname, !$input->getOption('insert-missing'));
 
         if (false === $entities) {
             $output->writeln(sprintf('<error>%s could not be loaded</error>', $fname));

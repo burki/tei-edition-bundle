@@ -155,12 +155,17 @@ abstract class RenderTeiController extends BaseController
         foreach ($entitiesByType as $type => $uriCount) {
             switch ($type) {
                 case 'person':
-                    $personGnds = $personDjhs = $personStolpersteine = [];
+                    $personGnds = $personWikidata = $personDjhs = $personStolpersteine = [];
                     foreach ($uriCount as $uri => $count) {
                         if (preg_match('/^https?'
                                        . preg_quote('://d-nb.info/gnd/', '/')
                                        . '(\d+[xX]?)$/', $uri, $matches)) {
                             $personGnds[$matches[1]] = $uri;
+                        }
+                        else if (preg_match('/^'
+                                       . preg_quote('http://www.wikidata.org/entity/', '/')
+                                       . '(Q\d+)$/', $uri, $matches)) {
+                            $personWikidata[$matches[1]] = $uri;
                         }
                         else if (preg_match('/^https?'
                                     . preg_quote('://www.dasjuedischehamburg.de/inhalt/', '/')
@@ -186,6 +191,25 @@ abstract class RenderTeiController extends BaseController
                                 $details = [
                                     'url' => $this->generateUrl('person-by-gnd', [
                                         'gnd' => $person->getGnd(),
+                                    ]),
+                                ];
+                                $entitiesByType[$type][$uri] += $details;
+                            }
+                        }
+                    }
+
+                    if (!empty($personWikidata)) {
+                        $persons = $entityManager
+                            ->getRepository('\TeiEditionBundle\Entity\Person')
+                            ->findBy([ 'wikidata' => array_keys($personWikidata) ])
+                        ;
+
+                        foreach ($persons as $person) {
+                            if ($person->getStatus() >= 0) {
+                                $uri = $personWikidata[$person->getWikidata()];
+                                $details = [
+                                    'url' => $this->generateUrl('person', [
+                                        'id' => $person->getId(),
                                     ]),
                                 ];
                                 $entitiesByType[$type][$uri] += $details;
@@ -302,12 +326,17 @@ abstract class RenderTeiController extends BaseController
                     break;
 
                 case 'organization':
-                    $organizationGnds = [];
+                    $organizationGnds = $organizationWikidata = [];
                     foreach ($uriCount as $uri => $count) {
                         if (preg_match('/^'
                                        . preg_quote('http://d-nb.info/gnd/', '/')
                                        . '(\d+[\-]?[\dxX]?)$/', $uri, $matches)) {
                             $organizationGnds[$matches[1]] = $uri;
+                        }
+                        else if (preg_match('/^'
+                                       . preg_quote('http://www.wikidata.org/entity/', '/')
+                                       . '(Q\d+)$/', $uri, $matches)) {
+                            $organizationWikidata[$matches[1]] = $uri;
                         }
                     }
 
@@ -323,6 +352,25 @@ abstract class RenderTeiController extends BaseController
                                 $details = [
                                     'url' => $this->generateUrl('organization-by-gnd', [
                                         'gnd' => $organization->getGnd(),
+                                    ]),
+                                ];
+                                $entitiesByType[$type][$uri] += $details;
+                            }
+                        }
+                    }
+
+                    if (!empty($organizationWikidata)) {
+                        $organizations = $entityManager
+                            ->getRepository('\TeiEditionBundle\Entity\Organization')
+                            ->findBy([ 'wikidata' => array_keys($organizationWikidata) ])
+                        ;
+
+                        foreach ($organizations as $organization) {
+                            if ($organization->getStatus() >= 0) {
+                                $uri = $organizationWikidata[$organization->getWikidata()];
+                                $details = [
+                                    'url' => $this->generateUrl('organization', [
+                                        'id' => $organization->getId(),
                                     ]),
                                 ];
                                 $entitiesByType[$type][$uri] += $details;
