@@ -79,6 +79,7 @@ extends PlaceBase
         'departments (political divisions)' => 'department',  // http://vocab.getty.edu/aat/300000772
         'first level subdivisions (political entities)' => 'province',  // http://vocab.getty.edu/aat/300387064
         'union territories' => 'union territory',    // http://vocab.getty.edu/aat/300387122
+        'second level subdivisions (political entities)' => 'county',  // http://vocab.getty.edu/aat/300387145
         'third level subdivisions (political entities)' => 'district',  // http://vocab.getty.edu/aat/300387064
         'cantons (administrative bodies)' => 'canton', // http://vocab.getty.edu/aat/300000769
         'prefectures' => 'prefecture',              // http://vocab.getty.edu/aat/300235099
