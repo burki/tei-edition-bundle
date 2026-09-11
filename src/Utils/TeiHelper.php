@@ -149,7 +149,7 @@ class TeiHelper
 
         $fnameFacs = '';
 
-        $result = $xml->xpath('/tei:TEI/tei:text//tei:figure');
+        $result = $xml('/tei:TEI/tei:text//tei:figure');
         foreach ($result as $element) {
             $facs = $element['facs'];
             if (!empty($facs)) {
@@ -174,7 +174,7 @@ class TeiHelper
 
         $fnameFacs = [];
 
-        $result = $xml->xpath('/tei:TEI/tei:text//tei:figure');
+        $result = $xml('/tei:TEI/tei:text//tei:figure');
         foreach ($result as $element) {
             $facs = $element['facs'];
             if (!empty($facs)) {
