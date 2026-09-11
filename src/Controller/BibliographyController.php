@@ -214,7 +214,7 @@ class BibliographyController extends BaseController
         }
 
         return $this->render('@TeiEdition/Bibliography/detail.html.twig', [
-            'pageTitle' => $bibitem->getName(true), //
+            'pageTitle' => $bibitem->getName(), //
             'bibitem' => $bibitem,
             'citeProc' => $this->instantiateCiteProc($request->getLocale()),
             'pageMeta' => [
