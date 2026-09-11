@@ -164,7 +164,7 @@ class SourceController extends ArticleController
             $relatedCriteria
                 ->where($relatedCriteria->expr()->eq('isPartOf', $interpretation))
                 ->andWhere($relatedCriteria->expr()->neq('uid', $sourceArticle->getUid()));
-            $relatedCriteria->orderBy([ 'dateCreated' => 'ASC', 'name' => 'ASC' ]);
+            $relatedCriteria->orderBy([ 'dateCreated' => \SortDirection::Ascending, 'name' => \SortDirection::Ascending ]);
 
             $related = $entityManager
                 ->getRepository('\TeiEditionBundle\Entity\Article')

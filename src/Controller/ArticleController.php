@@ -81,7 +81,7 @@ class ArticleController extends RenderTeiController
                     ->getRepository('\TeiEditionBundle\Entity\Article')
                     ->findBy(
                         [ 'isPartOf' => $article ],
-                        [ 'dateCreated' => 'ASC', 'name' => 'ASC']
+                        [ 'dateCreated' => \SortDirection::Ascending, 'name' => \SortDirection::Ascending]
                     );
     }
 

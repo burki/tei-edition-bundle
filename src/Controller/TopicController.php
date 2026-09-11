@@ -228,7 +228,7 @@ class TopicController extends RenderTeiController
                 ->where("A.status IN (1) AND A.keywords LIKE :topic AND A.articleSection <> 'background'"
                         . (!empty($language) ? ' AND A.language=:language' : ''))
                 ->setParameter('topic', '%' . $topics[$slug] . '%')
-                ->orderBy('S.dateCreated', 'ASC')
+                ->orderBy('S.dateCreated', \SortDirection::Ascending)
         ;
         if (!empty($language)) {
             $queryBuilder->setParameter('language', $language);

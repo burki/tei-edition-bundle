@@ -27,7 +27,7 @@ class GlossaryController extends BaseController
                 ->findBy(
                     [ 'status' => [ 0, 1 ],
                         'language' => $language ],
-                    [ 'term' => 'ASC' ]
+                    [ 'term' => \SortDirection::Ascending ]
                 );
 
         return $this->render('@TeiEdition/Glossary/index.html.twig', [

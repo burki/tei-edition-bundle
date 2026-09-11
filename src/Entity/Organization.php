@@ -7,6 +7,7 @@ namespace TeiEditionBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
 use FS\SolrBundle\Attribute as Solr;
+use SortDirection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -107,7 +108,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     protected $wikidata;
 
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'provider')]
-    #[ORM\OrderBy(['dateCreated' => 'ASC', 'name' => 'ASC'])]
+    #[ORM\OrderBy(['dateCreated' => SortDirection::Ascending, 'name' => SortDirection::Ascending])]
     protected $providerOf;
 
     /**

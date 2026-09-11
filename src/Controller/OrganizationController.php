@@ -24,7 +24,7 @@ class OrganizationController extends BaseController
                 ->getRepository('\TeiEditionBundle\Entity\Organization')
                 ->findBy(
                     [ 'status' => [ 0, 1 ] ],
-                    [ 'name' => 'ASC' ]
+                    [ 'name' => \SortDirection::Ascending ]
                 );
 
         // the following doesn't work on windows, where we would probably need accent removal

@@ -45,10 +45,9 @@ class ExtractGeoCommand extends BaseCommand
         $articles = $this->em->getRepository('TeiEditionBundle\Entity\Article')
             ->findBy(
                 [
-                    // 'uid' => 'jgo:source-193',
                     'language' => $language,
                 ],
-                [ 'uid' => 'ASC' ]
+                [ 'uid' => \SortDirection::Ascending ]
             )
         ;
 

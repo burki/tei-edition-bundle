@@ -499,7 +499,7 @@ class ArticleDoiCommand extends BaseCommand
                 ->getRepository('\TeiEditionBundle\Entity\Article')
                 ->findBy(
                     [ 'isPartOf' => $entity ],
-                    [ 'dateCreated' => 'ASC', 'name' => 'ASC']
+                    [ 'dateCreated' => \SortDirection::Ascending, 'name' => \SortDirection::Ascending]
                 )
             ;
 

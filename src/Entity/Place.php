@@ -6,6 +6,7 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FS\SolrBundle\Attribute as Solr;
+use SortDirection;
 use Symfony\Component\String\Inflector\EnglishInflector;
 
 /**
@@ -172,7 +173,7 @@ class Place extends PlaceBase
      * @var Place[]|null
      */
     #[ORM\OneToMany(targetEntity: Place::class, mappedBy: 'parent')]
-    #[ORM\OrderBy(['type' => 'ASC', 'name' => 'ASC'])]
+    #[ORM\OrderBy(['type' => SortDirection::Ascending, 'name' => SortDirection::Ascending])]
     private $children;
 
 

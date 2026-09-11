@@ -100,8 +100,8 @@ class PlaceController extends BaseController
                 ;
             }
 
-            $qb->addOrderBy('A.dateCreated', 'ASC')
-                ->addOrderBy('A.name', 'ASC');
+            $qb->addOrderBy('A.dateCreated', \SortDirection::Ascending)
+                ->addOrderBy('A.name', \SortDirection::Ascending);
 
             $articles = $qb
                     ->getQuery()

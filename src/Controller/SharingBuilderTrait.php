@@ -106,7 +106,7 @@ trait SharingBuilderTrait
                                 ->getRepository('\TeiEditionBundle\Entity\Article')
                                 ->findBy(
                                     [ 'isPartOf' => $entity ],
-                                    [ 'dateCreated' => 'ASC', 'name' => 'ASC'],
+                                    [ 'dateCreated' => \SortDirection::Ascending, 'name' => \SortDirection::Ascending],
                                     1
                                 );
                             if (count($related) > 0) {
