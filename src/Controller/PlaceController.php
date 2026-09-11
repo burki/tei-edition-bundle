@@ -50,7 +50,7 @@ class PlaceController extends BaseController
             $articles = [];
         }
         else {
-            $mode = str_replace('place-map-', '', $request->get('caller'));
+            $mode = str_replace('place-map-', '', $request->query->get('caller'));
 
             $ids = explode(',', $ids);
             $qb = $entityManager
@@ -75,7 +75,7 @@ class PlaceController extends BaseController
                 ->innerJoin('A.landmarkReferences', 'AL')
                 ->innerJoin('AL.landmark', 'P');
 
-                $geo = $request->get('geo');
+                $geo = $request->query->get('geo');
                 if (!empty($geo)) {
                     $qb->andWhere('P.geo = :geo')
                         ->setParameter('geo', $geo)
@@ -85,7 +85,7 @@ class PlaceController extends BaseController
             else {
                 $qb->innerJoin('A.contentLocation', 'P');
 
-                $geo = $request->get('geo');
+                $geo = $request->query->get('geo');
                 if (!empty($geo)) {
                     $qb->andWhere('A.geo = :geo OR (A.geo IS NULL AND P.geo = :geo)')
                         ->setParameter('geo', $geo)

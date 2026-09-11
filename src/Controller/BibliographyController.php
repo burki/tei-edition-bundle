@@ -237,9 +237,9 @@ class BibliographyController extends BaseController
         EntityManagerInterface $entityManager
     ) {
         /* see http://robotlibrarian.billdueber.com/2009/11/setting-up-your-opac-for-zotero-support-using-unapi/ */
-        $format = $request->get('format');
+        $format = $request->query->get('format');
 
-        $id = $request->get('id');
+        $id = $request->query->get('id');
         $bibitem = null;
         if (!empty($id)) {
             if (preg_match('/^urn:bibnum:(.+)$/', $id, $matches)) {
