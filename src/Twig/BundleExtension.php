@@ -35,7 +35,7 @@ class BundleExtension extends AbstractExtension
     ) {
         $this->translator = $translator;
         $this->slugifyer = $slugifyer;
-        if (!is_null($slugifyer)) {
+        if (!is_null($slugifyer) && method_exists($slugifyer, 'addRule')) {
             // this should be set in bundlesetup
             $slugifyer->addRule('Ṿ', 'V');
         }
