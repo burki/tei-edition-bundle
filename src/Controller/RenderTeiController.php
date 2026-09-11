@@ -480,6 +480,7 @@ abstract class RenderTeiController extends BaseController
 
         $crawler->filter('audio > source')->each(function ($node, $i) use ($baseUrl) {
             $src = $node->attr('src');
+            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
             $node->getNode(0)->setAttribute('src', $baseUrl . '/' . $src);
         });
 
@@ -487,18 +488,21 @@ abstract class RenderTeiController extends BaseController
         $crawler->filter('audio')->each(function ($node, $i) use ($baseUrl) {
             $poster = $node->attr('data-info-album-art');
             if (!is_null($poster)) {
+                // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                 $node->getNode(0)->setAttribute('data-info-album-art', $baseUrl . '/' . $poster);
             }
         });
 
         $crawler->filter('video > source')->each(function ($node, $i) use ($baseUrl) {
             $src = $node->attr('src');
+            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
             $node->getNode(0)->setAttribute('src', $baseUrl . '/' . $src);
         });
 
         $crawler->filter('video')->each(function ($node, $i) use ($baseUrl) {
             $attrValue = $node->attr('poster');
             if (!is_null($attrValue)) {
+                // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                 $node->getNode(0)->setAttribute('poster', $baseUrl . '/' . $attrValue);
             }
         });
@@ -506,14 +510,17 @@ abstract class RenderTeiController extends BaseController
         $crawler->filter('object')->each(function ($node, $i) use ($baseUrl) {
             $attrValue = $node->attr('data');
             if (!is_null($attrValue)) {
+                // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                 $node->getNode(0)->setAttribute('data', $baseUrl . '/' . $attrValue);
             }
         });
 
         $crawler->filter('img')->each(function ($node, $i) use ($baseUrl, $imgClass) {
             $src = $node->attr('src');
+            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
             $node->getNode(0)->setAttribute('src', $baseUrl . '/' . $src);
             if (!empty($imgClass)) {
+                // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                 $node->getNode(0)->setAttribute('class', $imgClass);
             }
         });
@@ -573,6 +580,7 @@ abstract class RenderTeiController extends BaseController
         $crawler->filterXPath("//a[@class='external']")
             ->each(function ($crawler) use ($refLookup, $siteLinkPrefix) {
                 foreach ($crawler as $node) {
+                    // @phpstan-ignore method.notFound
                     $href = $node->getAttribute('href');
 
                     if (preg_match('/^(' . $siteLinkPrefix . '(article|source)\-(\d+))(\#.+)?$/', $href, $matches)) {
@@ -580,14 +588,19 @@ abstract class RenderTeiController extends BaseController
                         $anchor = count($matches) > 4 ? $matches[4] : '';
                         if (array_key_exists($hrefBase, $refLookup)) {
                             $info = $refLookup[$hrefBase];
+                            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                             $node->setAttribute('href', $refLookup[$hrefBase]['href'] . $anchor);
                             if (!empty($info['headline'])) {
+                                // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                                 $node->setAttribute('title', $refLookup[$hrefBase]['headline']);
+                                // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                                 $node->setAttribute('class', 'setTooltip');
                             }
                         }
                         else {
+                            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                             $node->removeAttribute('href');
+                            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                             $node->setAttribute('class', 'externalDisabled');
                         }
                     }

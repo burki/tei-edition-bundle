@@ -238,7 +238,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     public function getDescriptionLocalized($locale)
     {
         if (empty($this->description)) {
-            return;
+            return null;
         }
 
         if (is_array($this->description)) {

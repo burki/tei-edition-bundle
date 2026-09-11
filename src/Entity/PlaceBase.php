@@ -298,7 +298,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
     public function getDescriptionLocalized($locale)
     {
         if (empty($this->description)) {
-            return;
+            return null;
         }
 
         if (is_array($this->description)) {
@@ -470,7 +470,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
         }
 
         if (!$fallback) {
-            return;
+            return null;
         }
 
         return $this->getName();

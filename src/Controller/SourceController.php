@@ -517,7 +517,11 @@ class SourceController extends ArticleController
         foreach ($result as $sourceArticle) {
             $locale = \TeiEditionBundle\Utils\Iso639::code3to1($sourceArticle->getLanguage());
             if (in_array($locale, $this->getParameter('locales'))) {
-                $translator->setLocale($locale);
+                /* setLocale() is not defined in TranslatorInterface */
+                if (method_exists($translator, 'setLocale')) {
+                    $translator->setLocale($locale);
+                }
+
                 $content = $this->renderView('@TeiEdition/Article/readme-' . $locale . '.txt.twig', [
                     'meta' => $sourceArticle,
                 ]);
@@ -530,7 +534,10 @@ class SourceController extends ArticleController
             }
         }
 
-        $translator->setLocale($defaultLocale);
+        /* setLocale() is not defined in TranslatorInterface */
+        if (method_exists($translator, 'setLocale')) {
+            $translator->setLocale($defaultLocale);
+        }
 
         return $ret;
     }
@@ -854,6 +861,7 @@ class SourceController extends ArticleController
         $xpath = new \DOMXPath($resource);
         foreach ($xpath->query("//mets:fileSec/mets:fileGrp[@USE='MASTER']") as $fileSec) {
             // <mets:fileGrp USE="MASTER"> -> <mets:fileGrp USE="DEFAULT">
+            // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
             $fileSec->setAttribute('USE', 'DEFAULT');
 
             /*
@@ -862,6 +870,7 @@ class SourceController extends ArticleController
              *    (_3.(jpg|png) if available, otherwise _2 or _1)
              */
             foreach ($xpath->query("./mets:file/mets:FLocat[@LOCTYPE='URL']", $fileSec) as $node) {
+                // @phpstan-ignore method.notFound
                 $hrefRel = $node->getAttribute('xlink:href');
                 $pathParts = pathinfo($hrefRel);
                 for ($zoom = $defaultZoom; $zoom >= 0; $zoom--) {
@@ -869,6 +878,7 @@ class SourceController extends ArticleController
                     // @phpstan-ignore variable.undefined
                     if (file_exists($filePath . '/' . $fnameScaled)) {
                         $hrefAbs = $directoryUrlAbs . '/' . $fnameScaled;
+                        // @phpstan-ignore method.notFound (we are directly manipulating the DOM)
                         $node->setAttribute('xlink:href', $hrefAbs);
                         break;
                     }

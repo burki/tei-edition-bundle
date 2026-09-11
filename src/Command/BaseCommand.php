@@ -189,6 +189,8 @@ abstract class BaseCommand extends Command
             switch ($field) {
                 case 'gnd':
                     $lodService = new LodService(new DnbProvider());
+
+                    // @phpstan-ignore method.notFound ($lodService has __call() routed to DnbProvider::fetch())
                     $resource = $lodService->fetch(new GndIdentifier($value));
 
                     if (is_null($resource) || !($resource instanceof \LodService\Model\Person)) {
@@ -226,6 +228,7 @@ abstract class BaseCommand extends Command
                                     break;
 
                                 default:
+                                    // @phpstan-ignore method.notFound
                                     $person->$setter($value);
                             }
                         }
@@ -279,6 +282,7 @@ abstract class BaseCommand extends Command
             switch ($field) {
                 case 'gnd':
                     $lodService = new LodService(new DnbProvider());
+                    // @phpstan-ignore method.notFound ($lodService has __call() routed to DnbProvider::fetch())
                     $resource = $lodService->fetch(new GndIdentifier($value));
 
                     if (is_null($resource) || !($resource instanceof \LodService\Model\Organization)) {
@@ -305,6 +309,7 @@ abstract class BaseCommand extends Command
                                     break;
 
                                 default:
+                                    // @phpstan-ignore method.notFound
                                     $organization->$setter($value);
                             }
                         }
@@ -391,6 +396,7 @@ abstract class BaseCommand extends Command
                     var_dump($prefix . ':' . $value);
 
                     $lodService = new LodService(new GettyVocabulariesProvider());
+                    // @phpstan-ignore method.notFound ($lodService has __call() routed to GettyVocabulariesProvider::fetch())
                     $resource = $lodService->fetch(new TgnIdentifier($value));
 
                     if (is_null($resource) || !($resource instanceof \LodService\Model\Place)) {
@@ -419,6 +425,7 @@ abstract class BaseCommand extends Command
                         ]);
 
                         if (is_null($parent)) {
+                            // @phpstan-ignore method.notFound (TgnIdentifier extends UriIdentifier)
                             $res = $this->insertMissingPlace($tgnParent->toUri());
                             if ($res >= 0) {
                                 $parent = $this->em->getRepository('TeiEditionBundle\Entity\Place')->findOneBy([ 'tgn' => $tgnParent->getValue() ]);
@@ -465,6 +472,7 @@ abstract class BaseCommand extends Command
                                     break;
 
                                 default:
+                                    // @phpstan-ignore method.notFound
                                     $entity->$setter($value);
                             }
                         }
@@ -540,6 +548,7 @@ abstract class BaseCommand extends Command
             switch ($prefix) {
                 case 'gnd':
                     $lodService = new LodService(new DnbProvider());
+                    // @phpstan-ignore method.notFound ($lodService has __call() routed to DnbProvider::fetch())
                     $resource = $lodService->fetch(new GndIdentifier($value));
 
                     if (is_null($resource) || !($resource instanceof \LodService\Model\DefinedTerm)) {
@@ -566,6 +575,7 @@ abstract class BaseCommand extends Command
                                     break;
 
                                 default:
+                                    // @phpstan-ignore method.notFound
                                     $entity->$setter($value);
                             }
                         }

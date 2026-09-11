@@ -198,13 +198,21 @@ class TopicController extends RenderTeiController
         if ($this->getParameter('fallback_locale') == $locale) {
             foreach ($this->getParameter('locales') as $alternateLocale) {
                 if ($locale != $alternateLocale) {
-                    $translator->setLocale($alternateLocale);
+                    /* setLocale() is not defined in TranslatorInterface */
+                    if (method_exists($translator, 'setLocale')) {
+                        $translator->setLocale($alternateLocale);
+                    }
+
                     $localeSwitch[$alternateLocale] = [
                         'slug' => $this->slugify(/** @Ignore */ $translator->trans($topics[$slug])),
                     ];
                 }
             }
-            $translator->setLocale($locale);
+
+            /* setLocale() is not defined in TranslatorInterface */
+            if (method_exists($translator, 'setLocale')) {
+                $translator->setLocale($locale);
+            }
         }
         else {
             // find corresponding slug for fallback_locale

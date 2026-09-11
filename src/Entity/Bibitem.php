@@ -736,7 +736,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     /**
      * Gets description.
      *
-     * @return string
+     * @return array|null
      */
     public function getDescription()
     {
