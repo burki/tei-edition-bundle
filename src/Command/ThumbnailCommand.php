@@ -135,7 +135,12 @@ class ThumbnailCommand extends BaseCommand
                         return Command::INVALID;
                     }
 
-                    $targetDir = realpath($baseDir . '/' . sprintf('web/viewer/%s', $DERIVATE));
+                    $targetPath = sprintf('/viewer/%s', $DERIVATE);
+                    if (!is_dir($this->publicDir . $targetPath)) {
+                        mkdir($this->publicDir . '/' . $targetPath);
+                    }
+
+                    $targetDir = $this->publicDir . $targetPath;
 
                     $fnameFull = $targetDir . '/' . $figureFacs;
 
