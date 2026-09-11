@@ -95,7 +95,7 @@ class BiographicalWikidata
      * Executes a SPARQL query
      *
      * @param string $query
-     * @param \EasyRdf\Sparql\Client $client
+     * @param \EasyRdf\Sparql\Client $sparqlClient
      *
      * @return \EasyRdf\Sparql\Result $result
      */

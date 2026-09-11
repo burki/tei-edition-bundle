@@ -615,9 +615,9 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
      *
      * @return $this
      */
-    public function setPagination($pagionation = null)
+    public function setPagination($pagination = null)
     {
-        $this->pagination = $pagionation;
+        $this->pagination = $pagination;
 
         return $this;
     }
@@ -717,9 +717,6 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     /**
      *
      * Populate description for other properties.
-     *
-     *
-     * @param string $description
      *
      * @return $this
      */

@@ -222,7 +222,7 @@ class Repository implements InterfaceRepository
     }
 
     /**
-     * @return Identity
+     * @return ImplementationIdentity
      */
     public function identify(): ImplementationIdentity
     {
@@ -391,7 +391,7 @@ class Repository implements InterfaceRepository
      *
      * @param int $offset
      * @param DateTime|null $from
-     * @param DateTime|null $util
+     * @param DateTime|null $until
      * @param string|null $metadataPrefix
      * @param string|null $set
      * @return string
