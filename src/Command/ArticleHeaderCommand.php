@@ -317,6 +317,7 @@ class ArticleHeaderCommand extends BaseCommand
 
                     $currentValues = $entity->$methodGet();
                     if ('author' == $attribute) {
+                        // @phpstan-ignore variable.undefined
                         $entity->setCreator(join('; ', $creator));
                     }
                 }

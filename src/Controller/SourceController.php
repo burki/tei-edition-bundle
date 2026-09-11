@@ -866,6 +866,7 @@ class SourceController extends ArticleController
                 $pathParts = pathinfo($hrefRel);
                 for ($zoom = $defaultZoom; $zoom >= 0; $zoom--) {
                     $fnameScaled = $pathParts['filename'] . '_' . $zoom . '.' . $pathParts['extension'];
+                    // @phpstan-ignore variable.undefined
                     if (file_exists($filePath . '/' . $fnameScaled)) {
                         $hrefAbs = $directoryUrlAbs . '/' . $fnameScaled;
                         $node->setAttribute('xlink:href', $hrefAbs);
