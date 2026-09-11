@@ -4,6 +4,7 @@
 
 namespace TeiEditionBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
 use FS\SolrBundle\Attribute as Solr;
@@ -100,7 +101,7 @@ class Event implements \JsonSerializable, JsonLdSerializable
     protected $additional;
 
     /**
-     * @var ArticleEvent[]|null References to articles about this event.
+     * @var Collection<int, ArticleEvent>|null References to articles about this event.
      */
     #[ORM\OneToMany(targetEntity: ArticleEvent::class, mappedBy: 'event', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;

@@ -4,6 +4,7 @@
 
 namespace TeiEditionBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
 use FS\SolrBundle\Attribute as Solr;
@@ -131,7 +132,7 @@ class Organization implements \JsonSerializable, JsonLdSerializable
     protected $succeedingOrganization;
 
     /**
-     * @var ArticleOrganization[]|null References to articles about this organization.
+     * @var Collection<int, ArticleOrganization>|null References to articles about this organization.
      */
     #[ORM\OneToMany(targetEntity: ArticleOrganization::class, mappedBy: 'organization', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;

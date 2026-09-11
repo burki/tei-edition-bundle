@@ -4,6 +4,7 @@
 
 namespace TeiEditionBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,7 +25,7 @@ class Landmark extends PlaceBase
     protected $djh;
 
     /**
-     * @var ArticleLandmark[]|null References to articles mentioning this landmark.
+     * @var Collection<int, ArticleLandmark>|null References to articles mentioning this landmark.
      */
     #[ORM\OneToMany(targetEntity: ArticleLandmark::class, mappedBy: 'landmark', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;

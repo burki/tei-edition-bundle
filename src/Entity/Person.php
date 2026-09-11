@@ -4,6 +4,7 @@
 
 namespace TeiEditionBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo; // alias for Gedmo extensions annotations
 use FS\SolrBundle\Attribute as Solr;
@@ -21,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
 {
     use ArticleReferencesTrait;
+
     public static $ENTITYFACTS_LOCALES = [ 'de', 'en' ];
 
     public static function formatDateIncomplete($dateStr)
@@ -200,13 +202,13 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
     protected $additional;
 
     /**
-     * @var ArticlePerson[]|null References to articles authored by this person.
+     * @var Collection<int,Article>|null Articles authored by this person.
      */
     #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'author')]
     protected $articles;
 
     /**
-     * @var ArticlePerson[]|null References to articles about this person.
+     * @var Collection<int, ArticlePerson>|null References to articles about this person.
      */
     #[ORM\OneToMany(targetEntity: ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;

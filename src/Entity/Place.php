@@ -4,6 +4,7 @@
 
 namespace TeiEditionBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use FS\SolrBundle\Attribute as Solr;
 use SortDirection;
@@ -181,7 +182,7 @@ class Place extends PlaceBase
     protected $articles;
 
     /**
-     * @var ArticlePlace[]|null References to articles mentioning this place.
+     * @var Collection<int, ArticlePlace>|null References to articles mentioning this place.
      */
     #[ORM\OneToMany(targetEntity: ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
