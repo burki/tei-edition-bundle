@@ -943,7 +943,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     public function getCoverUrl()
     {
         if (empty($this->additional)) {
-            return;
+            return null;
         }
 
         // currently only googleapi
@@ -957,6 +957,8 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
                 }
             }
         }
+
+        return null;
     }
 
     /**

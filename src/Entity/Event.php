@@ -217,6 +217,8 @@ class Event implements \JsonSerializable, JsonLdSerializable
         else {
             return $this->description;
         }
+
+        return null;
     }
 
     /**
