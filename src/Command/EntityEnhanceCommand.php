@@ -80,13 +80,13 @@ class EntityEnhanceCommand extends BaseCommand
     /**
      * Executes a query
      *
-     * @param string $query
+     * @param string $url
      * @param array|null $headers
      * @param bool|null $assoc
      *
      * @return array|bool representing the query result
      */
-    protected function executeJsonQuery($url, $headers = [], $assoc = false)
+    protected function executeJsonQuery($url, $headers = [], $assoc = true)
     {
         if (!isset($this->client)) {
             $this->client = new \EasyRdf\Http\Client();
@@ -112,7 +112,7 @@ class EntityEnhanceCommand extends BaseCommand
             return false;
         }
 
-        $json = json_decode(self::normalizeUnicode($content), true);
+        $json = json_decode(self::normalizeUnicode($content), $assoc);
 
         // API error
         if (!isset($json)) {
@@ -654,12 +654,11 @@ class EntityEnhanceCommand extends BaseCommand
                     $isbns[0],
                     $googleapisKey
                 );
-                // var_dump($url);
+
                 $result = $this->executeJsonQuery($url, [
                     'Accept' => 'application/json',
                     // 'Accept-Language' => $locale, // date-format!
                 ]);
-                // var_dump($result);
 
                 if (false !== $result && $result['totalItems'] > 0) {
                     $resultItem = $result['items'][0];
