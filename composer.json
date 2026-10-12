@@ -93,7 +93,7 @@
 
         "sabre/xml": "^4.1",
         "servo/fluidxml": "^2.0",
-        "fluentdom/fluentdom": "dev-master as 8.0",
+        "fluentdom/fluentdom": "dev-main as 8.0",
 
         "html2text/html2text": "^4.3",
 
