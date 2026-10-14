@@ -51,7 +51,7 @@ class XmlFormatterCommandlineAdapter
             'additional' => $this->buildAdditional($options),
         ]));
 
-        $res = `$cmd`; // TODO: implement some form of error-handling
+        $res = shell_exec($cmd); // TODO: implement some form of error-handling
 
         // move <lb/> to previous line
         $res = preg_replace('~[\s\n]+(<lb/>)\s*\n~', '\1' . "\n", $res);
