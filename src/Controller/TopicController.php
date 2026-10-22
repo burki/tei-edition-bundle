@@ -139,7 +139,8 @@ class TopicController extends RenderTeiController
                 ->getRepository('\TeiEditionBundle\Entity\Article')
                 ->findOneBy($criteria)
         ;
-        if (isset($article)) {
+
+        if (!is_null($article)) {
             $meta = $article;
             [$prefix, $path] = explode(':', $meta->getUid(), 2);
             if (preg_match('/\-(\d+)$/', $path, $matches)) {
@@ -156,7 +157,7 @@ class TopicController extends RenderTeiController
         // localize labels in xslt
         $language = null;
         $params = [];
-        if ($article instanceof \TeiEditionBundle\Entity\Article) {
+        if (!is_null($article) && $article instanceof \TeiEditionBundle\Entity\Article) {
             $language = $article->getLanguage();
             if (!empty($language)) {
                 $params['lang'] = $language;

@@ -122,109 +122,109 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     protected $status = 0;
 
     /**
-     * @var string The type of the Bibliographic Item (as in Zotero)
+     * @var string|null The type of the Bibliographic Item (as in Zotero)
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $itemType;
 
     /**
-     * @var array The author/contributor/editor of this CreativeWork.
+     * @var array|null The author/contributor/editor of this CreativeWork.
      */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $creators;
 
     /**
-     * @var string The series of books the book was published in
+     * @var string|null The series of books the book was published in
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $series;
 
     /**
-     * @var string The number within the series of books the book was published in
+     * @var string|null The number within the series of books the book was published in
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $seriesNumber;
 
     /**
-     * @var string The volume of a journal or multi-volume book
+     * @var string|null The volume of a journal or multi-volume book
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $volume;
 
     /**
-     * @var string The number of volumes of a multi-volume book
+     * @var string|null The number of volumes of a multi-volume book
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $numberOfVolumes;
 
     /**
-     * @var string The issue of a journal, magazine, or tech-report, if applicable
+     * @var string|null The issue of a journal, magazine, or tech-report, if applicable
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $issue;
 
     /**
-     * @var string The edition of a book
+     * @var string|null The edition of a book
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $bookEdition;
 
     /**
-     * @var string The place(s) of publication
+     * @var string|null The place(s) of publication
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $publicationLocation; /* map to contentLocation in Schema.org */
 
     /**
-     * @var string The publisher's name
+     * @var string|null The publisher's name
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $publisher;
 
     /**
-     * @var string Date of first broadcast/publication.
+     * @var string|null Date of first broadcast/publication.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $datePublished;
 
     /**
-     * @var string The Page numbers, separated either by commas or as range by hyphen
+     * @var string|null The Page numbers, separated either by commas or as range by hyphen
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $pagination;
 
     /**
-     * @var string The number of pages of the book
+     * @var string|null The number of pages of the book
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $numberOfPages;
 
     /**
-     * @var string The doi of the article
+     * @var string|null The doi of the article
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $doi;
 
     /**
-     * @var string The isbn of the book
+     * @var string|null The isbn of the book
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $isbn;
 
     /**
-     * @var string The issn of of the Journal
+     * @var string|null The issn of of the Journal
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $issn;
 
     /**
-     * @var array
+     * @var array|null
      */
     #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
     /**
-     * @var Bibitem Indicates a Bibitem that this Bibitem is (in some sense) part of.
+     * @var Bibitem|null Indicates a Bibitem that this Bibitem is (in some sense) part of.
      */
     #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Bibitem::class)]
     protected $isPartOf;
@@ -239,7 +239,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     protected $name;
 
     /**
-     * @var string The title of the book or journal for bookSection / journalArticle.
+     * @var string|null The title of the book or journal for bookSection / journalArticle.
      */
     #[ORM\Column(length: 512, nullable: true)]
     protected $containerName;
@@ -253,14 +253,14 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     protected $language;
 
     /**
-     * @var string URL of the item.
+     * @var string|null URL of the item.
      */
     #[Assert\Url]
     #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -268,7 +268,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     protected $slug;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -276,7 +276,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
     protected $uid;
 
     /**
-     * @var array A short description of the item. Generated for solr
+     * @var array|null A short description of the item. Generated for solr
      */
     #[ORM\Column(type: 'json', nullable: true)]
     #[Solr\Field(type: 'strings', getter: 'getDescriptionStrings')]
@@ -1327,7 +1327,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
                         continue;
                     }
 
-                    if (!empty($creator['firstName'])) {
+                    if (!empty($creator['firstName']) || !empty($creator['lastName'])) {
                         // we have a person
                         $person = new Person();
                         if (!empty($creator['firstName'])) {
@@ -1404,7 +1404,7 @@ class Bibitem implements \JsonSerializable, JsonLdSerializable, OgSerializable, 
                         break;
                 }
 
-                if (!is_null($parentItemType)) {
+                if (!is_null($parentItemType)) { // @phpstan-ignore function.impossibleType
                     $parent = clone $this;
                     $parent->setItemType($parentItemType);
                     $parent->setName($this->containerName);

@@ -127,7 +127,7 @@ class ThumbnailCommand extends BaseCommand
             switch ($article->sourceType) {
                 case 'Text':
                     return Command::INVALID;
-                    break;
+                    break; // @phpstan-ignore deadCode.unreachable
 
                 default:
                     $figureFacs = $teiHelper->getFirstFigureFacs($fname);

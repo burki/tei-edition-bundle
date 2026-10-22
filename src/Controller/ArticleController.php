@@ -111,12 +111,12 @@ class ArticleController extends RenderTeiController
 
         $teiHelper = new \TeiEditionBundle\Utils\TeiHelper();
         $meta = $teiHelper->analyzeHeader($this->locateTeiResource($fname));
-        if (is_null($meta)) {
+        if (false === $meta) {
             throw new \Exception('An error occurred while generating this page.');
         }
 
         $path = '';
-        [$prefix, $path] = explode(':', $meta->uid, 2); // @phpstan-ignore property.nonObject
+        [$prefix, $path] = explode(':', $meta->uid, 2);
         if (preg_match('/\-(\d+)$/', $path, $matches)) {
             $path = preg_replace('/\-(\d+)$/', sprintf('-%05d', $matches[1]), $path);
         }

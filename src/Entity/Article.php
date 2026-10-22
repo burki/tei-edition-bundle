@@ -82,7 +82,7 @@ class Article implements
     protected $articleSection;
 
     /**
-     * @var ArrayCollection<int, Person> The author of this content.
+     * @var ArrayCollection<int, Person>|null The author of this content.
      *
      * Please note that author is special in that HTML 5 provides
      * a special mechanism for indicating authorship via the rel tag.
@@ -93,26 +93,26 @@ class Article implements
     protected $author;
 
     /**
-     * @var Person Organization or person who adapts a creative work to different languages, regional differences and technical requirements of a target market, or that translates during some event.
+     * @var Person|null Person who adapts a creative work to different languages, regional differences and technical requirements of a target market, or that translates during some event.
      */
     #[ORM\ManyToOne(targetEntity: Person::class)]
     protected $translator;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
     protected $translatedFrom;
 
     /**
-     * @var Place The location depicted or described in the content.
+     * @var Place|null The location depicted or described in the content.
      */
     #[ORM\ManyToOne(targetEntity: Place::class, inversedBy: 'articles')]
     protected $contentLocation;
 
     /**
-     * @var string The geo coordinates of the place.
+     * @var string|null The geo coordinates of the place.
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -141,59 +141,59 @@ class Article implements
     protected $bibitemReferences;
 
     /**
-     * @var string The creator/author of this CreativeWork.
+     * @var string|null The creator/author of this CreativeWork.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $creator;
 
     /**
-     * @var string The date on which the CreativeWork was created.
+     * @var string|null The date on which the CreativeWork was created.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $dateCreated;
 
     /**
-     * @var string Override of the date on which the CreativeWork was created.
+     * @var string|null Override of the date on which the CreativeWork was created.
      */
     #[ORM\Column(type: 'string', nullable: true)]
     protected $dateCreatedDisplay;
 
     /**
-     * @var \DateTime Date of first broadcast/publication.
+     * @var \DateTime|null Date of first broadcast/publication.
      */
     #[Assert\Date]
     #[ORM\Column(type: 'date', nullable: true)]
     protected $datePublished;
 
     /**
-     * @var \DateTime The date on which the CreativeWork was most recently modified or when the item's entry was modified .
+     * @var \DateTime|null The date on which the CreativeWork was most recently modified or when the item's entry was modified .
      */
     #[Assert\Date]
     #[ORM\Column(type: 'date', nullable: true)]
     protected $dateModified;
 
     /**
-     * @var string A short description of the item.
+     * @var string|null A short description of the item.
      */
     #[ORM\Column(type: 'text', length: 65535, nullable: true)]
     #[Solr\Field(type: 'string')]
     protected $description;
 
     /**
-     * @var Article Indicates a CreativeWork that this CreativeWork is (in some sense) part of.
+     * @var Article|null Indicates a CreativeWork that this CreativeWork is (in some sense) part of.
      */
     #[ORM\JoinColumn(name: 'isPartOf_id', referencedColumnName: 'id', nullable: true)]
     #[ORM\ManyToOne(targetEntity: Article::class)]
     protected $isPartOf;
 
     /**
-     * @var Organization Holding institution.
+     * @var Organization|null Holding institution.
      */
     #[ORM\ManyToOne(targetEntity: Organization::class, inversedBy: 'providerOf')]
     protected $provider;
 
     /**
-     * @var string Holding institution's identification number.
+     * @var string|null Holding institution's identification number.
      *
      *
      */
@@ -201,20 +201,20 @@ class Article implements
     protected $providerIdno;
 
     /**
-     * @var string Keywords or tags used to describe this content. Multiple entries in a keywords list are typically delimited by commas.
+     * @var array|null Keywords or tags used to describe this content. Multiple entries in a keywords list are typically delimited by commas.
      */
     #[ORM\Column(type: 'simple_array', nullable: true)]
     protected $keywords;
 
     /**
-     * @var string A license document that applies to this content, typically indicated by URL.
+     * @var string|null A license document that applies to this content, typically indicated by URL.
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
     protected $license;
 
     /**
-     * @var string A license document that applies to this content, typically indicated by URL.
+     * @var string|null A license document that applies to this content, typically indicated by URL.
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true, length: 2048)]
@@ -246,14 +246,14 @@ class Article implements
     protected $sourceType;
 
     /**
-     * @var string The textual content of this CreativeWork.
+     * @var string|null The textual content of this CreativeWork.
      */
     #[ORM\Column(type: 'text', length: 16777215, nullable: true)]
     #[Solr\Field(type: 'text')]
     protected $text;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -261,7 +261,7 @@ class Article implements
     protected $uid;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -269,14 +269,14 @@ class Article implements
     protected $doi;
 
     /**
-     * @var string URL of the item.
+     * @var string|null URL of the item.
      */
     #[Assert\Url]
     #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
-     * @var string
+     * @var string|null
      */
     #[Assert\Type(type: 'string')]
     #[ORM\Column(nullable: true)]
@@ -413,6 +413,8 @@ class Article implements
 
     /**
      * Gets author Firstname1 Lastname1, Firstname2 Lastname2.
+     *
+     * @param bool $givenNameFirst Whether to display the given name first.
      *
      * @return string
      */
@@ -772,7 +774,7 @@ class Article implements
     /**
      * Sets keywords.
      *
-     * @param string $keywords
+     * @param array|null $keywords
      *
      * @return $this
      */
@@ -786,7 +788,7 @@ class Article implements
     /**
      * Gets keywords.
      *
-     * @return string
+     * @return array|null
      */
     public function getKeywords()
     {

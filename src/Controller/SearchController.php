@@ -343,12 +343,10 @@ class SearchController extends BaseController
                 $url = $this->generateUrl($suggestion['route'], $suggestion['routeParams']);
             }
 
-            if (!is_null($url)) {
-                $suggestionsFinal[] = [
-                    'name' => $suggestion['term'],
-                    'url' => $url,
-                ];
-            }
+            $suggestionsFinal[] = [
+                'name' => $suggestion['term'],
+                'url' => $url,
+            ];
         }
 
         return new \Symfony\Component\HttpFoundation\JsonResponse($suggestionsFinal);

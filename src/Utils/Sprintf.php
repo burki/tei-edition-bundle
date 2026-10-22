@@ -3,7 +3,7 @@
 namespace TeiEditionBundle\Utils;
 
 /**
- * Verbatim copy of https://github.com/jalet/util-sprintf-php
+ * Based on https://github.com/jalet/util-sprintf-php.
  */
 class Sprintf
 {
@@ -23,9 +23,10 @@ class Sprintf
      *     %key:bool%
      *     %key%            * default
      *
-     * @param  String $string String to be formated
-     * @param  array  $args   Key/value pairs
-     * @return String         Formated string
+     * @param string $string String to be formated
+     * @param array  $args   Key/value pairs
+     *
+     * @return string Formated string
      */
     public static function f($string, array $args)
     {
@@ -54,28 +55,30 @@ class Sprintf
     }
 
     /**
-     * [replace description]
-     * @param  String $key      Pattern to replace
-     * @param  String $val      The value to replace it with
-     * @param  String $format   Format, int, float or bool. Will default to string
-     * @param  String $output   Only used for :bool:int|str
-     * @return String
+     * [replace description].
+     *
+     * @param string $key    Pattern to replace
+     * @param string $val    The value to replace it with
+     * @param string $format Format, int, float or bool. Will default to string
+     * @param string $output Only used for :bool:int|str
+     *
+     * @return string
      */
     private static function replace($key, $val, $format = 'string', $output = null)
     {
         switch ($format) {
 
             case 'int':
-                $string = preg_replace('/%' . $key . '%/', intval($val), self::$string);
+                $string = preg_replace('/%' . $key . '%/', (string) intval($val), self::$string);
                 break;
 
             case 'float':
-                $string = preg_replace('/%' . $key . '%/', floatval($val), self::$string);
+                $string = preg_replace('/%' . $key . '%/', (string) floatval($val), self::$string);
                 break;
 
             case 'bool':
-                $string = $output === 'str' ? preg_replace('/%' . $key . '%/', (bool) $val ? 'true' : 'false', self::$string)
-                                            : preg_replace('/%' . $key . '%/', (bool) $val, self::$string);
+                $string = 'str' === $output ? preg_replace('/%' . $key . '%/', (bool) $val ? 'true' : 'false', self::$string)
+                                            : preg_replace('/%' . $key . '%/', (string) ((bool) $val), self::$string);
                 break;
 
             default:

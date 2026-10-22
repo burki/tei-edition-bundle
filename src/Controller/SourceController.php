@@ -665,6 +665,7 @@ class SourceController extends ArticleController
                 return $urlZip;
             }
 
+            // @phpstan-ignore deadCode.unreachable
             $flags |= \ZipArchive::OVERWRITE;
         }
 
@@ -875,7 +876,6 @@ class SourceController extends ArticleController
                 $pathParts = pathinfo($hrefRel);
                 for ($zoom = $defaultZoom; $zoom >= 0; $zoom--) {
                     $fnameScaled = $pathParts['filename'] . '_' . $zoom . '.' . $pathParts['extension'];
-                    // @phpstan-ignore variable.undefined
                     if (file_exists($filePath . '/' . $fnameScaled)) {
                         $hrefAbs = $directoryUrlAbs . '/' . $fnameScaled;
                         // @phpstan-ignore method.notFound (we are directly manipulating the DOM)

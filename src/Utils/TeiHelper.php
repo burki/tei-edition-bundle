@@ -1153,7 +1153,7 @@ class TeiHelper
                 }
 
                 return $result;
-                break;
+                break; // @phpstan-ignore deadCode.unreachable
 
             default:
                 throw new \InvalidArgumentException('Invalid schemaType: ' . $schemaType);

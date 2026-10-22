@@ -301,7 +301,7 @@ class PlaceBase implements \JsonSerializable, JsonLdSerializable
             return null;
         }
 
-        if (is_array($this->description)) {
+        if (is_array($this->description)) { // @phpstan-ignore if.alwaysTrue
             if (array_key_exists($locale, $this->description)) {
                 return $this->description[$locale];
             }

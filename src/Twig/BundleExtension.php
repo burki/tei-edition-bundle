@@ -31,7 +31,7 @@ class BundleExtension extends AbstractExtension
 
     public function __construct(
         TranslatorInterface $translator,
-        SlugifyInterface $slugifyer
+        ?SlugifyInterface $slugifyer
     ) {
         $this->translator = $translator;
         $this->slugifyer = $slugifyer;

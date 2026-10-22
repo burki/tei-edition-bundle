@@ -169,6 +169,7 @@ abstract class BaseCommand extends Command
         if (is_null($condition)) {
             die('Currently not handling ' . $uri);
 
+            // @phpstan-ignore deadCode.unreachable
             return -1;
         }
 
@@ -263,6 +264,7 @@ abstract class BaseCommand extends Command
         if (is_null($condition)) {
             die('Currently not handling ' . $uri);
 
+            // @phpstan-ignore deadCode.unreachable
             return -1;
         }
 
@@ -357,7 +359,8 @@ abstract class BaseCommand extends Command
         if (is_null($condition)) {
             die('Currently not handling ' . $uri);
 
-            return;
+            // @phpstan-ignore deadCode.unreachable
+            return null;
         }
 
         return $this->em->getRepository('TeiEditionBundle\Entity\Place')->findOneBy($condition);
@@ -511,7 +514,8 @@ abstract class BaseCommand extends Command
         if (is_null($condition)) {
             die('Currently not handling ' . $uri);
 
-            return;
+            // @phpstan-ignore deadCode.unreachable
+            return null;
         }
 
         return $this->em->getRepository('TeiEditionBundle\Entity\Landmark')->findOneBy($condition);
@@ -529,7 +533,8 @@ abstract class BaseCommand extends Command
         if (is_null($condition)) {
             die('Currently not handling ' . $uri);
 
-            return;
+            // @phpstan-ignore deadCode.unreachable
+            return null;
         }
 
         return $this->em->getRepository('TeiEditionBundle\Entity\Event')->findOneBy($condition);

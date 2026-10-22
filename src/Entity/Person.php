@@ -422,7 +422,7 @@ class Person implements \JsonSerializable, JsonLdSerializable, OgSerializable
             return;
         }
 
-        if (is_array($this->description)) {
+        if (is_array($this->description)) { // @phpstan-ignore if.alwaysTrue
             if (array_key_exists($locale, $this->description)) {
                 return $this->description[$locale];
             }

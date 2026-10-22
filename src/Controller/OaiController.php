@@ -53,9 +53,9 @@ class OaiController extends AbstractController
     }
 
     /**
-     * Build Psr\Http\Message\RequestInterface from globals
+     * Build Psr\Http\Message\ServerRequestInterface from globals
      */
-    private function buildRequest(): \Psr\Http\Message\RequestInterface
+    private function buildRequest(): \Psr\Http\Message\ServerRequestInterface
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ref = & $_POST;

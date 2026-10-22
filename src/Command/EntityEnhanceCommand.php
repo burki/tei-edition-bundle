@@ -34,23 +34,23 @@ class EntityEnhanceCommand extends BaseCommand
         switch ($input->getArgument('type')) {
             case 'person':
                 return $this->enhancePerson();
-                break;
+                break; // @phpstan-ignore deadCode.unreachable
 
             case 'place':
                 return $this->enhancePlace();
-                break;
+                break; // @phpstan-ignore deadCode.unreachable
 
             case 'organization':
                 return $this->enhanceOrganization();
-                break;
+                break; // @phpstan-ignore deadCode.unreachable
 
             case 'country':
                 return $this->enhanceCountry();
-                break;
+                break; // @phpstan-ignore deadCode.unreachable
 
             case 'bibitem':
                 return $this->enhanceBibitem();
-                break;
+                break; // @phpstan-ignore deadCode.unreachable
         }
 
         $output->writeln(sprintf(

@@ -316,7 +316,7 @@ class MetsCommand extends BaseCommand
 
                 $xw->endElement(); // </mets:div>
             }
-            else if ('LOGICAL' == $type) {
+            else if ('LOGICAL' == $type) { // @phpstan-ignore equal.alwaysTrue
                 $xw->startElement('mets:div');
                 $xw->writeAttribute('ID', 'log_' . $ID);
                 $xw->writeAttribute('DMDID', 'dmd_' . $ID);

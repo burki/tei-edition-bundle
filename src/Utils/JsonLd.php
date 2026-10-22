@@ -15,11 +15,11 @@ class JsonLd
      *
      * @param  string|\DateTime $date  date string
      *
-     * @return string|null        formatted date string (either YYYY or YYYY-MM-DD)
+     * @return string|null  formatted date string (either YYYY or YYYY-MM-DD)
      */
-    public static function formatDate8601($date)
+    public static function formatDate8601(string|\DateTime $date)
     {
-        if (is_object($date) && $date instanceof \DateTime) {
+        if (is_object($date)) {
             return $date->format('Y-m-d');
         }
 
