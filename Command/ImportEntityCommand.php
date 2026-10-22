@@ -16,7 +16,7 @@ use Spatie\SimpleExcel\SimpleExcelReader;
 class ImportEntityCommand
 extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('import:entity')
@@ -24,7 +24,7 @@ extends BaseCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fname = 'gnd2tgn.xlsx';
 

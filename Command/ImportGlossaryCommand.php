@@ -18,7 +18,7 @@ use Spatie\SimpleExcel\SimpleExcelReader;
  */
 class ImportGlossaryCommand extends BaseCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('import:glossary')

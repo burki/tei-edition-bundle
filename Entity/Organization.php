@@ -17,10 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="organization")
  */
+#[ORM\Table(name: 'organization')]
+#[ORM\Entity]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Organization
 implements \JsonSerializable, JsonLdSerializable
 {
@@ -45,125 +46,115 @@ implements \JsonSerializable, JsonLdSerializable
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
      * @var string A short description of the item.
-     *
-     * @ORM\Column(type="json", nullable=true)
      */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $description;
 
     /**
-     * @var string The date that this organization was dissolved.
-     *
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null The date that this organization was dissolved.
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $dissolutionDate;
 
     /**
      * @var string The date that this organization was founded.
-     *
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $foundingDate;
 
     /**
-     * @var string The name of the item.
+     * @var string|null The name of the item.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $name;
 
     /**
-     * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
+     * @var string|null URL of the item.
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
-     * @var Place The place where the Organization was founded.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place")
-     * @ORM\JoinColumn(name="foundingLocation_id", referencedColumnName="id")
+     * @var Place|null The place where the Organization was founded.
      */
+    #[ORM\JoinColumn(name: 'foundingLocation_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $foundingLocation;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", length=32, nullable=true)
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
     protected $gnd;
 
     /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="provider")
-     * @ORM\OrderBy({"dateCreated" = "ASC", "name" = "ASC"})
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
+    protected $wikidata;
+
+    #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'provider')]
+    #[ORM\OrderBy(['dateCreated' => 'ASC', 'name' => 'ASC'])]
     protected $providerOf;
 
-    /**
-    * @ORM\Column(type="json", nullable=true)
-    */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
     /**
-     * @var Organization The organization that preceded this on.
-     *
-     * @ORM\OneToOne(targetEntity="TeiEditionBundle\Entity\Organization", inversedBy="succeedingOrganization")
-     * @ORM\JoinColumn(name="precedingId", referencedColumnName="id")
+     * @var Organization|null The organization that preceded this on.
      */
+    #[ORM\JoinColumn(name: 'precedingId', referencedColumnName: 'id')]
+    #[ORM\OneToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, inversedBy: 'succeedingOrganization')]
     protected $precedingOrganization;
 
     /**
-     * @var Organization The organization that suceeded this on.
-     *
-     * @ORM\OneToOne(targetEntity="TeiEditionBundle\Entity\Organization", mappedBy="precedingOrganization")
+     * @var Organization|null The organization that suceeded this on.
      */
+    #[ORM\OneToOne(targetEntity: \TeiEditionBundle\Entity\Organization::class, mappedBy: 'precedingOrganization')]
     protected $succeedingOrganization;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticleOrganization", mappedBy="organization", cascade={"persist", "remove"}, orphanRemoval=TRUE)
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleOrganization::class, mappedBy: 'organization', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     /**
-     * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $slug;
 
     /**
@@ -217,7 +208,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets description.
      *
-     * @param string $description
+     * @param array|null $description
      *
      * @return $this
      */
@@ -231,7 +222,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets description.
      *
-     * @return string
+     * @return array|null
      */
     public function getDescription()
     {
@@ -276,7 +267,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets dissolutionDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getDissolutionDate()
     {
@@ -286,7 +277,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets foundingDate.
      *
-     * @param string $foundingDate
+     * @param string|null $foundingDate
      *
      * @return $this
      */
@@ -300,7 +291,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets foundingDate.
      *
-     * @return string
+     * @return string|null
      */
     public function getFoundingDate()
     {
@@ -310,7 +301,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets name.
      *
-     * @param string $name
+     * @param string|null $name
      *
      * @return $this
      */
@@ -324,7 +315,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets name.
      *
-     * @return string
+     * @return string|null
      */
     public function getName()
     {
@@ -352,7 +343,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets url.
      *
-     * @param string $url
+     * @param string|null $url
      *
      * @return $this
      */
@@ -366,7 +357,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets url.
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -461,11 +452,11 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets gnd.
      *
-     * @param string $gnd
+     * @param string|null $gnd
      *
      * @return $this
      */
-    public function setGnd($gnd)
+    public function setGnd(?string $gnd)
     {
         $this->gnd = $gnd;
 
@@ -475,12 +466,37 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets gnd.
      *
-     * @return string
+     * @return string|null
      */
     public function getGnd()
     {
         return $this->gnd;
     }
+
+    /**
+     * Sets Wikidata QID.
+     *
+     * @param string|null $wikidata
+     *
+     * @return $this
+     */
+    public function setWikidata($wikidata)
+    {
+        $this->wikidata = $wikidata;
+
+        return $this;
+    }
+
+    /**
+     * Gets Wikidata QID.
+     *
+     * @return string|null
+     */
+    public function getWikidata()
+    {
+        return $this->wikidata;
+    }
+
 
     /**
      * Gets providerOf.
@@ -521,7 +537,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets additional.
      *
-     * @return array
+     * @return array|null
      */
     public function getAdditional()
     {
@@ -531,7 +547,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Sets slug.
      *
-     * @param string $slug
+     * @param string|null $slug
      *
      * @return $this
      */
@@ -545,7 +561,7 @@ implements \JsonSerializable, JsonLdSerializable
     /**
      * Gets slug.
      *
-     * @return string
+     * @return string|null
      */
     public function getSlug()
     {
@@ -608,7 +624,6 @@ implements \JsonSerializable, JsonLdSerializable
 
         return $ret;
     }
-
 
     // solr-stuff
     public function indexHandler()

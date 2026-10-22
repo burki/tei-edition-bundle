@@ -82,7 +82,7 @@ extends RenderTeiController
                                      TranslatorInterface $translator,
                                      $article)
     {
-        $generatePrintView = 'article-pdf' == $request->get('_route');
+        $generatePrintView = 'article-pdf' == $request->attributes->get('_route');
 
         $fname = $this->buildArticleFname($article);
 
@@ -162,7 +162,7 @@ extends RenderTeiController
             }
         }
 
-        if (in_array($request->get('_route'), [ 'article-jsonld' ])) {
+        if (in_array($request->attributes->get('_route'), [ 'article-jsonld' ])) {
             return new JsonLdResponse($article->jsonLdSerialize($request->getLocale(), false, true));
         }
 
@@ -189,11 +189,9 @@ extends RenderTeiController
         ]);
     }
 
-    /**
-     * @Route("/article/date", name="article-index-date")
-     * @Route("/article.rss", name="article-index-rss")
-     * @Route("/article", name="article-index")
-     */
+    #[Route(path: '/article/date', name: 'article-index-date')]
+    #[Route(path: '/article.rss', name: 'article-index-rss')]
+    #[Route(path: '/article', name: 'article-index')]
     public function indexAction(Request $request,
                                 EntityManagerInterface $entityManager,
                                 TranslatorInterface $translator,
@@ -205,7 +203,7 @@ extends RenderTeiController
             $language = \TeiEditionBundle\Utils\Iso639::code1to3($locale);
         }
 
-        $sort = in_array($request->get('_route'), [
+        $sort = in_array($request->attributes->get('_route'), [
                     'article-index-date', 'article-index-rss'
                 ])
             ? '-A.datePublished' : 'A.creator';
@@ -228,13 +226,13 @@ extends RenderTeiController
             $query->setParameter('language', $language);
         }
 
-        if ('article-index-rss' == $request->get('_route')) {
+        if ('article-index-rss' == $request->attributes->get('_route')) {
             $query->setMaxResults(10);
         }
 
         $articles = $query->getResult();
 
-        if ('article-index-rss' == $request->get('_route')) {
+        if ('article-index-rss' == $request->attributes->get('_route')) {
             $feed = $feedManager->get('article');
             $feed->addFromArray($articles);
 
@@ -250,11 +248,9 @@ extends RenderTeiController
         ]);
     }
 
-    /**
-     * @Route("/article/{slug}.jsonld", name="article-jsonld")
-     * @Route("/article/{slug}.pdf", name="article-pdf")
-     * @Route("/article/{slug}", name="article")
-     */
+    #[Route(path: '/article/{slug}.jsonld', name: 'article-jsonld')]
+    #[Route(path: '/article/{slug}.pdf', name: 'article-pdf')]
+    #[Route(path: '/article/{slug}', name: 'article')]
     public function detailAction(Request $request,
                                  EntityManagerInterface $entityManager,
                                  TranslatorInterface $translator,

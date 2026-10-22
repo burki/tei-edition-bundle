@@ -21,10 +21,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="place")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'place')]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Place
 extends PlaceBase
 {
@@ -38,7 +39,6 @@ extends PlaceBase
     static $aatToType = [
         'facets (controlled vocabulary)' => 'root', // http://vocab.getty.edu/aat/300386699
         'continents' => 'continent',                // http://vocab.getty.edu/aat/300128176
-        'subcontinents' => 'subcontinent',          // http://vocab.getty.edu/aat/300182723
         'oceans' => 'ocean',                        // http://vocab.getty.edu/aat/300008687
         'oceans (marine bodies of water)' => 'ocean',  // http://vocab.getty.edu/aat/300008687
         'seas' => 'sea',                            // http://vocab.getty.edu/aat/300008694
@@ -78,8 +78,6 @@ extends PlaceBase
         'states (political divisions)' => 'state',  // http://vocab.getty.edu/aat/300000776
         'departments (political divisions)' => 'department',  // http://vocab.getty.edu/aat/300000772
         'first level subdivisions (political entities)' => 'province',  // http://vocab.getty.edu/aat/300387064
-        'union territories' => 'union territory',    // http://vocab.getty.edu/aat/300387122
-        'second level subdivisions (political entities)' => 'county',  // http://vocab.getty.edu/aat/300387145
         'third level subdivisions (political entities)' => 'district',  // http://vocab.getty.edu/aat/300387064
         'cantons (administrative bodies)' => 'canton', // http://vocab.getty.edu/aat/300000769
         'prefectures' => 'prefecture',              // http://vocab.getty.edu/aat/300235099
@@ -161,37 +159,24 @@ extends PlaceBase
         return ucfirst($label);
     }
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Place", inversedBy="children")
-     * @ORM\JoinColumn(referencedColumnName="id", onDelete="CASCADE")
-     */
+    #[ORM\JoinColumn(referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\ManyToOne(targetEntity: \Place::class, inversedBy: 'children')]
     protected $parent;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Place", mappedBy="parent")
-     * @ORM\OrderBy({"type" = "ASC", "name" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: \Place::class, mappedBy: 'parent')]
+    #[ORM\OrderBy(['type' => 'ASC', 'name' => 'ASC'])]
     private $children;
 
-    /**
-     * @ORM\OneToMany(targetEntity="Article", mappedBy="contentLocation")
-     */
+    #[ORM\OneToMany(targetEntity: \Article::class, mappedBy: 'contentLocation')]
     protected $articles;
 
     use ArticleReferencesTrait;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticlePlace",
-     *   mappedBy="place",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticlePlace::class, mappedBy: 'place', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     public function showCenterMarker()
     {
-        $hasPlaceParent = false;
         $ancestorOrSelf = $this;
         while (!is_null($ancestorOrSelf)) {
             if (in_array($ancestorOrSelf->type, [ 'neighborhood', 'inhabited place' ])) {

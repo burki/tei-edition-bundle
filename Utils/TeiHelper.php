@@ -897,7 +897,7 @@ class TeiHelper
         return $textContent;
     }
 
-    public function extractEntities($fname)
+    public function extractEntities($fname, $enableWikidata = false)
     {
         $reader = new CollectingReader();
 
@@ -938,6 +938,11 @@ class TeiHelper
                         else if (preg_match('/geo\:(-?\d+\.\d*),\s*(-?\d+\.\d*)/', $uri, $matches)) {
                             $uri = sprintf('geo:%s,%s', $matches[1], $matches[2]);
                         }
+                        else if ($enableWikidata && preg_match('/^'
+                            . preg_quote('http://www.wikidata.org/entity/', '/')
+                            . 'Q\d+$/', $uri)) {
+                            ;
+                        }
                         else {
                             // die($uri);
                             unset($uri);
@@ -961,6 +966,11 @@ class TeiHelper
                         {
                             ;
                         }
+                        else if ($enableWikidata && preg_match('/^'
+                            . preg_quote('http://www.wikidata.org/entity/', '/')
+                            . 'Q\d+$/', $uri)) {
+                            ;
+                        }
                         else {
                             // die($uri);
                             unset($uri);
@@ -973,6 +983,11 @@ class TeiHelper
                                        . preg_quote('://d-nb.info/gnd/', '/')
                                        . '\d+\-?[\dxX]?$/', $uri))
                         {
+                            ;
+                        }
+                        else if ($enableWikidata && preg_match('/^'
+                            . preg_quote('http://www.wikidata.org/entity/', '/')
+                            . 'Q\d+$/', $uri)) {
                             ;
                         }
                         else {

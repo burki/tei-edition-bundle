@@ -79,9 +79,7 @@ extends BaseController
         return $solrClient;
     }
 
-    /**
-     * @Route("/search", name="search-index")
-     */
+    #[Route(path: '/search', name: 'search-index')]
     public function indexAction(Request $request,
                                 TranslatorInterface $translator)
     {
@@ -206,9 +204,7 @@ extends BaseController
         ]);
     }
 
-    /**
-     * @Route("/search/suggest", name="search-suggest")
-     */
+    #[Route(path: '/search/suggest', name: 'search-suggest')]
     public function suggestAction(Request $request,
                                   EntityManagerInterface $entityManager)
     {

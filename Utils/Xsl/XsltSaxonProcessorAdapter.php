@@ -2,8 +2,6 @@
 
 namespace TeiEditionBundle\Utils\Xsl;
 
-use TeiEditionBundle\Utils\Sprintf;
-
 class XsltSaxonProcessorAdapter
 implements XsltAdapterInterface
 {

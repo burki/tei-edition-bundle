@@ -12,10 +12,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * An historical landmark or building.
  *
  * @see https://schema.org/LandmarksOrHistoricalBuildings on Schema.org
- *
- * @ORM\Entity
- * @ORM\Table(name="landmark")
  */
+#[ORM\Table(name: 'landmark')]
+#[ORM\Entity]
 class Landmark
 extends PlaceBase
 {
@@ -23,17 +22,11 @@ extends PlaceBase
 
     /**
      * @var string
-     * @ORM\Column(type="string", nullable=true)
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $djh;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticleLandmark",
-     *   mappedBy="landmark",
-     *   cascade={"persist", "remove"},
-     *   orphanRemoval=TRUE
-     * )
-     */
+    #[ORM\OneToMany(targetEntity: \ArticleLandmark::class, mappedBy: 'landmark', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**

@@ -5,22 +5,16 @@ namespace TeiEditionBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity
- */
+#[ORM\Entity]
 class ArticleLandmark
 extends ArticleEntity
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="Landmark", inversedBy="articleReferences")
-     * @ORM\JoinColumn(name="entity_id", referencedColumnName="id", nullable=FALSE)
-     */
+    #[ORM\JoinColumn(name: 'entity_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \Landmark::class, inversedBy: 'articleReferences')]
     protected $landmark;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Article", inversedBy="landmarkReferences")
-     * @ORM\JoinColumn(name="article_id", referencedColumnName="id", nullable=FALSE)
-     */
+    #[ORM\JoinColumn(name: 'article_id', referencedColumnName: 'id', nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \Article::class, inversedBy: 'landmarkReferences')]
     protected $article;
 
     public function setEntity($entity)

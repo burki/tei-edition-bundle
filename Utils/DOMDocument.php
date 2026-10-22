@@ -39,7 +39,7 @@ class DOMDocument extends \DOMDocument
     /**
      * {@inheritdoc}
      */
-    public function relaxNGValidate($filename)
+    public function relaxNGValidate($filename): bool
     {
         $this->setErrorHandler();
         $result = parent::relaxNGValidate($filename);
@@ -51,7 +51,7 @@ class DOMDocument extends \DOMDocument
     /**
      * {@inheritdoc}
      */
-    public function relaxNGValidateSource($string)
+    public function relaxNGValidateSource($string): bool
     {
         $this->setErrorHandler();
         $result = parent::relaxNGValidateSource($string);

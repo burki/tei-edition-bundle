@@ -5,8 +5,6 @@ Seas:                               Meere
 Archipelago:                        Inselgruppe
 Island:                             Insel
 Islands:                            Inseln
-Coastline:                          Küste
-Coastlines:                         Küsten
 Nation:                             Staat
 Nations:                            Staaten
 River:                              Fluss
@@ -21,10 +19,6 @@ Country:                            Land
 Countries:                          Landesteile
 Autonomous republic:                Autonome Republik
 Autonomous republics:               Autonome Republiken
-Unincorporated territory:           Nicht eingegliedertes Gebiet
-Unincorporated territories:         Nicht eingegliederte Gebiete
-Semi-independent political entity:  Halbautonomes Gebiet
-Semi-independent political entities: Halbautonome Gebiete
 Former primary political entity:    Ehemaliger Staat
 Former primary political entities:  Ehemalige Staaten
 Former administrative division:     Ehemalige Verwaltungseinheit
@@ -54,8 +48,6 @@ Canton:                             Kanton
 Cantons:                            Kantone
 Voivodeship:                        Woiwodschaft
 Voivodeships:                       Woiwodschaften
-Union territory:                    Unionsterritorium
-Union territories:                  Unionsterritorien
 Autonomous community:               Autonome Gemeinschaft
 Autonomous communities:             Autonome Gemeinschaften
 Governorate:                        Gouvernement
@@ -82,7 +74,5 @@ Bay:                                Bucht
 Peninsula:                          Halbinsel
 Continent:                          Kontinent
 Continents:                         Kontinente
-Subcontinent:                       Subkontinent
-Subcontinents:                      Subkontinente
 Miscellaneous:                      Verschiedenes
 Association:                        Gemeinschaft

@@ -17,10 +17,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @Solr\Document(indexHandler="indexHandler")
  * @Solr\SynchronizationFilter(callback="shouldBeIndexed")
- *
- * @ORM\Entity
- * @ORM\Table(name="person")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'person')]
+#[Solr\Document(indexHandler: 'indexHandler')]
+#[Solr\SynchronizationFilter(callback: 'shouldBeIndexed')]
 class Person
 implements \JsonSerializable, JsonLdSerializable, OgSerializable
 {
@@ -42,211 +43,196 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
      * @var int
      *
      * @Solr\Id
-     *
-     * @ORM\Column(type="integer")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
+    #[ORM\Column(type: 'integer')]
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[Solr\Id]
     protected $id;
 
     /**
      * @var int
-     *
-     * @ORM\Column(type="integer", nullable=false)
      */
+    #[ORM\Column(type: 'integer', nullable: false)]
     protected $status = 0;
 
     /**
-     * @var string An additional name for a Person, can be used for a middle name.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null An additional name for a Person, can be used for a middle name.
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $additionalName;
 
     /**
-     * @var string An award won by or for this item.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null An award won by or for this item.
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $award;
 
     /**
-     * @var string Date of birth.
-     *
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null Date of birth.
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $birthDate;
 
     /**
-     * @var string Date of death.
-     *
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null Date of death.
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $deathDate;
 
     /**
      * @var array|null A short description of the item.
      *
-     * @ORM\Column(type="json", nullable=true)
      *
      * @Solr\Field(type="strings", getter="getDescriptionValues")
      */
+    #[ORM\Column(type: 'json', nullable: true)]
+    #[Solr\Field(type: 'strings', getter: 'getDescriptionValues')]
     protected $description;
 
     /**
-     * @var string Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
+     * @var string|null Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $familyName;
 
     /**
-     * @var string Gender of the person.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null Gender of the person.
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $gender;
 
     /**
-     * @var string Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.
+     * @var string|null Given name. In the U.S., the first name of a Person. This can be used along with familyName instead of the name property.
      *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
      * @Solr\Field(type="string")
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
+    #[Solr\Field(type: 'string')]
     protected $givenName;
 
     /**
-     * @var string The job title of the person (for example, Financial Manager).
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null The job title of the person (for example, Financial Manager).
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $jobTitle;
 
     /**
-     * @var string Nationality of the person.
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null Nationality of the person.
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $nationality;
 
     /**
-     * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ORM\Column(nullable=true)
+     * @var string|null URL of the item.
      */
+    #[Assert\Url]
+    #[ORM\Column(nullable: true)]
     protected $url;
 
     /**
-     * @var Place The place where the person was born.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place")
-     * @ORM\JoinColumn(name="birthPlace_id", referencedColumnName="id")
+     * @var Place|null The place where the person was born.
      */
+    #[ORM\JoinColumn(name: 'birthPlace_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $birthPlace;
 
     /**
-     * @var Place The place where the person died.
-     *
-     * @ORM\ManyToOne(targetEntity="TeiEditionBundle\Entity\Place")
-     * @ORM\JoinColumn(name="deathPlace_id", referencedColumnName="id")
+     * @var Place|null The place where the person died.
      */
+    #[ORM\JoinColumn(name: 'deathPlace_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: \TeiEditionBundle\Entity\Place::class)]
     protected $deathPlace;
 
     /**
      * TODO: rename to honorificPrefix
-     * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $honoricPrefix;
 
     /**
      * TODO: rename to honorificSuffice
-     * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $honoricSuffix;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $gnd;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $stolpersteine;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $djh;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", nullable=true)
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', nullable: true)]
     protected $viaf;
 
     /**
-     * @ORM\Column(type="json", nullable=true)
+     * @var string|null
      */
+    #[ORM\Column(type: 'string', length: 32, nullable: true)]
+    protected $wikidata;
+
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $entityfacts;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: 'json', nullable: true)]
     protected $additional;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Article", mappedBy="author")
-     */
+    #[ORM\ManyToMany(targetEntity: \Article::class, mappedBy: 'author')]
     protected $articles;
 
     use ArticleReferencesTrait;
 
-    /**
-     * @ORM\OneToMany(targetEntity="ArticlePerson", mappedBy="person", cascade={"persist", "remove"}, orphanRemoval=TRUE)
-     */
+    #[ORM\OneToMany(targetEntity: \ArticlePerson::class, mappedBy: 'person', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected $articleReferences;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="create")
-     * @ORM\Column(name="created_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'create')]
+    #[ORM\Column(name: 'created_at', type: 'datetime')]
     protected $createdAt;
 
     /**
      * @var \DateTime
-     *
-     * @Gedmo\Timestampable(on="update")
-     * @ORM\Column(name="changed_at", type="datetime")
      */
+    #[Gedmo\Timestampable(on: 'update')]
+    #[ORM\Column(name: 'changed_at', type: 'datetime')]
     protected $changedAt;
 
     /**
-     * @var string
-     *
-     * @Assert\Type(type="string")
-     * @ORM\Column(nullable=true)
+     * @var string|null
      */
+    #[Assert\Type(type: 'string')]
+    #[ORM\Column(nullable: true)]
     protected $slug;
 
     /**
@@ -348,7 +334,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets birthDate.
      *
-     * @param string $birthDate
+     * @param string|null $birthDate
      *
      * @return $this
      */
@@ -450,7 +436,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets familyName.
      *
-     * @param string $familyName
+     * @param string|null $familyName
      *
      * @return $this
      */
@@ -464,7 +450,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets familyName.
      *
-     * @return string
+     * @return string|null
      */
     public function getFamilyName()
     {
@@ -474,7 +460,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets gender.
      *
-     * @param string $gender
+     * @param string|null $gender
      *
      * @return $this
      */
@@ -488,7 +474,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets gender.
      *
-     * @return string
+     * @return string|null
      */
     public function getGender()
     {
@@ -498,7 +484,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets givenName.
      *
-     * @param string $givenName
+     * @param string|null $givenName
      *
      * @return $this
      */
@@ -512,7 +498,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets givenName.
      *
-     * @return string
+     * @return string|null
      */
     public function getGivenName()
     {
@@ -522,7 +508,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets jobTitle.
      *
-     * @param string $jobTitle
+     * @param string|null $jobTitle
      *
      * @return $this
      */
@@ -536,7 +522,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets jobTitle.
      *
-     * @return string
+     * @return string|null
      */
     public function getJobTitle()
     {
@@ -546,7 +532,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets nationality.
      *
-     * @param string $nationality
+     * @param string|null $nationality
      *
      * @return $this
      */
@@ -560,7 +546,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets nationality.
      *
-     * @return string
+     * @return string|null
      */
     public function getNationality()
     {
@@ -570,7 +556,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets url.
      *
-     * @param string $url
+     * @param string|null $url
      *
      * @return $this
      */
@@ -584,7 +570,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets url.
      *
-     * @return string
+     * @return string|null
      */
     public function getUrl()
     {
@@ -723,7 +709,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets honoricPrefix.
      *
-     * @param string $honoricPrefix
+     * @param string|null $honoricPrefix
      *
      * @return $this
      */
@@ -737,7 +723,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets honoricPrefix.
      *
-     * @return string
+     * @return string|null
      */
     public function getHonoricPrefix()
     {
@@ -747,7 +733,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets honoricSuffix.
      *
-     * @param string $honoricSuffix
+     * @param string|null $honoricSuffix
      *
      * @return $this
      */
@@ -761,7 +747,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets honoricSuffix.
      *
-     * @return string
+     * @return string|null
      */
     public function getHonoricSuffix()
     {
@@ -771,7 +757,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets gnd.
      *
-     * @param string $gnd
+     * @param string|null $gnd
      *
      * @return $this
      */
@@ -785,7 +771,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets gnd.
      *
-     * @return string
+     * @return string|null
      */
     public function getGnd()
     {
@@ -793,9 +779,9 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     }
 
     /**
-     * Sets djh.
+     * Sets slug within dasjuedischehamburg.de.
      *
-     * @param string $djh
+     * @param string|null $djh
      *
      * @return $this
      */
@@ -807,9 +793,9 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     }
 
     /**
-     * Gets djh.
+     * Gets slug within dasjuedischehamburg.de.
      *
-     * @return string
+     * @return string|null
      */
     public function getDjh()
     {
@@ -819,7 +805,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets stolpersteine.
      *
-     * @param string $stolpersteine
+     * @param string|null $stolpersteine
      *
      * @return $this
      */
@@ -833,7 +819,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets stolpersteine.
      *
-     * @return string
+     * @return string|null
      */
     public function getStolpersteine()
     {
@@ -841,9 +827,57 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     }
 
     /**
+     * Sets VIAF identifier.
+     *
+     * @param string|null $viaf
+     *
+     * @return $this
+     */
+    public function setViaf($viaf)
+    {
+        $this->viaf = $viaf;
+
+        return $this;
+    }
+
+    /**
+     * Gets VIAF identifier.
+     *
+     * @return string|null
+     */
+    public function getViaf()
+    {
+        return $this->viaf;
+    }
+
+    /**
+     * Sets Wikidata QID.
+     *
+     * @param string|null $wikidata
+     *
+     * @return $this
+     */
+    public function setWikidata($wikidata)
+    {
+        $this->wikidata = $wikidata;
+
+        return $this;
+    }
+
+    /**
+     * Gets Wikidata QID.
+     *
+     * @return string|null
+     */
+    public function getWikidata()
+    {
+        return $this->wikidata;
+    }
+
+    /**
      * Sets entityfacts.
      *
-     * @param array $entityfacts
+     * @param array|null $entityfacts
      *
      * @return $this
      */
@@ -863,7 +897,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets entityfacts.
      *
-     * @return array
+     * @return array|null
      */
     public function getEntityfacts($locale = 'de', $force_locale = false)
     {
@@ -905,7 +939,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets additional.
      *
-     * @return array
+     * @return array|null
      */
     public function getAdditional()
     {
@@ -915,7 +949,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Sets slug.
      *
-     * @param string $slug
+     * @param string|null $slug
      *
      * @return $this
      */
@@ -929,7 +963,7 @@ implements \JsonSerializable, JsonLdSerializable, OgSerializable
     /**
      * Gets slug.
      *
-     * @return string
+     * @return string|null
      */
     public function getSlug()
     {

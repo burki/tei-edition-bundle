@@ -22,7 +22,7 @@ extends BaseCommand
 {
     protected $client;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('entity:enhance')
