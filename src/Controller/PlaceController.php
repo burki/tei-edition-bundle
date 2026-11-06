@@ -40,6 +40,74 @@ class PlaceController extends BaseController
         ]);
     }
 
+    /**
+     * Lookup articles connected to place $ids
+     *
+     * @param EntityManagerInterface $entityManager
+     * @param array $ids Place IDs
+     * @param string|null $geo Geo coordinate filter
+     * @param string $locale Locale code
+     * @param string $mode Mode of lookup ('place-map', 'mentioned', or 'landmark')
+     *
+     * @return array
+     */
+    protected function buildPopupContentArticles(EntityManagerInterface $entityManager, $ids, $geo, $locale, $mode = '')
+    {
+        $ids = explode(',', $ids);
+        $qb = $entityManager
+                ->getRepository(in_array($mode, [ 'mentioned', 'landmark' ])
+                                            ? '\TeiEditionBundle\Entity\Article' : '\TeiEditionBundle\Entity\SourceArticle')
+                ->createQueryBuilder('A')
+        ;
+
+        $qb->select('A')
+                ->distinct()
+                ->andWhere('A.status IN (1) AND P.id IN (:ids)')
+                ->setParameter('ids', $ids)
+        ;
+
+        if ('mentioned' == $mode) {
+            $qb
+            ->innerJoin('A.placeReferences', 'AP')
+            ->innerJoin('AP.place', 'P');
+        }
+        else if ('landmark' == $mode) {
+            $qb
+            ->innerJoin('A.landmarkReferences', 'AL')
+            ->innerJoin('AL.landmark', 'P');
+
+            $geo = $request->query->get('geo');
+            if (!empty($geo)) {
+                $qb->andWhere('P.geo = :geo')
+                    ->setParameter('geo', $geo)
+                ;
+            }
+        }
+        else {
+            $qb->innerJoin('A.contentLocation', 'P');
+
+            if (!empty($geo)) {
+                $qb->andWhere('A.geo = :geo OR (A.geo IS NULL AND P.geo = :geo)')
+                    ->setParameter('geo', $geo)
+                ;
+            }
+        }
+
+        if (!empty($locale)) {
+            $qb->andWhere('A.language = :lang')
+                ->setParameter('lang', \TeiEditionBundle\Utils\Iso639::code1to3($locale))
+            ;
+        }
+
+        $qb->addOrderBy('A.dateCreated', \SortDirection::Ascending)
+            ->addOrderBy('A.name', \SortDirection::Ascending);
+
+        return $qb
+                ->getQuery()
+                ->getResult();
+        ;
+    }
+
     #[Route(path: '/map/popup-content/{ids}', name: 'place-map-popup-content')]
     public function mapPopupContentAction(
         Request $request,
@@ -50,63 +118,7 @@ class PlaceController extends BaseController
             $articles = [];
         }
         else {
-            $mode = str_replace('place-map-', '', $request->query->get('caller'));
-
-            $ids = explode(',', $ids);
-            $qb = $entityManager
-                    ->getRepository(in_array($mode, [ 'mentioned', 'landmark' ])
-                                             ? '\TeiEditionBundle\Entity\Article' : '\TeiEditionBundle\Entity\SourceArticle')
-                    ->createQueryBuilder('A')
-            ;
-
-            $qb->select('A')
-                    ->distinct()
-                    ->andWhere('A.status IN (1) AND P.id IN (:ids)')
-                    ->setParameter('ids', $ids)
-            ;
-
-            if ('mentioned' == $mode) {
-                $qb
-                ->innerJoin('A.placeReferences', 'AP')
-                ->innerJoin('AP.place', 'P');
-            }
-            else if ('landmark' == $mode) {
-                $qb
-                ->innerJoin('A.landmarkReferences', 'AL')
-                ->innerJoin('AL.landmark', 'P');
-
-                $geo = $request->query->get('geo');
-                if (!empty($geo)) {
-                    $qb->andWhere('P.geo = :geo')
-                        ->setParameter('geo', $geo)
-                    ;
-                }
-            }
-            else {
-                $qb->innerJoin('A.contentLocation', 'P');
-
-                $geo = $request->query->get('geo');
-                if (!empty($geo)) {
-                    $qb->andWhere('A.geo = :geo OR (A.geo IS NULL AND P.geo = :geo)')
-                        ->setParameter('geo', $geo)
-                    ;
-                }
-            }
-
-            $locale = $request->getLocale();
-            if (!empty($locale)) {
-                $qb->andWhere('A.language = :lang')
-                    ->setParameter('lang', \TeiEditionBundle\Utils\Iso639::code1to3($locale))
-                ;
-            }
-
-            $qb->addOrderBy('A.dateCreated', \SortDirection::Ascending)
-                ->addOrderBy('A.name', \SortDirection::Ascending);
-
-            $articles = $qb
-                    ->getQuery()
-                    ->getResult();
-            ;
+            $articles = $this->buildPopupContentArticles($entityManager, $ids, $request->query->get('geo'), $request->getLocale(), str_replace('place-map-', '', $request->query->get('caller')));
         }
 
         return $this->render('@TeiEdition/Place/map-popup-content.html.twig', [
