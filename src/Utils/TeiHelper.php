@@ -249,7 +249,12 @@ class TeiHelper
         foreach ($result as $element) {
             switch ($element['type']) {
                 case 'firstPublication':
-                    $article->datePublished = new \DateTime((string) $element);
+                    $dateString = (string) $element;
+                    if (preg_match('/^\d{4}$/', $dateString)) {
+                        // fix year-only dates
+                        $dateString .= '-01-01';
+                    }
+                    $article->datePublished = new \DateTime($dateString);
                     break;
 
                 case 'publication':
