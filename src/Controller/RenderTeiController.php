@@ -695,7 +695,12 @@ abstract class RenderTeiController extends BaseController
 
         // bibitem
         $bibitems = array_filter(array_unique($crawler->filterXPath("//span[@class='dta-bibl']")->each(function ($node, $i) {
-            return trim($node->attr('data-corresp'));
+            $corresp = $node->attr('data-corresp');
+            if (is_null($corresp)) {
+                return null;
+            }
+
+            return trim($corresp);
         })));
 
         $bibitemsByCorresp = [];
