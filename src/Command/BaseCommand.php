@@ -399,8 +399,15 @@ abstract class BaseCommand extends Command
                     var_dump($prefix . ':' . $value);
 
                     $lodService = new LodService(new GettyVocabulariesProvider());
-                    // @phpstan-ignore method.notFound ($lodService has __call() routed to GettyVocabulariesProvider::fetch())
-                    $resource = $lodService->fetch(new TgnIdentifier($value));
+
+                    $resource = null;
+                    try {
+                        // @phpstan-ignore method.notFound ($lodService has __call() routed to GettyVocabulariesProvider::fetch())
+                        $resource = $lodService->fetch(new TgnIdentifier($value));
+                    }
+                    catch (\Exception $e) {
+                        var_dump($e->getMessage());
+                    }
 
                     if (is_null($resource) || !($resource instanceof \LodService\Model\Place)) {
                         return -1;
